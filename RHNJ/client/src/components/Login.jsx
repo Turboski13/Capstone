@@ -14,8 +14,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login({ username, password });
-      localStorage.setItem('token', response.data.token);
-      console.log('Login successful:', response.data);
+      // const results = await response.json();
+      console.log('Login successful:', response);
+      localStorage.setItem('token', response.token);
+      // console.log('Login successful:', response.data);
       navigate('/player-home'); // Redirect to home or another page
     } catch (error) {
       console.error('Login failed:', error.response.data);

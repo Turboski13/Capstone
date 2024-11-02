@@ -58,7 +58,7 @@ function authMiddleware(req, res, next) {
 }
 
 // Create Express server
-function createServer() {
+
  
 
   app.get('/test', (req, res) => {
@@ -245,20 +245,15 @@ function createServer() {
       .send({ error: 'Internal server error', message: err.message });
   });
 
-  return app;
-}
+  app.listen(3000, () => {
+    console.log('Listening on port 3000');});
+
 
 // Start the server
 // const app = createServer();
 
-const startServer = async () => {
-  await prisma.$connect();
-  app.listen(3000, () => {
-    console.log('Listening on port 3000');
-  });
+
+//   // await prisma.$connect();
   
-};
 
-startServer();
 
-module.exports = { prisma, createServer };
