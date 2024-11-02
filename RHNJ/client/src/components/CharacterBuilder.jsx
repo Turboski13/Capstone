@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import characters from "../utils/characterList";
-import axios from 'axios';
+/* import axios from 'axios'; */
 
 const CharacterBuilder = ({onCharacterSelect}) => {
   const [selectedCharacterId, setSelectedCharacterId] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState(null); 
+  const [characterDetails, setCharacterDetails] = useState({});
   const [ideals, setIdeals] = useState('');
   const [flaws, setFlaws] = useState('');
   const [notes, setNotes] = useState('');
@@ -24,43 +25,56 @@ const CharacterBuilder = ({onCharacterSelect}) => {
       onCharacterSelect(character);
     }
   };
+
+  const characterData = {
+    userId: selectedCharacter.userId,
+    characterId: selectedCharacter.id,
+    characterName: selectedCharacter.CharacterName,
+    characterClass: selectedCharacter.characterClass,
+    characterLevel: selectedCharacter.characterLevel,
+    characterImage: selectedCharacter.characterImage,
+    strength: selectedCharacter.strength,
+    dexterity: selectedCharacter.dexterity,
+    constitution: selectedCharacter.constitution,
+    intelligence: selectedCharacter.intelligence,
+    wisdom: selectedCharacter.wisdom,
+    charisma: selectedCharacter.charisma,
+    savingThrows: selectedCharacter.savingThrows,
+    skills: selectedCharacter.skills,
+    singleUseSkill: selectedCharacter.singleUseSkill,
+    statusPoints: selectedCharacter.statusPoints,
+    attackRoll: selectedCharacter.attackRoll,
+    catchPhrases: selectedCharacter.catchPhrases,
+    abilities: selectedCharacter.abilities,
+    ideals,
+    flaws,
+    notes,
+  };
     
-  const saveCharacterDetails = async () => {
-    const characterData = {
-      userId: selectedCharacter.userId,
-      characterId: selectedCharacter.id,
-      characterName: selectedCharacter.CharacterName,
-      characterClass: selectedCharacter.characterClass,
-      characterLevel: selectedCharacter.characterLevel,
-      characterImage: selectedCharacter.characterImage,
-      strength: selectedCharacter.strength,
-      dexterity: selectedCharacter.dexterity,
-      constitution: selectedCharacter.constitution,
-      intelligence: selectedCharacter.intelligence,
-      wisdom: selectedCharacter.wisdom,
-      charisma: selectedCharacter.charisma,
-      savingThrows: selectedCharacter.savingThrows,
-      skills: selectedCharacter.skills,
-      singleUseSkill: selectedCharacter.singleUseSkill,
-      statusPoints: selectedCharacter.statusPoints,
-      attackRoll: selectedCharacter.attackRoll,
-      catchPhrases: selectedCharacter.catchPhrases,
-      abilities: selectedCharacter.abilities,
-      ideals,
-      flaws,
-      notes,
-    };
+  const saveCharacterDetails = async (characterData) => {
+    setCharacterDetails(characterData);
 
     console.log(characterData);
   
     try {
-      const response = await axios.post('/api/characters/save-character',);
-      console.log("Character saved:", response.data);
+      const response = await fetch('/api/characters/save-character', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ characterDetails}),
+      });
+    
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+    
+      const data = await response.json();
+      console.log("Character saved:", data);
       setSelectedCharacter(null); // Clear selected character
     } catch (error) {
       console.error("Error saving character:", error);
-    }
-  }; 
+    };}
   // const saveCharacterDetails = () => {
   
   //     setSelectedCharacter(null);
@@ -90,7 +104,7 @@ const CharacterBuilder = ({onCharacterSelect}) => {
       {selectedCharacter && (
 
         <div className="character-stats">
-          <h3>{selectedCharacter.name}'s Stats</h3>
+          <h3>{selectedCharacter.characterName}'s Stats</h3>
           <p>Description: {selectedCharacter.description}</p><br></br>
           <ul>
             <li>Level: {selectedCharacter.level}</li>
@@ -168,7 +182,7 @@ const CharacterBuilder = ({onCharacterSelect}) => {
       {selectedCharacter && (
         <div className="character-details">
           <h3>{selectedCharacter.name}'s Details</h3>
-          <button onClick={() => saveCharacterDetails()}>Save</button>
+          <button onClick={() => saveCharacterDetails(characterData)}>Save</button>
         </div>
       )}
     </div>

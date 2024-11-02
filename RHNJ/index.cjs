@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors'); // Import cors
-const { PrismaClient } = require('@prisma/client');
-const jwt = require('jsonwebtoken');
+/* const { PrismaClient } = require('@prisma/client');
+ */const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
-const prisma = new PrismaClient();
+/* const prisma = new PrismaClient();*/
+const prisma = require('./prisma/client');
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(cors()); // Added this line
 app.use(express.json());
 
