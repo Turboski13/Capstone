@@ -38,7 +38,6 @@ function App() {
         <Route path='/navigations' element={<Navigations />} />
         <Route path='/' element={<Home />} />
       </Routes>
-    
     </div>
   );
 }

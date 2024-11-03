@@ -64,7 +64,6 @@ export const editUser = async (userId, userData) => {
   }
 };
 
-
 /* export const deleteUser = async (userId) => {
   try {
     await axios.delete(`${API_URL}/users/${userId}`);
@@ -94,7 +93,6 @@ export const deleteUser = async (userId) => {
 };
 
 // DM Functions
-
 
 /* export const searchAllDMs = async () => {
   try {
@@ -149,7 +147,6 @@ export const searchSingleDM = async (dmId) => {
     throw error; // Re-throw the error for further handling
   }
 };
-
 
 /* export const editDM = async (dmId, dmData) => {
   try {
@@ -213,7 +210,6 @@ export const deleteDM = async (dmId) => {
 };
 
 // Character Functions
-
 
 /* export const searchAllCharacters = async () => {
   try {

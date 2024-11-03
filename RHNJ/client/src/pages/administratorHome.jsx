@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { searchAllUsers } from "../functions/userFunctions"; // Adjust imports based on your file structure
+import React, { useEffect, useState } from 'react';
+import { searchAllUsers } from '../functions/userFunctions'; // Adjust imports based on your file structure
 import {
   searchSingleUser,
   editUser,
@@ -12,7 +12,7 @@ import {
   searchSingleCharacter,
   editCharacter,
   deleteCharacter,
-} from "../functions/adminFunctions"; // Adjust imports based on your file structure
+} from '../functions/adminFunctions'; // Adjust imports based on your file structure
 
 const AdministratorHome = () => {
   const [users, setUsers] = useState([]);
@@ -25,7 +25,7 @@ const AdministratorHome = () => {
         const allUsers = await searchAllUsers();
         setUsers(allUsers);
       } catch (err) {
-        setError("Failed to fetch users. Please try again.");
+        setError('Failed to fetch users. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ const AdministratorHome = () => {
       await deleteUser(userId);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (err) {
-      setError("Failed to delete user. Please try again.");
+      setError('Failed to delete user. Please try again.');
     }
   };
 
@@ -50,7 +50,7 @@ const AdministratorHome = () => {
   return (
     <div>
       <h2>Administrator Home</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <h3>User List</h3>
       <table>
         <thead>
