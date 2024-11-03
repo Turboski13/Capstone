@@ -10,7 +10,7 @@ import Navigations from './components/Navigations';
 import Home from './components/Home';
 import About from './components/About';
 import HowToPlay from './components/HowToPlay';
-import AdminSignUp from './components/AdminSignUp';
+import AdminLogin from './components/AdminLogin';
 import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
@@ -24,7 +24,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/how-to-play' element={<HowToPlay />} />
-        <Route path='/admin-signup' element={<AdminSignUp />} />
+        <Route path='/admin-login' element={<AdminLogin />} />
         <Route path='/dm-signup' element={<DmSignUp />} />
         <Route
           path='/about-characters'

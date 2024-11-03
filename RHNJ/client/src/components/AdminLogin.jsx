@@ -1,38 +1,44 @@
-// client/src/components/Login.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../api';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
 
-const Login = () => {
+const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await login({ username, password });
-      // const results = await response.json();
-      console.log('Login successful:', response);
-      localStorage.setItem('token', response.token);
-      // console.log('Login successful:', response.data);
-      navigate('/player-home'); // Redirect to home or another page
-    } catch (error) {
-      const errorMessage = error.response
-        ? error.response.data
-        : 'Login failed. Please check your credentials.';
-      console.error('Login failed:', errorMessage);
+      // Replace with your actual login logic
+      const response = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed. Please check your credentials.');
+      }
+
+      const data = await response.json();
+      // Handle successful login (e.g., redirect or store tokens)
+      console.log('Login successful:', data);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className='login-page'>
+    <div className='admin-login-div'>
       <Navigations />
 
       <div className='form'>
         <div className='card-container'>
+          <h2 className='admin-login-h2'>Admin Login</h2>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <form className='login-form' onSubmit={handleLogin}>
             <div className='user-box'>
               <input
@@ -62,4 +68,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
