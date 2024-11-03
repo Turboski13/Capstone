@@ -79,82 +79,82 @@ export const deleteUser = async (userId) => {
   }
 };
 
-// DM Functions
-export const searchAllDMs = async () => {
-  try {
-    const response = await fetch(`${API_URL}/dms`); // Adjust API endpoint as needed
+// // DM Functions
+// export const searchAllDMs = async () => {
+//   try {
+//     const response = await fetch(`${API_URL}/dms`); // Adjust API endpoint as needed
 
-    // Check if the response is OK (status code 200-299)
-    if (!response.ok) {
-      throw new Error(`Error fetching DMs: ${response.statusText}`);
-    }
+//     // Check if the response is OK (status code 200-299)
+//     if (!response.ok) {
+//       throw new Error(`Error fetching DMs: ${response.statusText}`);
+//     }
 
-    const data = await response.json(); // Parse the JSON from the response
-    return data; // Return the data
-  } catch (error) {
-    console.error('Error fetching DMs:', error);
-    throw error; // Re-throw the error for further handling
-  }
-};
+//     const data = await response.json(); // Parse the JSON from the response
+//     return data; // Return the data
+//   } catch (error) {
+//     console.error('Error fetching DMs:', error);
+//     throw error; // Re-throw the error for further handling
+//   }
+// };
 
-export const searchSingleDM = async (dmId) => {
-  try {
-    const response = await fetch(`${API_URL}/dms/${dmId}`); // Adjust API endpoint as needed
+// export const searchSingleDM = async (dmId) => {
+//   try {
+//     const response = await fetch(`${API_URL}/dms/${dmId}`); // Adjust API endpoint as needed
 
-    // Check if the response is OK (status code 200-299)
-    if (!response.ok) {
-      throw new Error(`Error fetching DM: ${response.statusText}`);
-    }
+//     // Check if the response is OK (status code 200-299)
+//     if (!response.ok) {
+//       throw new Error(`Error fetching DM: ${response.statusText}`);
+//     }
 
-    const data = await response.json(); // Parse the JSON from the response
-    return data; // Return the data
-  } catch (error) {
-    console.error('Error fetching DM:', error);
-    throw error; // Re-throw the error for further handling
-  }
-};
+//     const data = await response.json(); // Parse the JSON from the response
+//     return data; // Return the data
+//   } catch (error) {
+//     console.error('Error fetching DM:', error);
+//     throw error; // Re-throw the error for further handling
+//   }
+// };
 
 
-export const editDM = async (dmId, dmData) => {
-  try {
-    const response = await fetch(`${API_URL}/dms/${dmId}`, {
-      method: 'PUT', // Specify the method as PUT
-      headers: {
-        'Content-Type': 'application/json', // Set the content type
-      },
-      body: JSON.stringify(dmData), // Convert the data to a JSON string
-    });
+// export const editDM = async (dmId, dmData) => {
+//   try {
+//     const response = await fetch(`${API_URL}/dms/${dmId}`, {
+//       method: 'PUT', // Specify the method as PUT
+//       headers: {
+//         'Content-Type': 'application/json', // Set the content type
+//       },
+//       body: JSON.stringify(dmData), // Convert the data to a JSON string
+//     });
 
-    // Check if the response is OK (status code 200-299)
-    if (!response.ok) {
-      throw new Error(`Error editing DM: ${response.statusText}`);
-    }
+//     // Check if the response is OK (status code 200-299)
+//     if (!response.ok) {
+//       throw new Error(`Error editing DM: ${response.statusText}`);
+//     }
 
-    const data = await response.json(); // Parse the JSON response
-    return data; // Return the edited DM data
-  } catch (error) {
-    console.error('Error editing DM:', error);
-    throw error; // Re-throw the error for further handling
-  }
-};
+//     const data = await response.json(); // Parse the JSON response
+//     return data; // Return the edited DM data
+//   } catch (error) {
+//     console.error('Error editing DM:', error);
+//     throw error; // Re-throw the error for further handling
+//   }
+// };
 
-export const deleteDM = async (dmId) => {
-  try {
-    const response = await fetch(`${API_URL}/dms/${dmId}`, {
-      method: 'DELETE', // Specify the method as DELETE
-    });
+// export const deleteDM = async (dmId) => {
+//   try {
+//     const response = await fetch(`${API_URL}/dms/${dmId}`, {
+//       method: 'DELETE', // Specify the method as DELETE
+//     });
 
-    // Check if the response is OK (status code 200-299)
-    if (!response.ok) {
-      throw new Error(`Error deleting DM: ${response.statusText}`);
-    }
+//     // Check if the response is OK (status code 200-299)
+//     if (!response.ok) {
+//       throw new Error(`Error deleting DM: ${response.statusText}`);
+//     }
 
-    return true; // Return true to indicate success
-  } catch (error) {
-    console.error('Error deleting DM:', error);
-    throw error; // Re-throw the error for further handling
-  }
-};
+//     return true; // Return true to indicate success
+//   } catch (error) {
+//     console.error('Error deleting DM:', error);
+//     throw error; // Re-throw the error for further handling
+//   }
+// };
 
 // Character Functions
 export const searchAllCharacters = async () => {
@@ -240,3 +240,4 @@ export const deleteCharacter = async (characterId) => {
     throw error;
   }
 };
+

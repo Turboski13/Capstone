@@ -38,6 +38,7 @@ const CharacterBuilder = ({onCharacterSelect}) => {
       characterName: characterName,
       class: selectedCharacter.class,
       image: selectedCharacter.image,
+      description: selectedCharacter.description,
       strength: selectedCharacter.attribute.strength,
       dexterity: selectedCharacter.attribute.dexterity,
       constitution: selectedCharacter.attribute.constitution,
