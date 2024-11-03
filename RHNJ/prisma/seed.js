@@ -45,6 +45,7 @@ const init = async () => {
 
     // Create characters
     const characters = await Promise.all([
+
       prisma.userCharacter.create({
         data: {
           userId: 20,
@@ -78,7 +79,7 @@ const init = async () => {
        ideals: 'family first, Gucci forever'    
        flaws: 'the Book!!!, was a stripper, got that movie part by sleeping with the producer'    
        notes: 'blah blah blah'
-       
+       } 
       })
 
       prisma.userCharacter.create({
@@ -146,9 +147,7 @@ const init = async () => {
        notes: 'put more stuff here'
         },
       })
-
-      },
-    ]);
+     ]);
 
     console.log('Created characters:', characters);
     console.log('Data seeded');
