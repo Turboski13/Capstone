@@ -76,11 +76,11 @@ const init = async () => {
       'I don’t just make headlines, darling—I am them.',
       'When I speak, everyone listens—whether they want to or not.',
        ],
-       ideals: 'family first, Gucci forever'    
-       flaws: 'the Book!!!, was a stripper, got that movie part by sleeping with the producer'    
+       ideals: 'family first, Gucci forever' ,   
+       flaws: 'the Book!!!, was a stripper, got that movie part by sleeping with the producer'  ,  
        notes: 'blah blah blah'
        } 
-      })
+      }),
 
       prisma.userCharacter.create({
         data: {
@@ -90,7 +90,7 @@ const init = async () => {
           class: 'The Empath',
           image: '/Images/ClericImage.png',
           description:
-      'The Empath is the self-righteous Diva who believes she's the moral compass of the group. She's quick to judge, especially when someone else’s behavior doesn’t align with her version of right and wrong. Constantly preaching about loyalty, family, or faith, she’s often at the center of disputes over values and respect. Whether hosting a charity event or defending her 'sacred' family name, the Empath positions herself as above the petty drama—until she gets dragged into it, of course.',
+      'The Empath is the self-righteous Diva who believes she is the moral compass of the group. She is quick to judge, especially when someone else’s behavior doesn’t align with her version of right and wrong. Constantly preaching about loyalty, family, or faith, she’s often at the center of disputes over values and respect. Whether hosting a charity event or defending her sacred family name, the Empath positions herself as above the petty drama—until she gets dragged into it, of course.',
         strength: 13,
         dexterity: 10,
         constitution: 14,
@@ -106,11 +106,11 @@ const init = async () => {
       'In my world, loyalty is law—and I’m judge, jury, and executioner.',
       'I don’t preach—I protect, and heaven help anyone who crosses me.',
        ],
-       ideals: 'God, family, country. Kids should not be spoiled.'    
-       flaws: 'is a boy-mom. will lie to protect family. gaslights constantly'    
+       ideals: 'God, family, country. Kids should not be spoiled.'  ,  
+       flaws: 'is a boy-mom. will lie to protect family. gaslights constantly'   , 
        notes: 'blahdy blah blah'
         },
-      })
+      }),
 
       prisma.userCharacter.create({
         data: {
@@ -142,9 +142,9 @@ const init = async () => {
       'Keep your enemies close—especially when you know their secrets.',
       'You may not see me coming, but you’ll definitely feel the sting.',
        ],
-       ideals: 'Put yourself first. A happy mother makes for happy children.'    
-       flaws: 'diagnosed sociopath. Killed her last ex dog and blamed her ex mother because she was bored.'    
-       notes: 'put more stuff here'
+       ideals: 'Put yourself first. A happy mother makes for happy children.',    
+       flaws: 'diagnosed sociopath. Killed her last ex dog and blamed her ex mother because she was bored.'  ,  
+       notes: 'put more stuff here',
         },
       })
      ]);
