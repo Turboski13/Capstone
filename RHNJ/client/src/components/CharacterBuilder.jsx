@@ -90,7 +90,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
     <div>
       {/* Character Dropdown */}
       <label htmlFor='character-select'>Choose a Character:</label>
-      <h3>Your Characters</h3>
+      {/* <h3>Your Characters</h3>
       <table>
         <thead>
           <tr>
@@ -111,7 +111,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
       <select
         id='character-select'
         value={selectedCharacterId}
