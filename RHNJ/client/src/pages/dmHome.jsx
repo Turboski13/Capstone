@@ -22,6 +22,8 @@ const DMHome = () => {
   const [assets, setAssets] = useState('');
   const [teamPW, setTeamPW] = useState('');
   const [joinTeamId, setJoinTeamId] = useState(null);
+  const [teamSearchInput, setTeamSearchInput] = useState('');
+  
 
   
 
@@ -107,9 +109,14 @@ const DMHome = () => {
       console.log(teamInfo);
     }catch(err){
       console.log('couldnt join the team, sorry.', err);
-    }
-
-  }
+    };
+  };
+  const filteredTeams = teams.filter((team) => team.name.toLowerCase().includes(teamSearchInput.toLowerCase()));
+  // useEffect(() => {
+  //   setFilteredTeams(
+  //     teams.filter((team) => team.name.toLowerCase().includes(teamSearchInput.toLowerCase()))
+  //   );
+  // },[teamSearchInput, teams])
 
   return (
     <div className='dm-home'>
@@ -206,7 +213,16 @@ const DMHome = () => {
       )} */}
 
       <h3 className='dm-h3'>Teams List</h3>
-      {teams.length === 0 ? (
+      <h3 id="search-label">Search for a specific team</h3>
+      <input
+        id="team-search"
+        type="text"
+        placeholder='Search For Teams Here'
+        value={teamSearchInput}
+        onChange={(e) => setTeamSearchInput(e.target.value)}
+      />
+
+      {filteredTeams.length === 0 ? (
         <p>No teams available.</p>
       ) : (
         <table>
@@ -217,30 +233,30 @@ const DMHome = () => {
             </tr>
           </thead>
           <tbody>
-          {teams.map((team) => (
-            <tr key={team.id}>
-              <td>{team.name}</td>
-              <td>
-                {joinTeamId === team.id ? (
-                  <form onSubmit={handleJoinSubmit}>
-                    <div>
-                      <label htmlFor="teamPW">Enter Password:</label>
-                      <input
-                        type="password"
-                        id="teamPW"
-                        value={teamPW}
-                        onChange={(e) => setTeamPW(e.target.value)}
-                      />
-                    </div>
-                    <button type="submit">Submit</button>
-                  </form>
-                ) : (
-                  <button onClick={() => handleJoinClick(team.id)}>Join</button>
-                )}
-                <button onClick={() => handleDelete(team.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
+            {filteredTeams.map((team) => (
+              <tr key={team.id}>
+                <td>{team.name}</td>
+                <td>
+                  {joinTeamId === team.id ? (
+                    <form onSubmit={handleJoinSubmit}>
+                      <div>
+                        <label htmlFor="teamPW">Enter Password:</label>
+                        <input
+                          type="password"
+                          id="teamPW"
+                          value={teamPW}
+                          onChange={(e) => setTeamPW(e.target.value)}
+                        />
+                      </div>
+                      <button type="submit">Submit</button>
+                    </form>
+                  ) : (
+                    <button onClick={() => handleJoinClick(team.id)}>Join</button>
+                  )}
+                  <button onClick={() => handleDelete(team.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}
