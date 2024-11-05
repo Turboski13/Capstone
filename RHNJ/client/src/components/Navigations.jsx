@@ -1,15 +1,19 @@
 // client/src/components/navigations.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api';
 
 const Navigations = () => {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogout = () => {
     logout(); // Call the logout function
+    setIsLoggedIn(false);
     navigate('/login'); // Redirect to the login page
   };
+
+  
 
   return (
     <nav>
@@ -40,12 +44,7 @@ const Navigations = () => {
       <div className='nav-right'>
         <ul>
           <li>
-            <Link to='/dm-home'classname='navtext'>DM Page
-            </Link>
-          </li>
-          <li>
-            <Link to='/login' className='navtext2'>
-              Login
+            <Link to='/dm-home'classname='navtext2'>Find A Team
             </Link>
           </li>
           <li>
@@ -53,11 +52,19 @@ const Navigations = () => {
               Signup
             </Link>
           </li>
+          {isLoggedIn ? (
           <li>
             <button onClick={handleLogout} className='navtext2'>
               Logout
             </button>
           </li>
+        ) : (
+          <li>
+            <Link to='/login' className='navtext2'>
+              Login
+            </Link>
+          </li>
+        )}
         </ul>
       </div>
     </nav>

@@ -112,12 +112,7 @@ const DMHome = () => {
     };
   };
   const filteredTeams = teams.filter((team) => team.name.toLowerCase().includes(teamSearchInput.toLowerCase()));
-  // useEffect(() => {
-  //   setFilteredTeams(
-  //     teams.filter((team) => team.name.toLowerCase().includes(teamSearchInput.toLowerCase()))
-  //   );
-  // },[teamSearchInput, teams])
-
+  
   return (
     <div className='dm-home'>
       <ul className='dm-nav-ul'>
@@ -253,7 +248,8 @@ const DMHome = () => {
                   ) : (
                     <button onClick={() => handleJoinClick(team.id)}>Join</button>
                   )}
-                  <button onClick={() => handleDelete(team.id)}>Delete</button>
+                  {/* uncomment the below line if you for some reason the average users should have the ability to delete rooms */}
+                  {/* <button onClick={() => handleDelete(team.id)}>Delete</button> */}
                 </td>
               </tr>
             ))}

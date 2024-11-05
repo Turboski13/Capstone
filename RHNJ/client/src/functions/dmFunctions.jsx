@@ -124,6 +124,21 @@ export const invitePlayerToTeam = async (teamId, playerId) => {
   }
 };
 
+export const getAllUserTeams = async() => {
+  const token = localStorage.getItem('token');
+  try{
+    return await fetchData(`${API_URL}/teams/getMyTeams`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+  }catch(err){
+    console.error('Error when grabing all teams', err);
+  }
+}
+
 // Remove player from team
 export const removePlayerFromTeam = async (teamId, playerId) => {
   try {

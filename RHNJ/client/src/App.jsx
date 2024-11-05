@@ -14,6 +14,7 @@ import AdminLogin from './components/AdminLogin';
 import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
+import Account from './pages/Account';
 import './App.css';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/admin-home' element={<AdminHome />} />
         <Route path='/dm-home' element={<DMHome />} />
+        <Route path='/account' element={<Account />} />
         <Route path='/player-home' element={<PlayerHome />} />
         <Route path='/navigations' element={<Navigations />} />
         <Route path='/' element={<Home />} />

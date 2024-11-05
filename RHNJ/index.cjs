@@ -249,6 +249,25 @@ app.post('/api/teams/:teamId/join', authMiddleware, async(req, res, next) => {
   }
 })
 
+app.get('/api/teams/getMyTeams', authMiddleware, async(req, res, next) => {
+  try{
+    const userId = req.user;
+    const getUser = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+        include: {
+          teams: true,
+      },
+    });
+    res.status(201).json({ message: 'here are the users teams', getUser});
+    if(!getUser){
+      return res.status(404).json({ message: 'userId incorrect'});
+    }
+  }catch(err){
+    console.error('couldnt get any teams for the user', err);
+    res.status(401).json({ message: 'did not find any teams for the user', err});
+  }
+})
+
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
@@ -299,7 +318,7 @@ app.get('/api/users', async (req, res, next) => {
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
   const characters = await prisma.userCharacter.findMany({
-    where: { userId: req.user.id },
+    where: { userId: req.user },
   });
   res.status(200).json(characters);
 });
