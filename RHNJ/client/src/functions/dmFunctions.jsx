@@ -13,6 +13,30 @@ const fetchData = async (url, options) => {
   return response.json();
 };
 
+// Search all players
+export const searchAllPlayers = async () => {
+  try {
+    return await fetchData(`${API_URL}/players`);
+  } catch (error) {
+    console.error('Error fetching players:', error);
+    throw error;
+  }
+};
+
+// Search all teams
+export const searchAllTeams = async () => {
+  try {
+    const response = await fetch(`${API_URL}/teams`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    throw error;
+  }
+};
+
 // Search all team characters
 export const searchAllTeamCharacters = async (teamId) => {
   try {
@@ -61,15 +85,6 @@ export const createTeam = async (teamData) => {
     });
   } catch (error) {
     console.error('Error creating team:', error);
-    throw error;
-  }
-};
-// Search all players
-export const searchAllPlayers = async () => {
-  try {
-    return await fetchData(`${API_URL}/players`);
-  } catch (error) {
-    console.error('Error fetching players:', error);
     throw error;
   }
 };
