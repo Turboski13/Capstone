@@ -22,15 +22,15 @@ const DMHome = () => {
   
 
   useEffect(() => {
-    const fetchPlayers = async () => {
-      setError(null);
-      try {
-        const allPlayers = await searchAllPlayers();
-        setPlayers(allPlayers);
-      } catch (err) {
-        setError('Failed to fetch players. Please try again.');
-      }
-    };
+    // const fetchPlayers = async () => {
+    //   setError(null);
+    //   try {
+    //     const allPlayers = await searchAllPlayers();
+    //     setPlayers(allPlayers);
+    //   } catch (err) {
+    //     setError('Failed to fetch players. Please try again.');
+    //   }
+    // };
 
     const fetchTeams = async () => {
       setError(null);
@@ -42,12 +42,16 @@ const DMHome = () => {
       }
     };
 
-    const fetchData = async () => {
-      await Promise.all([fetchPlayers(), fetchTeams()]);
-      setLoading(false);
-    };
+    fetchTeams();
+    setLoading(false);
+    //uncomment this if you guys think that you want to see all players for some reason instead of all teams
+    // const fetchData = async () => {
+    //   await Promise.all([fetchPlayers(), fetchTeams()]);
+    //   setLoading(false);
+    // };
+    
 
-    fetchData();
+    // fetchData();
   }, []);
 
   const handleDelete = async (playerId) => {
@@ -147,8 +151,8 @@ const DMHome = () => {
       <button onClick={() => setNewTeamForm(prevState => !prevState)}>
         {newTeamForm ? "Cancel" : "Create New Team"}
       </button>
-
-      <h3 className='dm-h3'>Player List</h3>
+      {/* add the below back if you guys want the player list to show up again. Also did you mean character list and not player? */}
+      {/* <h3 className='dm-h3'>Player List</h3>
       {players.length === 0 ? (
         <p>No players available.</p>
       ) : (
@@ -174,7 +178,7 @@ const DMHome = () => {
             ))}
           </tbody>
         </table>
-      )}
+      )} */}
 
       <h3 className='dm-h3'>Teams List</h3>
       {teams.length === 0 ? (
@@ -191,10 +195,9 @@ const DMHome = () => {
             {teams.map((team) => (
               <tr key={team.id}>
                 <td>{team.name}</td>{' '}
-                {/* Adjust this according to your team object */}
                 <td>
                   <button onClick={() => handleDelete(team.id)}>Delete</button>{' '}
-                  {/* Update with proper delete function */}
+                  
                 </td>
               </tr>
             ))}
