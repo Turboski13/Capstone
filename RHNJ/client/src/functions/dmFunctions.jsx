@@ -90,6 +90,24 @@ export const createTeam = async (teamName, roomPassword='', assets, token) => {
   }
 };
 
+export const joinTeam = async(teamId, teamPW, token) => {
+  try {
+    return await fetchData(`${API_URL}/teams/${teamId}/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        teamId, teamPW,
+      })
+    })
+  }catch(error){
+    console.error('error joining the team:', error);
+    throw error;
+  }
+}
+
 // Invite player to team
 export const invitePlayerToTeam = async (teamId, playerId) => {
   try {

@@ -5,6 +5,7 @@ import {
   searchAllPlayers,
   searchAllTeams,
   createTeam,
+  joinTeam,
   // invitePlayerToTeam,
   removePlayerFromTeam,
 } from '../functions/dmFunctions';
@@ -19,6 +20,9 @@ const DMHome = () => {
   const [teamName, setTeamName] = useState('');
   const [roomPassword, setRoomPassword] = useState('');
   const [assets, setAssets] = useState('');
+  const [teamPW, setTeamPW] = useState('');
+  const [joinTeamId, setJoinTeamId] = useState(null);
+
   
 
   useEffect(() => {
@@ -87,6 +91,25 @@ const DMHome = () => {
       console.log('problem with creating team', err);
     }
   }
+  const handleJoinSubmit = (e) => {
+    e.preventDefault();
+    handleJoin(joinTeamId, teamPW);
+  };
+  const handleJoinClick = (teamId) => {
+    setJoinTeamId(teamId);
+  };
+
+  const handleJoin = async(teamId, teamPW) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await joinTeam(teamId, teamPW, token);
+      const teamInfo = response;
+      console.log(teamInfo);
+    }catch(err){
+      console.log('couldnt join the team, sorry.', err);
+    }
+
+  }
 
   return (
     <div className='dm-home'>
@@ -151,6 +174,8 @@ const DMHome = () => {
       <button onClick={() => setNewTeamForm(prevState => !prevState)}>
         {newTeamForm ? "Cancel" : "Create New Team"}
       </button>
+
+
       {/* add the below back if you guys want the player list to show up again. Also did you mean character list and not player? */}
       {/* <h3 className='dm-h3'>Player List</h3>
       {players.length === 0 ? (
@@ -192,15 +217,30 @@ const DMHome = () => {
             </tr>
           </thead>
           <tbody>
-            {teams.map((team) => (
-              <tr key={team.id}>
-                <td>{team.name}</td>{' '}
-                <td>
-                  <button onClick={() => handleDelete(team.id)}>Delete</button>{' '}
-                  
-                </td>
-              </tr>
-            ))}
+          {teams.map((team) => (
+            <tr key={team.id}>
+              <td>{team.name}</td>
+              <td>
+                {joinTeamId === team.id ? (
+                  <form onSubmit={handleJoinSubmit}>
+                    <div>
+                      <label htmlFor="teamPW">Enter Password:</label>
+                      <input
+                        type="password"
+                        id="teamPW"
+                        value={teamPW}
+                        onChange={(e) => setTeamPW(e.target.value)}
+                      />
+                    </div>
+                    <button type="submit">Submit</button>
+                  </form>
+                ) : (
+                  <button onClick={() => handleJoinClick(team.id)}>Join</button>
+                )}
+                <button onClick={() => handleDelete(team.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
           </tbody>
         </table>
       )}

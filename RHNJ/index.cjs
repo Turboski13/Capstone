@@ -217,6 +217,38 @@ app.post('/api/teams', authMiddleware, async(req,res,next) => {
   }
 })
 
+app.post('/api/teams/:teamId/join', authMiddleware, async(req, res, next) => {
+  try{
+    const { teamPW } = req.body;
+    const { teamId } = req.params;
+    const userId = req.user;
+    const team = await prisma.team.findUnique({
+      where: { id: parseInt(teamId) }
+    });
+
+    if(!team) {
+      return res.status(404).json({ message: 'No teams found!'});
+    }
+
+    if(team.password !== teamPW) {
+      return res.status(401).json({ message: 'password is incorrect'});
+    }
+
+    const joinedTeam = await prisma.team.update({
+      where: { id: parseInt(teamId) },
+      data: {
+        users: {
+          connect: { id: userId }
+        }
+      }
+    });
+    res.status(201).json({ message: 'Joined new team!: ', team: joinedTeam });
+  }catch(err){
+    console.error('wrong info or error: ', err);
+    res.status(401).json({ message: 'The credentials are incorrect. ', err});
+  }
+})
+
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
