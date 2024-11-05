@@ -21,6 +21,7 @@ export default function AboutCharacters({
                 alt={character.characterClass}
                 className='char-img'
               />
+
               <h3>{character.characterClass}</h3>
             </div>
           </Link>
