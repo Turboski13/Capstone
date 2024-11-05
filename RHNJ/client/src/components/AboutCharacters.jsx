@@ -6,7 +6,7 @@ import Navigations from './Navigations';
 // import AboutCharacters from './AboutCharacters';
 
 export default function AboutCharacters({
-  setSelectedCharacterID,
+  // setSelectedCharacterID,
   characters,
 }) {
   return (
@@ -16,7 +16,12 @@ export default function AboutCharacters({
         characters.map((character) => (
           <Link to={`/character/${character.id}`} key={character.id}>
             <div>
-              <img src={character.image} alt={character.characterClass} className='char-img' />
+              <img
+                src={character.image}
+                alt={character.characterClass}
+                className='char-img'
+              />
+
               <h3>{character.characterClass}</h3>
             </div>
           </Link>
