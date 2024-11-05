@@ -278,9 +278,7 @@ button {
 @layer base {
   html {
     --nav-block-size: 74px;
-    --brand-gradient: linear-gradient(227deg,
-        #1400c7 0%,
-        #00bbff 100%);
+    --brand-gradient: linear-gradient(227deg, #1400c7 0%, #00bbff 100%);
     @media (prefers-reduced-motion: no-preference) {
       scroll-behavior: smooth;
     }
@@ -389,4 +387,104 @@ button {
     font-family: 'Inter', sans-serif;
     min-block-size: 100dvb;
   }
+}
+
+/* DM Homepage */
+.dm-home {
+  background-image: url(./Images/background-image2.gif);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: stretch;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: auto; /* adds scroll bars when content exceeds the viewport */
+  /* width: 100%; */
+  color: goldenrod;
+  margin: 0;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.dm-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: normal;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0);
+  z-index: 1000;
+  color: goldenrod;
+  text-decoration: none;
+}
+
+.dm-nav-ul {
+  margin-left: 360px;
+}
+.dm-h2,
+.dm-h3 {
+  margin-top: 50px;
+  color: aliceblue;
+}
+
+/* Admin Login */
+.admin-login-container {
+  position: fixed; /* Use fixed positioning */
+  bottom: 20px; /* Distance from the bottom */
+  right: 20px; /* Distance from the right */
+  padding: 10px; /* Optional padding */
+  background-color: dimgray; /* Background color for visibility */
+  border: 1px solid #ccc; /* Optional border */
+  border-radius: 5px; /* Optional rounded corners */
+  z-index: 1000; /* Ensure it stays above other content */
+}
+
+.navtext3 {
+  text-decoration: none;
+  color: silver;
+}
+
+.admin-login-div {
+  background-image: url(./Images/background-image2.gif);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: stretch;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: auto; /* adds scroll bars when content exceeds the viewport */
+  /* width: 100%; */
+  color: goldenrod;
+  margin: 0;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-container {
+  margin-top: 300px;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-login-h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: silver;
 }
