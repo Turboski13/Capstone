@@ -40,7 +40,7 @@ beforeEach(async () => {
 
   // Sign up a new user
   const response = await request(app).post('/api/auth/signup').send(userData);
-  console.log('Signup response:', response.body); // Log the response
+  console.log('Signup response:', response); // Log the response
 
   if (response.status === 409) {
     console.error('User already exists:', response.body);
@@ -106,11 +106,11 @@ describe('API Routes', () => {
   test('POST /api/auth/signup - should create a new user', async () => {
     const response = await request(app).post('/api/auth/signup').send(userData);
 
-    // if (response.status === 409) {
-    //   console.error('User already exists:', response.body);
-    //   const existingUsers = await prismaClient.user.findMany();
-    //   console.log('Existing Users:', existingUsers);
-    // }
+    if (response.status === 409) {
+      console.error('User already exists:', response.body);
+      const existingUsers = await prismaClient.user.findMany();
+      console.log('Existing Users:', existingUsers);
+    }
     console.log('Signup response:', response.body);
 
     expect(response.status).toBe(201);

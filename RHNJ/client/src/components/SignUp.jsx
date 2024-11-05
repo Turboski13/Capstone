@@ -5,16 +5,19 @@ import { signup } from '../api';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigation from './Navigations';
 
+
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const response = await signup({ username, password });
-      console.log('Signup successful:', response.data);
+      console.log('Signup successful:', response);
+      setUsername(response.username);
       navigate('/player-home'); // Redirect to login or another page
     } catch (error) {
       console.error('Signup failed:', error.response?.data || error.message);

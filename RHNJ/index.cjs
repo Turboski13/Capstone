@@ -12,53 +12,31 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // Added this line
 app.use(express.json());
 
-const secret = process.env.JWT_SECRET || 'itsLeviosaaaa';
-const payload = { id: 1 };
-
-const token = jwt.sign(payload, secret);
-console.log('Generated Token:', token);
-
-jwt.verify(token, secret, (err, decoded) => {
-  if (err) {
-    console.error('Verification Error:', err);
-  } else {
-    console.log('Decoded Token:', decoded);
-  }
-});
-
 // JWT Verfication Middleware
 const authMiddleware = (req, res, next) => {
   console.log('Request Headers:', req.headers);
   const authHeader = req.headers['authorization'];
 
-  if (authHeader) {
-    console.log('Authorization Header:', authHeader);
-    const token = req.headers['authorization']?.split(' ')[1];
-    
-    console.log('Extracted Token:', token);
-    // console.log('Using JWT Secret:', process.env.JWT_SECRET, {
-    //   expiresIn: '1h',
-    // };
-    if (!token) {
-      console.error('Token is undefined');
-      return res.sendStatus(401);
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        console.error('JWT Error:', err.message, 'Token:', token);
-        console.log('Verifying Token:', token);
-
-        return res.sendStatus(401);
-      }
-      req.user = user;
-      console.log('Authenticated user:', req.user);
-      next();
-    });
-  } else {
-    console.error('No authorization header found');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('Authorization header missing or incorrectly formatted');
     return res.sendStatus(401);
   }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    console.error('Token is undefined');
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.log('Error with token:', token);
+      return res.status(401).send({ message: 'Invalid token' });
+    }
+    req.user = decoded.id;
+    console.log('Authenticated user:', req.user);
+    next();
+  });
 };
 
 // Create Express server
@@ -134,7 +112,7 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 // Delete current user
 app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
   try {
-    const userId = req.user.id; // Assuming you have the user's ID in req.user
+    const userId = req.user.id; 
 
     // Delete related user characters first
     await prisma.userCharacter.deleteMany({
@@ -166,25 +144,48 @@ app.get('/api/characters', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/characters', authMiddleware, async (req, res, next) => {
+app.post('/api/characters',  async (req, res, next) => {
   try {
+    const authHeader = req.headers['authorization'];//problem here
+    
+
+    if(!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "missing or wrong jwt"});
+    }
+    const token = authHeader.split(' ')[1];
+    console.log(token);
+    let verifiedUser;
+    try {
+      verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      console.error('JWT Verification Failed:', err);
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+
+    console.log('Verified User:', verifiedUser);
+    const userExists = await prisma.user.findUnique({
+      where: { id: verifiedUser.id },
+    });
+
+    console.log('User Exists:', userExists);
+    if (!userExists) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     const characterData = {
       ...req.body,
-      userId: req.user.id,
+      userId: verifiedUser.id,
     };
-    console.log('Character Data:', characterData);
-    console.log('Request Body:', req.body);
-
     const character = await prisma.userCharacter.create({
       data: characterData,
     });
-    console.log('Created Character:', character);
+    console.log('character created!!: ', character);
     res.status(201).json(character);
-  } catch (error) {
-    console.error('Error creating character:', error);
-    next(error);
+  }catch(err){
+    console.error('Couldnt create char, stuck in index: ', err);
+    res.status(500).json({ message: 'could not create the char successfully', error: err.message});
   }
 });
+  
 
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {
@@ -224,22 +225,6 @@ app.put('/api/characters/:id', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
-
-app.post(
-  'http://localhost:3000/api/characters/save-character',
-  async (req, res) => {
-    try {
-      const characterData = req.body;
-      const savedCharacter = await prisma.userCharacter.create({
-        data: characterData,
-      });
-      res.status(200).json(savedCharacter);
-    } catch (error) {
-      console.error('Error saving character:', error);
-      res.status(500).json({ error: 'Error saving character' });
-    }
-  }
-);
 
 app.get('/api/users', async (req, res, next) => {
   try {
