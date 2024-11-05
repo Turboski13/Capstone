@@ -4,6 +4,7 @@ import Navigations from '../components/Navigations';
 import {
   searchAllPlayers,
   searchAllTeams,
+  createTeam,
   // invitePlayerToTeam,
   removePlayerFromTeam,
 } from '../functions/dmFunctions';
@@ -14,6 +15,11 @@ const DMHome = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [newTeamForm, setNewTeamForm] = useState(false);
+  const [teamName, setTeamName] = useState('');
+  const [roomPassword, setRoomPassword] = useState('');
+  const [assets, setAssets] = useState('');
+  
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -65,6 +71,19 @@ const DMHome = () => {
     return <p>Loading players and teams...</p>;
   }
 
+  const createNewTeam = async(nameOfTeam, roomCode, anyAssets) => {
+    setNewTeamForm(false);
+    const token = localStorage.getItem('token');
+    try{
+      const response = await createTeam(nameOfTeam, roomCode, anyAssets, token);
+      const team = response.json();
+      console.log(team);
+
+    }catch(err){
+      console.log('problem with creating team', err);
+    }
+  }
+
   return (
     <div className='dm-home'>
       <ul className='dm-nav-ul'>
@@ -90,6 +109,44 @@ const DMHome = () => {
 
       <h2 className='dm-h2'>Diva Manager Home</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {
+        newTeamForm && (
+          <form onSubmit={() => createNewTeam(teamName, roomPassword, assets)}>
+          <div>
+            <label htmlFor="name">Team Name:</label>
+            <input
+              type="text"
+              id="name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              value={roomPassword}
+              onChange={(e) => setRoomPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="assets">Assets (JSON format):</label>
+            <textarea
+              id="assets"
+              value={assets}
+              onChange={(e) => setAssets(e.target.value)}
+            />
+          </div>
+          <button type="submit">Create Team</button>
+        </form>
+        )
+      }
+      <button onClick={() => setNewTeamForm(prevState => !prevState)}>
+        {newTeamForm ? "Cancel" : "Create New Team"}
+      </button>
 
       <h3 className='dm-h3'>Player List</h3>
       {players.length === 0 ? (

@@ -185,7 +185,37 @@ app.post('/api/characters',  async (req, res, next) => {
     res.status(500).json({ message: 'could not create the char successfully', error: err.message});
   }
 });
-  
+
+app.get('/api/teams', async(req, res, next) => {
+  try{
+    const teams = await prisma.team.findMany();
+    res.status(201).json(teams);
+  }catch(err){
+    console.error('no teams returned', err);
+    res.status(401).json({ message: "couldn't find any teams =(" , err});
+  }
+})
+
+app.post('/api/teams', authMiddleware, async(req,res,next) => {
+  try{
+    const { teamName, roomPassword, assets} = req.body;
+    const dmId = req.user;
+
+    const newTeam = await prisma.team.create({
+      data: {
+        name: teamName,
+        password: roomPassword, 
+        dmId: parseInt(dmId),
+        assets: assets ? JSON.parse(assets) : {},
+      }
+    });
+    res.status(201).json(newTeam);
+
+  }catch(err){
+    console.error('couldnt create a taem', err);
+    res.status(401).json({ message: 'couldnt make a new team', err });
+  }
+})
 
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {

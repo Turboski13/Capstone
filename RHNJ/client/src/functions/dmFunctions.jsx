@@ -16,7 +16,7 @@ const fetchData = async (url, options) => {
 // Search all players
 export const searchAllPlayers = async () => {
   try {
-    return await fetchData(`${API_URL}/players`);
+    return await fetchData(`${API_URL}/users`);
   } catch (error) {
     console.error('Error fetching players:', error);
     throw error;
@@ -74,14 +74,15 @@ export const editUserCharacter = async (characterId, updatedData) => {
 };
 
 // Create a team
-export const createTeam = async (teamData) => {
+export const createTeam = async (teamName, roomPassword='', assets, token) => {
   try {
     return await fetchData(`${API_URL}/teams`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(teamData),
+      body: JSON.stringify({teamName, roomPassword, assets}),
     });
   } catch (error) {
     console.error('Error creating team:', error);

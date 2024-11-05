@@ -9,19 +9,21 @@ datasource db {
 
 model User {
   id              Int             @id @default(autoincrement())
-  username        String          @unique 
+  username        String          @unique
   password        String
   characters      UserCharacter[]
+  teams           Team[]          @relation("UserTeams")
+  dms             Team[]          @relation("DMTeams")
 }
 
 model UserCharacter {
   id                    Int             @id @default(autoincrement())
   userId                Int
   characterName         String
-  description           String?         // Required to represent description in the character object
+  description           String?         // Optional field for character description
   characterClass        String
   level                 Int
-  image                 String?         // Optional as per the original schema
+  image                 String?         // Optional character image
   attributes            Json            // JSON field to store all character attributes as a nested object
   savingThrows          String[]        // Array to store saving throws as strings
   skills                String[]        // Array for skills
@@ -29,11 +31,23 @@ model UserCharacter {
   statusPoints          Int             // Required to represent statusPoints in character
   attackRoll            String          // Changed to String to match "1 D8 per level" from character object
   catchPhrases          String[]        // Array for catch phrases
-  abilities             String[]        // Keeping abilities in case additional powers/skills are added
-  ideals                String?         // Optional
-  flaws                 String?         // Optional
-  notes                 String?         // Optional
+  abilities             String[]        // Array for additional abilities or powers
+  ideals                String?         // Optional field for character ideals
+  flaws                 String?         // Optional field for character flaws
+  notes                 String?         // Optional field for character notes
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt
   user                  User            @relation(fields: [userId], references: [id])
+}
+
+model Team {
+  id              Int             @id @default(autoincrement())
+  name            String          @unique
+  password        String?         // Password for users to join the team
+  dmId            Int?             // Dungeon Master user reference
+  users           User[]          @relation("UserTeams")
+  dm              User?            @relation("DMTeams", fields: [dmId], references: [id])
+  assets          Json?           // JSON to store various assets like images, maps, or notes
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }

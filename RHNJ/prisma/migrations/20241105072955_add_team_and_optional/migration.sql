@@ -1,0 +1,9 @@
+-- DropForeignKey
+ALTER TABLE "Team" DROP CONSTRAINT "Team_dmId_fkey";
+
+-- AlterTable
+ALTER TABLE "Team" ALTER COLUMN "password" DROP NOT NULL,
+ALTER COLUMN "dmId" DROP NOT NULL;
+
+-- AddForeignKey
+ALTER TABLE "Team" ADD CONSTRAINT "Team_dmId_fkey" FOREIGN KEY ("dmId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
