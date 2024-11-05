@@ -12,7 +12,6 @@ const PlayerHome = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false); // To toggle the character form
-  
 
   const handleLogout = () => {
     console.log('Logging out...');
@@ -48,20 +47,20 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-      <nav>
-        <ul>
+      <nav className='ph-nav'>
+        <ul className='ph-ul'>
           <li>
-            <Link to='/how-to-play' className='nav-left1'>
+            <Link to='/how-to-play' className='dm-nav'>
               How to Play
             </Link>
           </li>
           <li>
-            <Link to='/about-characters' className='nav-left1'>
+            <Link to='/about-characters' className='dm-nav'>
               Characters
             </Link>
           </li>
           <li>
-            <Link to='/dm-home' className='nav-left1'>
+            <Link to='/dm-home' className='dm-nav'>
               DM Home
             </Link>
           </li>
@@ -72,9 +71,14 @@ const PlayerHome = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={toggleForm}>
         {showForm ? 'Cancel' : 'Choose your character'}
-        </button>
+      </button>
       {showForm && (
-        <CharacterBuilder onClose={toggleForm} characters={characters} setCharacters={setCharacters} onCharacterSelect={handleCharacterSelect} />
+        <CharacterBuilder
+          onClose={toggleForm}
+          characters={characters}
+          setCharacters={setCharacters}
+          onCharacterSelect={handleCharacterSelect}
+        />
       )}
     </div>
   );
