@@ -35,17 +35,6 @@ const PlayerHome = () => {
     fetchCharacters();
   }, []);
 
-  const handleDelete = async (characterId) => {
-    try {
-      await deleteUserCharacter(characterId);
-      setCharacters((prevCharacters) =>
-        prevCharacters.filter((char) => char.id !== characterId)
-      );
-    } catch (err) {
-      setError('Failed to delete character. Please try again.');
-    }
-  };
-
   const toggleForm = () => {
     setShowForm((prev) => !prev);
   };
@@ -82,33 +71,11 @@ const PlayerHome = () => {
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={toggleForm}>
-        {showForm ? 'Cancel' : 'Add Character'}
+        {showForm ? 'Cancel' : 'Choose your character'}
         </button>
       {showForm && (
-        <CharacterBuilder onClose={toggleForm} characters={characters} onCharacterSelect={handleCharacterSelect} />
+        <CharacterBuilder onClose={toggleForm} characters={characters} setCharacters={setCharacters} onCharacterSelect={handleCharacterSelect} />
       )}
-      <h3>Your Characters</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Level</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {characters.map((character) => (
-            <tr key={character.id}>
-              <td>{character.name}</td>
-              <td>{character.level}</td>
-              <td>
-              <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => setSelectedCharacter(character)}>View Details</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "username" VARCHAR(20) NOT NULL,
+    "id" SERIAL NOT NULL,
+    "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -9,20 +9,26 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "UserCharacter" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
     "characterName" TEXT NOT NULL,
+    "description" TEXT,
     "characterClass" TEXT NOT NULL,
-    "characterLevel" INTEGER NOT NULL,
-    "characterImage" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "strength" INTEGER NOT NULL,
-    "dexterity" INTEGER NOT NULL,
-    "constitution" INTEGER NOT NULL,
-    "intelligence" INTEGER NOT NULL,
-    "wisdom" INTEGER NOT NULL,
-    "charisma" INTEGER NOT NULL,
+    "level" INTEGER NOT NULL,
+    "image" TEXT,
+    "attributes" JSONB NOT NULL,
+    "savingThrows" TEXT[],
+    "skills" TEXT[],
+    "singleUseSkill" TEXT[],
     "statusPoints" INTEGER NOT NULL,
+    "attackRoll" TEXT NOT NULL,
+    "catchPhrases" TEXT[],
     "abilities" TEXT[],
+    "ideals" TEXT,
+    "flaws" TEXT,
+    "notes" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "UserCharacter_pkey" PRIMARY KEY ("id")
 );

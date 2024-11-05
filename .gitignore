@@ -1,1 +1,5 @@
 node_modules
+tmpnodejsnpm-cache/
+/tmpnodejsnpm-cache/
+tmpnodejsnpm-cache
+tmpnodejsnpm-cache/*

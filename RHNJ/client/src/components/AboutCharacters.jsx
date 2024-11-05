@@ -16,8 +16,8 @@ export default function AboutCharacters({
         characters.map((character) => (
           <Link to={`/character/${character.id}`} key={character.id}>
             <div>
-              <img src={character.image} alt={character.class} className='char-img' />
-              <h3>{character.class}</h3>
+              <img src={character.image} alt={character.characterClass} className='char-img' />
+              <h3>{character.characterClass}</h3>
             </div>
           </Link>
         ))

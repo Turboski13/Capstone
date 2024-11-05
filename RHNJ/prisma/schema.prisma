@@ -15,31 +15,25 @@ model User {
 }
 
 model UserCharacter {
-  id              Int             @id @default(autoincrement())
-  userId          Int
-  characterName   String
-  characterDescription String
-  characterClass  String
-  characterLevel  Int
-  characterImage  String
-  strength        Int
-  dexterity       Int
-  constitution    Int
-  intelligence    Int
-  wisdom          Int
-  charisma        Int
-  savingThrows String[] // Array to store saving throws as strings
-  skills    String[] // Array for skills
-  singleUseSkill String[] // Array for single-use skills
-  statusPoints Int
-  attackRoll Int
-  catchPhrases String[] // Array for catch phrases
-  abilities       String[] 
-  ideals    String
-  flaws     String
-  notes     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user            User            @relation(fields: [userId], references: [id])
-  
+  id                    Int             @id @default(autoincrement())
+  userId                Int
+  characterName         String
+  description           String?         // Required to represent description in the character object
+  characterClass        String
+  level                 Int
+  image                 String?         // Optional as per the original schema
+  attributes            Json            // JSON field to store all character attributes as a nested object
+  savingThrows          String[]        // Array to store saving throws as strings
+  skills                String[]        // Array for skills
+  singleUseSkill        String[]        // Array for single-use skills
+  statusPoints          Int             // Required to represent statusPoints in character
+  attackRoll            String          // Changed to String to match "1 D8 per level" from character object
+  catchPhrases          String[]        // Array for catch phrases
+  abilities             String[]        // Keeping abilities in case additional powers/skills are added
+  ideals                String?         // Optional
+  flaws                 String?         // Optional
+  notes                 String?         // Optional
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  user                  User            @relation(fields: [userId], references: [id])
 }
