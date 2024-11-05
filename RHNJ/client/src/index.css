@@ -278,9 +278,7 @@ button {
 @layer base {
   html {
     --nav-block-size: 74px;
-    --brand-gradient: linear-gradient(227deg,
-        #1400c7 0%,
-        #00bbff 100%);
+    --brand-gradient: linear-gradient(227deg, #1400c7 0%, #00bbff 100%);
     @media (prefers-reduced-motion: no-preference) {
       scroll-behavior: smooth;
     }
