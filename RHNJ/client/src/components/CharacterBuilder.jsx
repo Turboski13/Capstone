@@ -87,7 +87,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   };
 
   return (
-    <div>
+    <div className='char-build'>
       {/* Character Dropdown */}
       <label htmlFor='character-select'>Choose a Character:</label>
       {/* <h3>Your Characters</h3>
@@ -116,6 +116,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         id='character-select'
         value={selectedCharacterId}
         onChange={handleCharacterChange}
+        className='character-select'
       >
         <option value=''>-- Create a new character--</option>
 
@@ -129,8 +130,8 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       {/* Display Selected Character's Stats */}
       {selectedCharacter && (
         <div className='character-stats'>
-          <h3>{selectedCharacter.characterName}'s Stats</h3>
-          <label htmlFor='name'>Name:</label>
+          <h3 className='char-stats'>{selectedCharacter.characterName}'s Stats</h3>
+          <label htmlFor='name' className='char-label'>Name:</label>
           <input
             type='text'
             id='character-name'
@@ -138,9 +139,10 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             value={selectedCharacter.characterName}
             onChange={(e) => setCharacterName(e.target.value)}
             placeholder="Enter your character's name"
+            className='char-input'
           />
 
-          <p>Description: {selectedCharacter.description}</p>
+          <p className='char-txt'>Description: {selectedCharacter.description}</p>
           <br></br>
           <ul>
             <li>Level: {selectedCharacter.level}</li>
@@ -151,7 +153,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             <li>Wisdom: {selectedCharacter.attributes.wisdom}</li>
             <li>Charisma: {selectedCharacter.attributes.charisma}</li>
           </ul>
-          <p>
+          <p className='char-txt'>
             Saving Throws:{' '}
             {selectedCharacter.savingThrows?.map((save, index) => (
               <span key={index}>
@@ -160,7 +162,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
               </span>
             ))}
           </p>
-          <p>
+          <p className='char-txt'>
             Skills:{' '}
             {selectedCharacter.skills.map((skill, index) => (
               <span key={index}>
@@ -169,7 +171,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
               </span>
             ))}
           </p>
-          <p>
+          <p className='char-txt'>
             Single-Use Skills:{' '}
             {selectedCharacter.singleUseSkill.map((skill, index) => (
               <span key={index}>
@@ -180,9 +182,9 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
               </span>
             ))}
           </p>
-          <p>Status Points: {selectedCharacter.statusPoints}</p>
-          <p>Attack Roll: {selectedCharacter.attackRoll}</p>
-          <p>
+          <p className='char-txt'>Status Points: {selectedCharacter.statusPoints}</p>
+          <p className='char-txt'>Attack Roll: {selectedCharacter.attackRoll}</p>
+          <p className='char-txt'>
             Catch Phrases:{' '}
             {selectedCharacter.catchPhrases.map((phrase, index) => (
               <span key={index}>
@@ -193,7 +195,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
           </p>
 
           {/* New Text Inputs */}
-          <label htmlFor='ideals'>
+          <label htmlFor='ideals' className='char-label'>
             Ideals, convictions, and other things your character holds dear:
           </label>
           <input
@@ -203,9 +205,10 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             value={ideals}
             onChange={(e) => setIdeals(e.target.value)}
             placeholder="Enter your character's ideals"
+            className='char-input'
           />
 
-          <label htmlFor='flaws'>
+          <label htmlFor='flaws' className='char-label'>
             Flaws, skeletons in the closet, and other things that can be used
             against your character:
           </label>
@@ -216,9 +219,10 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             value={flaws}
             onChange={(e) => setFlaws(e.target.value)}
             placeholder="Enter your character's flaws"
+            className='char-input'
           />
 
-          <label htmlFor='notes'>Notes for yourself:</label>
+          <label htmlFor='notes' className='char-label'>Notes for yourself:</label>
           <input
             type='text'
             id='notes'
@@ -226,6 +230,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder='Enter personal notes'
+            className='char-input'
           />
         </div>
       )}

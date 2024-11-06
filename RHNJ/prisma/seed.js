@@ -12,34 +12,50 @@ const init = async () => {
     await prisma.userCharacter.deleteMany();
     await prisma.user.deleteMany();
 
-    // Create users with hashed passwords
+    // Create users with hashed passwords and isAdmin flag
     const users = await Promise.all([
       prisma.user.create({
         data: {
-          username: 'admin1',
+          username: 'turboski',
           password: await bcrypt.hash('testing123', 10),
+          isAdmin: true, //user is am admin
         },
       }),
       prisma.user.create({
         data: {
-          username: 'admin2',
+          username: 'djoeyk',
           password: await bcrypt.hash('testing789', 10),
+          isAdmin: true, //user is an admin
         },
       }),
+      prisma.user.create({
+        data: {
+          username: 'sudosmurf',
+          password: await bcrypt.hash('1234', 10),
+          isAdmin: true, //user is an admin
+        },
+      }),
+
       prisma.user.create({
         data: {
           username: 'user1',
           password: await bcrypt.hash('getf@cked', 10),
+          isAdmin: false, // regular user
         },
       }),
       prisma.user.create({
         data: {
           username: 'user2',
           password: await bcrypt.hash('likesisters', 10),
+          isAdmin: false, // regular user
         },
       }),
       prisma.user.create({
-        data: { username: 'user3', password: await bcrypt.hash('suckit', 10) },
+        data: {
+          username: 'user3',
+          password: await bcrypt.hash('suckit', 10),
+          isAdmin: false, // regular user
+        },
       }),
     ]);
     console.log('Created users:', users);
@@ -147,7 +163,6 @@ const init = async () => {
         },
       }),
     ]);
-    
 
     console.log('Created characters:', characters);
     console.log('Data seeded');

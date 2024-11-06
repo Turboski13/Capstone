@@ -389,6 +389,17 @@ button {
   }
 }
 
+.ph-nav {
+  margin-left: 250px;
+}
+.ph-ul {
+  display: flex; /* Enable flexbox */
+  justify-content: space-between; /* Spread the items out with space between them */
+  align-items: center; /* Vertically center the items */
+  width: 100%; /* Make sure the container spans the full width of the page */
+  padding: 0 20px;
+}
+
 /* DM Homepage */
 .dm-home {
   background-image: url(./Images/background-image2.gif);
@@ -428,12 +439,122 @@ button {
 }
 
 .dm-nav-ul {
-  margin-left: 360px;
+  margin-left: 300px;
 }
 .dm-h2,
 .dm-h3 {
   margin-top: 50px;
+  color: goldenrod;
+}
+
+.team-name {
+  width: 300px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  margin: auto;
+  padding-top: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-label {
+  margin-top: 15px;
+  margin-bottom: 5;
+}
+
+.submit-btn {
+  padding: 6 16;
+  font-size: 16px;
+  background-color: whitesmoke;
+  color: goldenrod;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+#search-label {
+  margin-top: 15px;
+  margin-bottom: 5px;
   color: aliceblue;
+}
+
+#team-search {
+  width: 300px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  margin: auto;
+  padding-top: 10px;
+}
+
+/* Character Builder */
+.character-select {
+  width: 600px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  margin: auto;
+  padding-top: 10px;
+  color: #0056b3;
+  font-weight: bold;
+  font-size: 1em;
+}
+.char-build {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Labels styling */
+.char-label {
+  display: block;
+  margin-top: 20;
+  margin-bottom: 5;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.5;
+  color: aliceblue;
+}
+.char-input {
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 20px; /* Adds space between each input */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.char-txt {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: goldenrod;
+  margin-bottom: 10px;
+}
+
+/* button {
+  padding: 10px 15px;
+  background-color: goldenrod;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+} */
+
+button:hover {
+  background-color: #004080;
 }
 
 /* Admin Login */
