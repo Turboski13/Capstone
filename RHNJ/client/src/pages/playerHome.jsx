@@ -76,6 +76,29 @@ const PlayerHome = () => {
       {showForm && (
         <CharacterBuilder onClose={toggleForm} characters={characters} setCharacters={setCharacters} onCharacterSelect={handleCharacterSelect} />
       )}
+      <h3>Your Characters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Class</th>
+          </tr>
+        </thead>
+        <tbody>
+          {characters.map((userCharacter) => (
+            <tr key={userCharacter.id}>
+              <img src={userCharacter.image} alt={UserCharacter.class} className='img2' />
+              <td>{userCharacter.name}</td>
+              <td>{userCharacter.level}</td>
+              <td>
+              <button onClick={() => handleDelete(userCharacter.id)}>Delete</button>
+              <button onClick={() => setSelectedCharacter(userCharacter)}>View Details</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
