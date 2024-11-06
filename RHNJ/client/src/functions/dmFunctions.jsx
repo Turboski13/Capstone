@@ -74,17 +74,42 @@ export const editUserCharacter = async (characterId, updatedData) => {
 };
 
 // Create a team
-export const createTeam = async (teamData) => {
+export const createTeam = async (
+  teamName,
+  roomPassword = '',
+  assets,
+  token
+) => {
   try {
     return await fetchData(`${API_URL}/teams`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(teamData),
+      body: JSON.stringify({ teamName, roomPassword, assets }),
     });
   } catch (error) {
     console.error('Error creating team:', error);
+    throw error;
+  }
+};
+
+export const joinTeam = async (teamId, teamPW, token) => {
+  try {
+    return await fetchData(`${API_URL}/teams/${teamId}/join`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        teamId,
+        teamPW,
+      }),
+    });
+  } catch (error) {
+    console.error('error joining the team:', error);
     throw error;
   }
 };

@@ -5,11 +5,10 @@ import { signup } from '../api';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigation from './Navigations';
 
-
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
