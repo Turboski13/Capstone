@@ -261,12 +261,12 @@ const DMHome = () => {
                       Join
                     </button>
                   )}
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(team.id)}
                     className='submit-btn'
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}

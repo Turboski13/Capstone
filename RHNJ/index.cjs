@@ -112,7 +112,7 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 // Delete current user
 app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     // Delete related user characters first
     await prisma.userCharacter.deleteMany({
@@ -144,13 +144,12 @@ app.get('/api/characters', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/characters',  async (req, res, next) => {
+app.post('/api/characters', async (req, res, next) => {
   try {
-    const authHeader = req.headers['authorization'];//problem here
-    
+    const authHeader = req.headers['authorization']; //problem here
 
-    if(!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: "missing or wrong jwt"});
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'missing or wrong jwt' });
     }
     const token = authHeader.split(' ')[1];
     console.log(token);
@@ -180,12 +179,78 @@ app.post('/api/characters',  async (req, res, next) => {
     });
     console.log('character created!!: ', character);
     res.status(201).json(character);
-  }catch(err){
+  } catch (err) {
     console.error('Couldnt create char, stuck in index: ', err);
-    res.status(500).json({ message: 'could not create the char successfully', error: err.message});
+    res
+      .status(500)
+      .json({
+        message: 'could not create the char successfully',
+        error: err.message,
+      });
   }
 });
-  
+
+app.get('/api/teams', async (req, res, next) => {
+  try {
+    const teams = await prisma.team.findMany();
+    res.status(201).json(teams);
+  } catch (err) {
+    console.error('no teams returned', err);
+    res.status(401).json({ message: "couldn't find any teams =(", err });
+  }
+});
+
+app.post('/api/teams', authMiddleware, async (req, res, next) => {
+  try {
+    const { teamName, roomPassword, assets } = req.body;
+    const dmId = req.user;
+
+    const newTeam = await prisma.team.create({
+      data: {
+        name: teamName,
+        password: roomPassword,
+        dmId: parseInt(dmId),
+        assets: assets ? JSON.parse(assets) : {},
+      },
+    });
+    res.status(201).json(newTeam);
+  } catch (err) {
+    console.error('couldnt create a taem', err);
+    res.status(401).json({ message: 'couldnt make a new team', err });
+  }
+});
+
+app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
+  try {
+    const { teamPW } = req.body;
+    const { teamId } = req.params;
+    const userId = req.user;
+    const team = await prisma.team.findUnique({
+      where: { id: parseInt(teamId) },
+    });
+
+    if (!team) {
+      return res.status(404).json({ message: 'No teams found!' });
+    }
+
+    if (team.password !== teamPW) {
+      return res.status(401).json({ message: 'password is incorrect' });
+    }
+
+    const joinedTeam = await prisma.team.update({
+      where: { id: parseInt(teamId) },
+      data: {
+        users: {
+          connect: { id: userId },
+        },
+      },
+    });
+    res.status(201).json({ message: 'Joined new team!: ', team: joinedTeam });
+  } catch (err) {
+    console.error('wrong info or error: ', err);
+    res.status(401).json({ message: 'The credentials are incorrect. ', err });
+  }
+});
 
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {
@@ -260,7 +325,6 @@ if (process.env.NODE_ENV !== 'test') {
 app.get('/test', (req, res) => {
   res.send('Server is up and running!');
 });
-
 
 module.exports = {
   prisma,

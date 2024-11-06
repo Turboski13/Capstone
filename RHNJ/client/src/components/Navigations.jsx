@@ -1,5 +1,5 @@
 // client/src/components/navigations.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api';
 
@@ -39,6 +39,11 @@ const Navigations = () => {
       </div>
       <div className='nav-right'>
         <ul>
+          <li>
+            <Link to='/dm-home' classname='navtext'>
+              DM Page
+            </Link>
+          </li>
           <li>
             <Link to='/login' className='navtext2'>
               Login
