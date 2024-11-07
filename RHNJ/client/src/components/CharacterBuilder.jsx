@@ -81,18 +81,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       }
   };
   
-  /* const handleDelete = async (characterId) => {
-    try {
-      await deleteUserCharacter(characterId);
-      setCharacters((prevCharacters) =>
-        prevCharacters.filter((char) => char.id !== characterId)
-      
-      );
-    } catch (err) {
-      console.error('Failed to delete character. Please try again.', err);
-    }
-  }; */
-
+  
   return (
     <div className='char-build'>
       {/* Character Dropdown */}

@@ -1,8 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-// const { hash } = require('bcrypt');
-const express = require('express');
 const bcrypt = require('bcrypt');
-
 const prisma = new PrismaClient();
 require('dotenv').config();
 
@@ -18,7 +15,7 @@ const init = async () => {
         data: {
           username: 'turboski',
           password: await bcrypt.hash('testing123', 10),
-          isAdmin: true, //user is am admin
+          isAdmin: true, //user is an admin
         },
       }),
       prisma.user.create({
@@ -35,7 +32,6 @@ const init = async () => {
           isAdmin: true, //user is an admin
         },
       }),
-
       prisma.user.create({
         data: {
           username: 'user1',
@@ -58,113 +54,70 @@ const init = async () => {
         },
       }),
     ]);
-    console.log('Created users:', users);
 
-    // Create characters
+    console.log('Created users:', users.map(user => user.username));
+
+    // Create characters for the users
     const characters = await Promise.all([
       prisma.userCharacter.create({
         data: {
-          characterName: 'May',
-          characterClass: 'Rogue',
+          userId: users[3].id, // user1
+          characterName: 'Archer John',
+          description: 'A skilled archer with keen eyes.',
+          characterClass: 'Ranger',
           level: 5,
-          image: 'image',
-          user: { connect: { id: users[2].id } },
+          image: '/images/archer.png',
           attributes: {
-            strength: 10,
-            dexterity: 20,
-            constitution: 15,
+            strength: 12,
+            dexterity: 18,
+            constitution: 14,
             intelligence: 10,
-            wisdom: 10,
-            charisma: 15,
+            wisdom: 16,
+            charisma: 8,
+            savingThrows: ['dexterity', 'wisdom'],
           },
-          statusPoints: 5,
+          skills: ['archery', 'survival', 'stealth'],
+          singleUseSkill: ['multiShot'],
+          statusPoints: 20,
           attackRoll: '1 D8 per level',
-          abilities: ['sneak', 'steal', 'stab'],
+          catchPhrases: ['You can run, but you can’t hide.'],
+          abilities: ['keenSight'],
+          ideals: 'Freedom',
+          flaws: 'Overconfident',
+          notes: 'Always ready for a challenge.',
         },
       }),
       prisma.userCharacter.create({
         data: {
-          characterName: 'Kristen',
-          characterClass: 'Wizard',
+          userId: users[4].id, // user2
+          characterName: 'Mage Jane',
+          description: 'A powerful mage who controls fire and ice.',
+          characterClass: 'Sorcerer',
           level: 5,
-          image: 'image',
-          user: { connect: { id: users[4].id } },
+          image: '/images/mage.png',
           attributes: {
-            strength: 10,
-            dexterity: 10,
-            constitution: 10,
-            intelligence: 20,
-            wisdom: 15,
-            charisma: 15,
+            strength: 8,
+            dexterity: 14,
+            constitution: 12,
+            intelligence: 18,
+            wisdom: 14,
+            charisma: 10,
+            savingThrows: ['intelligence', 'charisma'],
           },
-          statusPoints: 5,
-          attackRoll: '1 D8 per level',
-          abilities: ['cast', 'spell', 'fireball'],
-        },
-      }),
-      prisma.userCharacter.create({
-        data: {
-          characterName: 'Ingrid',
-          characterClass: 'Cleric',
-          level: 5,
-          image: 'image',
-          user: { connect: { id: users[3].id } },
-          attributes: {
-            strength: 10,
-            dexterity: 10,
-            constitution: 15,
-            intelligence: 10,
-            wisdom: 20,
-            charisma: 15,
-          },
-          statusPoints: 5,
-          attackRoll: '1 D8 per level',
-          abilities: ['heal', 'pray', 'smite'],
-        },
-      }),
-      prisma.userCharacter.create({
-        data: {
-          characterName: 'Crystal',
-          characterClass: 'Fighter',
-          level: 5,
-          image: 'image',
-          user: { connect: { id: users[2].id } },
-          attributes: {
-            strength: 20,
-            dexterity: 10,
-            constitution: 15,
-            intelligence: 10,
-            wisdom: 10,
-            charisma: 15,
-          },
-          statusPoints: 5,
-          attackRoll: '1 D8 per level',
-          abilities: ['swing', 'hit', 'block'],
-        },
-      }),
-      prisma.userCharacter.create({
-        data: {
-          characterName: 'Destinee',
-          characterClass: 'Bard',
-          level: 5,
-          image: 'image',
-          user: { connect: { id: users[1].id } },
-          attributes: {
-            strength: 10,
-            dexterity: 10,
-            constitution: 15,
-            intelligence: 15,
-            wisdom: 10,
-            charisma: 20,
-          },
-          statusPoints: 5,
-          attackRoll: '1 D8 per level',
-          abilities: ['sing', 'dance', 'charm'],
+          skills: ['fireball', 'iceShard', 'teleport'],
+          singleUseSkill: ['timeWarp'],
+          statusPoints: 25,
+          attackRoll: '1 D6 per level',
+          catchPhrases: ['Magic is in the air.'],
+          abilities: ['fireControl', 'frostNova'],
+          ideals: 'Knowledge',
+          flaws: 'Easily distracted',
+          notes: 'A deep thinker but can be absent-minded.',
         },
       }),
     ]);
 
-    console.log('Created characters:', characters);
+    console.log('Created characters:', characters.map(character => character.characterName));
     console.log('Data seeded');
   } catch (err) {
     console.error('Error during seeding:', err);

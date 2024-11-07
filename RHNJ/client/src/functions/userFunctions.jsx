@@ -101,6 +101,10 @@ export const deleteUserCharacter = async (characterId) => {
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
   } catch (error) {
     console.error('Error deleting character:', error);

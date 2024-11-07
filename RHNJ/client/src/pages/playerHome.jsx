@@ -19,6 +19,18 @@ const PlayerHome = () => {
     navigate('/login'); // Redirect to the home or login page
   };
 
+  const handleDelete = async (characterId) => {
+    try {
+      await deleteUserCharacter(characterId);
+      setCharacters((prevCharacters) =>
+        prevCharacters.filter((char) => char.id !== characterId)
+      
+      );
+    } catch (err) {
+      console.error('Failed to delete character. Please try again.', err);
+    }
+  };
+
   const fetchCharacters = async () => {
     try {
       const allCharacters = await searchAllUserCharacters();
