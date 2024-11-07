@@ -47,12 +47,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/how-to-play' element={<HowToPlay />} />
-        <Route
-          path='/admin-login'
-          element={
-            !isAuthenticated() ? <Navigate to='/admin-home' /> : <AdminLogin />
-          }
-        />
+        <Route path='/admin-login' element={<AdminLogin />} />
         <Route path='/dm-signup' element={<DmSignUp />} />
         <Route
           path='/about-characters'

@@ -53,7 +53,7 @@ const authenticateAdmin = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if the decoded token has an "admin" role
-    if (decoded.role !== 'admin') {
+    if (!decoded.isAdmin) {
       return res.status(403).send('Forbidden: Admin access required');
     }
 
@@ -140,14 +140,14 @@ app.post('/admin/login', async (req, res, next) => {
       return res.status(401).send('Invalid Login');
     }
 
-    if (user.role !== 'admin') {
+    if (!user.isAdmin) {
       return res.status(403).send('Forbidden: Admin access required');
     }
 
     const tokenPayload = {
       id: user.id,
       username: user.username,
-      role: 'admin',
+      isAdmin: user.isAdmin,
     };
 
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {

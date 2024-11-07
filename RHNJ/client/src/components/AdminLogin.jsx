@@ -11,58 +11,37 @@ const AdminLogin = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      navigate('/admin-home');
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('authToken');
+  //   if (token) {
+  //     navigate('/admin-home');
+  //   }
+  // }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    console.log('Logging in with:', username, password);
-
     try {
       const response = await fetch('http://localhost:3000/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
+        body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
-        setError('Invalid credentials');
-        setLoading(false);
-        return;
-      }
-
       const data = await response.json();
-      console.log('Login successful:', data);
 
-      if (data.token) {
-        console.log('Saving token:', data.token);
-        localStorage.setItem('authToken', data.token);
+      if (response.ok) {
+        // Store the token in localStorage
+        localStorage.setItem('token', data.token);
 
-        setUsername('');
-        setPassword('');
-        setError(null);
-
+        // Redirect to admin home
         navigate('/admin-home');
-        console.log('Navigating to /admin-home');
       } else {
-        setError('Failed to get token from server');
-        setLoading(false);
+        setError(data.message || 'Invalid credentials');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.message || 'An error occurred during login');
-      setLoading(false);
+      setError('Something went wrong!');
     }
   };
 
