@@ -1,37 +1,60 @@
-// client/src/components/navigations.jsx
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation to detect current path
 import { logout } from '../api';
 
 const Navigations = () => {
-  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation(); // Get current route
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(token !== null);
+  }, []);
 
   const handleLogout = () => {
-    logout(); // Call the logout function
-    navigate('/login'); // Redirect to the login page
+    logout();
+    setIsLoggedIn(false);
   };
 
   return (
     <nav>
-      <div className='nav-left1'>
+      <div className='nav-left'>
         <ul>
           <li>
-            <Link to='/' className='navtext'>
+            <Link
+              to='/'
+              className={`navtext ${location.pathname === '/' ? 'active' : ''}`}
+            >
               Home
             </Link>
           </li>
           <li>
-            <Link to='/about' className='navtext'>
+            <Link
+              to='/about'
+              className={`navtext ${
+                location.pathname === '/about' ? 'active' : ''
+              }`}
+            >
               About
             </Link>
           </li>
           <li>
-            <Link to='/how-to-play' className='navtext'>
-              How To Play
+            <Link
+              to='/how-to-play'
+              className={`navtext ${
+                location.pathname === '/how-to-play' ? 'active' : ''
+              }`}
+            >
+              How to Play
             </Link>
           </li>
           <li>
-            <Link to='/about-characters' className='navtext'>
+            <Link
+              to='/about-characters'
+              className={`navtext ${
+                location.pathname === '/about-characters' ? 'active' : ''
+              }`}
+            >
               Characters
             </Link>
           </li>
@@ -39,26 +62,26 @@ const Navigations = () => {
       </div>
       <div className='nav-right'>
         <ul>
-          <li>
-            <Link to='/dm-home' classname='navtext'>
-              DM Page
-            </Link>
-          </li>
-          <li>
-            <Link to='/login' className='navtext2'>
-              Login
-            </Link>
-          </li>
-          <li>
-            <Link to='/signup' className='navtext2'>
-              Signup
-            </Link>
-          </li>
-          <li>
-            <button onClick={handleLogout} className='navtext2'>
-              Logout
-            </button>
-          </li>
+          {isLoggedIn ? (
+            <li>
+              <button onClick={handleLogout} className='navtext2'>
+                Logout
+              </button>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link to='/login' className='navtext2'>
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link to='/signup' className='navtext2'>
+                  Signup
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>

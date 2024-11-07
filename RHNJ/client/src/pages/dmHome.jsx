@@ -119,6 +119,12 @@ const DMHome = () => {
     <div className='dm-home'>
       <ul className='dm-nav-ul'>
         <li>
+          <Link to='/' className='dm-nav'>
+            Home
+          </Link>
+        </li>
+
+        <li>
           <Link to='/how-to-play' className='dm-nav'>
             How to Play
           </Link>

@@ -33,16 +33,46 @@ const authMiddleware = (req, res, next) => {
       console.log('Error with token:', token);
       return res.status(401).send({ message: 'Invalid token' });
     }
-    req.user = decoded.id;
+    req.user = decoded;
     console.log('Authenticated user:', req.user);
     next();
   });
+};
+
+// Middleware to check if the user is an admin
+const authenticateAdmin = (req, res, next) => {
+  console.log('Authorization Header:', req.headers.authorization);
+
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Check if the decoded token has an "admin" role
+    if (decoded.role !== 'admin') {
+      return res.status(403).send('Forbidden: Admin access required');
+    }
+
+    req.user = decoded; // Attach the decoded user to the request
+    next(); // Proceed to the next middleware or route
+  } catch (err) {
+    return res.status(401).send('Invalid token');
+  }
 };
 
 // Create Express server
 
 app.get('/test', (req, res) => {
   res.send('Server is up and running!');
+});
+
+// Protected admin route
+app.get('/admin-home', authenticateAdmin, (req, res) => {
+  res.send('Welcome to Admin Home');
 });
 
 // Sign-up
@@ -92,6 +122,42 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (error) {
     console.error('Error during login:', error);
     return res.status(500).send({ error: 'Internal server error ' });
+  }
+});
+
+// Admin Login
+app.post('/admin/login', async (req, res, next) => {
+  const { username, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).send('Invalid Login');
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).send('Forbidden: Admin access required');
+    }
+
+    const tokenPayload = {
+      id: user.id,
+      username: user.username,
+      role: 'admin',
+    };
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    return res.json({ token });
+  } catch (error) {
+    console.error('Error during admin login', error);
+    return res.status(500).send('Internal Server Error');
   }
 });
 
@@ -181,12 +247,10 @@ app.post('/api/characters', async (req, res, next) => {
     res.status(201).json(character);
   } catch (err) {
     console.error('Couldnt create char, stuck in index: ', err);
-    res
-      .status(500)
-      .json({
-        message: 'could not create the char successfully',
-        error: err.message,
-      });
+    res.status(500).json({
+      message: 'could not create the char successfully',
+      error: err.message,
+    });
   }
 });
 

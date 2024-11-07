@@ -14,6 +14,8 @@ nav {
   padding: 10px;
   background: rgba(0, 0, 0, 0);
   z-index: 1000;
+  margin-left: 300px;
+  margin-top: 20px;
 }
 
 .navtext {
@@ -159,9 +161,16 @@ th {
 .about-h3 {
   color: honeydew;
   padding-bottom: 0;
+  margin-top: 20px;
   margin-bottom: 5px;
   font-family: 'balzano-std', sans-serif;
   font-size: 30px;
+}
+.abt-p3 {
+  margin-bottom: 10px;
+}
+.linkedin {
+  padding: 10px;
 }
 
 /* Login Page and Signup Page */
@@ -608,4 +617,21 @@ button:hover {
   font-size: 20px;
   margin-bottom: 15px;
   color: silver;
+}
+.admin-h3 {
+  margin-top: 20px;
+}
+
+.admin-table {
+  padding-top: 30px;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-th {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding: 15px;
 }

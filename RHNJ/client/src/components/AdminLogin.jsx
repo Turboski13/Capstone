@@ -1,33 +1,68 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      navigate('/admin-home');
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    console.log('Logging in with:', username, password);
+
     try {
-      // Replace with your actual login logic
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('http://localhost:3000/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Login failed. Please check your credentials.');
+        setError('Invalid credentials');
+        setLoading(false);
+        return;
       }
 
       const data = await response.json();
-      // Handle successful login (e.g., redirect or store tokens)
       console.log('Login successful:', data);
+
+      if (data.token) {
+        console.log('Saving token:', data.token);
+        localStorage.setItem('authToken', data.token);
+
+        setUsername('');
+        setPassword('');
+        setError(null);
+
+        navigate('/admin-home');
+        console.log('Navigating to /admin-home');
+      } else {
+        setError('Failed to get token from server');
+        setLoading(false);
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Login error:', err);
+      setError(err.message || 'An error occurred during login');
+      setLoading(false);
     }
   };
 
@@ -39,6 +74,7 @@ const AdminLogin = () => {
         <div className='card-container'>
           <h2 className='admin-login-h2'>Admin Login</h2>
           {error && <p style={{ color: 'red' }}>{error}</p>}
+          {loading && <p>Loading...</p>}
           <form className='login-form' onSubmit={handleLogin}>
             <div className='user-box'>
               <input
