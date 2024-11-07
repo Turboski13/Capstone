@@ -33,7 +33,8 @@ const PlayerHome = () => {
 
   const fetchCharacters = async () => {
     try {
-      const allCharacters = await searchAllUserCharacters();
+      const userId = localStorage.getItem('userId');
+      const allCharacters = await searchAllUserCharacters(userId);
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');

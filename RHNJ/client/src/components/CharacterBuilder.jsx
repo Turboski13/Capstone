@@ -18,9 +18,11 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   // Handle character selection from the dropdown
   const handleCharacterChange = (event) => {
     const characterId = Number(event.target.value);
+  /*   console.log("Selected Character ID:", characterId); */
 
     // Find the selected character based on ID
     const character = characters.find((char) => char.id === characterId);
+    /* console.log("Found Character:", character); */
     setSelectedCharacterId(characterId);
     setSelectedCharacter(character);
 
@@ -30,7 +32,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   };
 
   const saveCharacterDetails = async () => {
-    let characterData = {
+    const characterData = {
       userId: selectedCharacter.userId,
       level: selectedCharacter.level,
       characterName: characterName,
@@ -57,7 +59,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       notes: notes,
     };
     setCharacterDetails(characterData);
-    console.log(characterData);
+    console.log('Character data to be sent:', characterData);
   
     const token = localStorage.getItem('token');
     if(!token) {
@@ -75,6 +77,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         console.log('Character saved:', data);
 
         setSelectedCharacter(null);
+        setSelectedCharacterId(null);
 
         } catch (error) {
         console.error('Error saving character:', error);
