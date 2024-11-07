@@ -80,24 +80,24 @@ const PlayerHome = () => {
           onCharacterSelect={handleCharacterSelect}
         />
       )}
+      <label htmlFor='character-select'>Create a Character:</label>
       <h3>Your Characters</h3>
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Level</th>
-            <th>Class</th>
+            
           </tr>
         </thead>
         <tbody>
-          {characters.map((userCharacter) => (
-            <tr key={userCharacter.id}>
-              <img src={userCharacter.image} alt={UserCharacter.class} className='img2' />
-              <td>{userCharacter.name}</td>
-              <td>{userCharacter.level}</td>
+          {characters.map((character) => (
+            <tr key={character.id}>
+              <td>{character.name}</td>
+              <td>{character.level}</td>
               <td>
-              <button onClick={() => handleDelete(userCharacter.id)}>Delete</button>
-              <button onClick={() => setSelectedCharacter(userCharacter)}>View Details</button>
+              <button onClick={() => handleDelete(character.id)}>Delete</button>
+              <button onClick={() => setSelectedCharacter(character)}>View Details</button>
               </td>
             </tr>
           ))}

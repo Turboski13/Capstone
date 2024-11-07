@@ -144,9 +144,10 @@ app.get('/api/characters', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/characters', async (req, res, next) => {
+app.post('/api/character', async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization']; //problem here
+    console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'missing or wrong jwt' });

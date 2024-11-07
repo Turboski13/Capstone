@@ -55,8 +55,32 @@ export const fetchCharacters = (token) => {
 };
 
 export const createCharacter = (token, characterData) => {
-  return request('/characters', 'POST', characterData, token)
-}
+  return request('/character', 'POST', characterData, token)
+}  
+  /* export const createCharacter = async (token, characterData) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/user/character', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({characterData}),
+      });
+      console.log('Character Data Sent to Server:', characterData);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      return response;
+    } catch (error) {
+      console.error('Error in createCharacter:', error);
+      throw error;
+    }
+  }; 
+ */
+
 // User functions
 export const fetchUsers = (token) => {
   return request('/users', 'GET', null, token);
