@@ -13,6 +13,7 @@ const PlayerHome = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
+  
   const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
@@ -95,6 +96,7 @@ const PlayerHome = () => {
       )}
       <label htmlFor='character-select'>Create a Character:</label>
       <h3>Your Characters</h3>
+      
       <table>
         <thead>
           <tr>
@@ -110,7 +112,7 @@ const PlayerHome = () => {
               <td>{character.level}</td>
               <td>
               <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => setSelectedCharacter(character)}>View Details</button>
+              <button onClick={() => setSelectedCharacter(character.id)}>View Details</button>
               </td>
             </tr>
           ))}

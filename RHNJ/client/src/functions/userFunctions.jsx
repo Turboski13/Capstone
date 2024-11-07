@@ -81,7 +81,7 @@ export const searchAllUserCharacters = async (token) => {
       throw new Error('Authorization token is missing');
     }
 
-    console.log('Retrieved Token:', storedToken);
+    /* console.log('Retrieved Token:', storedToken); */
 
     const response = await fetch(`${API_URL}/user/characters`, {
       method: 'GET',
@@ -134,8 +134,9 @@ export const editUserCharacter = async (characterId, updatedData) => {
 
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
+  const token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`, {
+    return await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
