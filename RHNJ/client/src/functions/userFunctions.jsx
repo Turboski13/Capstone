@@ -1,5 +1,5 @@
 const API_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests
 const fetchData = async (url, options) => {
@@ -56,9 +56,10 @@ export const searchSingleUser = async (userId) => {
 };
 
 // Get all characters for a user
-export const searchAllUserCharacters = async () => {
+/* export const searchAllUserCharacters = async (token) => {
   try {
     return await fetchData(`${API_URL}/user/characters`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -68,7 +69,42 @@ export const searchAllUserCharacters = async () => {
     console.error('Error fetching user characters:', error);
     throw error;
   }
+}; */
+
+export const searchAllUserCharacters = async (token) => {
+  try {
+    // Check if token is passed as argument, otherwise get it from localStorage
+    const storedToken = token || localStorage.getItem('token');
+    
+    if (!storedToken) {
+      console.error('No token found');
+      throw new Error('Authorization token is missing');
+    }
+
+    console.log('Retrieved Token:', storedToken);
+
+    const response = await fetch(`${API_URL}/user/characters`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${storedToken}`, // Passing token here
+      },
+    });
+    
+    
+    if (!response.ok) {
+      throw new Error('Error fetching user characters');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user characters:', error);
+    throw error;
+  }
 };
+
+
 
 // Search a single user character
 export const searchSingleUserCharacter = async (characterId) => {

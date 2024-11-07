@@ -61,7 +61,7 @@ const init = async () => {
     const characters = await Promise.all([
       prisma.userCharacter.create({
         data: {
-          userId: users[3].id, // user1
+          userId: users[5].id, // user1
           characterName: 'Archer John',
           description: 'A skilled archer with keen eyes.',
           characterClass: 'Ranger',
