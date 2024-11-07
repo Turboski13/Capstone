@@ -253,7 +253,7 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
     const character = await prisma.userCharacter.findUnique({
@@ -264,7 +264,7 @@ app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
       return res.status(404).send({ error: 'Character not found' });
     }
 
-    if (character.userId !== req.user.id) {
+    if (character.userId !== req.user) {
       return res
         .status(403)
         .send({ error: 'Not authorized to delete this character' });
@@ -303,9 +303,10 @@ app.get('/api/users', async (req, res, next) => {
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
   const characters = await prisma.userCharacter.findMany({
-    where: { userId: req.user.id },
+    where: { userId: req.user },
+
   });
-  res.status(200).json(characters);
+  res.status(201).json(characters);
 });
 
 // Middleware error handling
