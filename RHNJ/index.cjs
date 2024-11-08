@@ -130,6 +130,20 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+app.post('/api/user/characters/:id', authMiddleware, async(req, res, next)=> {
+  const { characterId } = req.body;
+  try{
+    const character = await prisma.userCharacter.findUnique({
+      where: { id: characterId}
+    })
+    res.status(201).json({character});
+  }catch(err){
+    console.error('Error finding characters', err);
+    res.status(401).json({ message: 'couldnt get the character'});
+  }
+
+})
+
 
 // Character routes
 app.get('/api/characters', authMiddleware, async (req, res) => {

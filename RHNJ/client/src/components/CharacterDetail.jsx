@@ -9,6 +9,7 @@ import '../index.css';
 const CharacterDetail = () => {
   const { id } = useParams();
   const character = characters.find((char) => char.id === parseInt(id));
+  
 
   if (!character) {
     return <div>Character not found</div>;

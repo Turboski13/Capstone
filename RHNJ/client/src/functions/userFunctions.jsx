@@ -108,8 +108,25 @@ export const searchAllUserCharacters = async (token) => {
 
 // Search a single user character
 export const searchSingleUserCharacter = async (characterId) => {
+  let token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`);
+    
+    const response = await fetch(`${API_URL}/user/characters/${characterId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+
+      },
+      body: JSON.stringify({
+        characterId: Number(characterId), 
+      })
+    }
+  
+  );
+  const result = response.json();
+  return result
+
   } catch (error) {
     console.error('Error fetching character:', error);
     throw error;
@@ -118,11 +135,13 @@ export const searchSingleUserCharacter = async (characterId) => {
 
 // Edit user character
 export const editUserCharacter = async (characterId, updatedData) => {
+  let token = localStorage.getItem('token');
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(updatedData),
     });

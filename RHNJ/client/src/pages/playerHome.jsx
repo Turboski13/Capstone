@@ -6,6 +6,7 @@ import {
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
 
+
 const PlayerHome = () => {
   const navigate = useNavigate();
   const [characters, setCharacters] = useState([]);
@@ -112,7 +113,7 @@ const PlayerHome = () => {
               <td>{character.level}</td>
               <td>
               <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => setSelectedCharacter(character.id)}>View Details</button>
+              <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
               </td>
             </tr>
           ))}
