@@ -28,18 +28,18 @@ const UserCharacter = () => {
             <div className='character-stats'>
 
            <h1>{characterInfo.character?.characterName}</h1>
-           <p> Catch Phrases:{' '}
+           {/* <p> Catch Phrases:{' '}
             {characterInfo.character.catchPhrases.map((phrase, index) => (
               <span key={index}>
                 {phrase}
                 {index < characterInfo.character.catchPhrases.length - 1 ? ', ' : ''}
               </span>
             ))}
-          </p>
+          </p> */}
 
-           <h3>Level:{characterInfo.character?.level} </h3>
-           <p>Status Points: {characterInfo.character?.statusPoints}</p>
-           <h3>Stats:</h3>
+           <h3 className='char-txt'>Level:{characterInfo.character?.level} </h3>
+           <h3 className='char-txt'>Status Points: {characterInfo.character?.statusPoints}</h3>
+           <h2>Stats:</h2>
            <ul>
             <li>Strength: {characterInfo.character.attributes.strength}</li>
             <li>Dexterity: {characterInfo.character.attributes.dexterity}</li>
@@ -77,10 +77,14 @@ const UserCharacter = () => {
               </span>
             ))}
           </p> 
-          <p>Attack Roll: {characterInfo.character.attackRoll}</p>
+          <p className='char-txt'>Attack Roll: {characterInfo.character.attackRoll}</p>
            <h3>Flaws: {characterInfo.character.flaws}</h3>
            <h3>Ideals: {characterInfo.character.ideals}</h3>
            <h3>Notes: {characterInfo.character.notes}</h3>
+
+
+           {/* <button onClick={async () => await editUserCharacter()}>Edit</button> */}
+           
             </div>
         )
         }
