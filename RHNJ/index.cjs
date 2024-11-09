@@ -221,6 +221,7 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
 app.post('/api/user/characters/:id', authMiddleware, async(req, res, next)=> {
   const { characterId } = req.body;
   try{
@@ -250,7 +251,7 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.get('/api/characters', authMiddleware, async (req, res) => {
+app.get('/api/user/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
       where: { userId: req.user.id }, // Ensure you're only fetching characters for the authenticated user

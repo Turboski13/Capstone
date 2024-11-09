@@ -106,7 +106,7 @@ export const searchSingleUser = async (userId) => {
   }
 }; */
 
-export const searchAllUserCharacters = async (token) => {
+export const fetchAllUserCharacters = async (token) => {
   try {
     // Check if token is passed as argument, otherwise get it from localStorage
     const storedToken = token || localStorage.getItem('token');
@@ -116,7 +116,7 @@ export const searchAllUserCharacters = async (token) => {
       throw new Error('Authorization token is missing');
     }
 
-    /* console.log('Retrieved Token:', storedToken); */
+     /* console.log('Retrieved Token:', storedToken); */
 
     const response = await fetch(`${API_URL}/user/characters`, {
       method: 'GET',

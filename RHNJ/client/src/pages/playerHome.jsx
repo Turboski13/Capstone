@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  searchAllUserCharacters,
+  fetchAllUserCharacters,
   deleteUserCharacter,
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
-import Navigations from '../components/Navigations';
+
 
 
 const PlayerHome = () => {
@@ -38,7 +38,7 @@ const PlayerHome = () => {
   const fetchCharacters = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      const allCharacters = await searchAllUserCharacters(userId);
+      const allCharacters = await fetchAllUserCharacters(userId);
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');
@@ -48,7 +48,14 @@ const PlayerHome = () => {
   };
 
   useEffect(() => {
-    fetchCharacters();
+    const token = localStorage.getItem('token');
+    console.log("Token:", token); // Check if the token is present
+    if (!token) {
+      console.log("No token found, navigating to login.");
+      navigate('/login'); // Redirect to login if no token is found
+    } else {
+      fetchCharacters(); // Only fetch characters if the user is authenticated
+    }
   }, []);
 
   const toggleForm = () => {
@@ -64,11 +71,9 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-      {/* <Navigations /> */}
-
-      <nav className='ph-nav'>
+       <nav className='ph-nav'>
         <ul className='ph-ul'>
-          <li>
+           <li>
             <Link to='/' className='dm-nav'>
               Home
             </Link>
@@ -91,6 +96,7 @@ const PlayerHome = () => {
           <button onClick={handleLogout}>Logout</button>
         </ul>
       </nav>
+
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={toggleForm}>
