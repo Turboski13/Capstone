@@ -75,6 +75,31 @@ app.get('/admin-home', authenticateAdmin, (req, res) => {
   res.send('Welcome to Admin Home');
 });
 
+// Verify Token Route
+app.post('/api/verify-token', (req, res) => {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).send({
+      message: 'Authorization header is missing or incorrectly formatted',
+    });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).send({ message: 'Token is undefined' });
+  }
+
+  // Verify the token
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: 'Invalid or expired token' });
+    }
+
+    // If token is valid, send success message
+    res.status(200).json({ message: 'Token is valid', user: decoded });
+  });
+});
+
 // Sign-up
 app.post('/api/auth/signup', async (req, res, next) => {
   try {
@@ -198,6 +223,19 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
 });
 
 // Character routes
+app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
+  const { characterId } = req.body;
+  try {
+    const character = await prisma.userCharacter.findUnique({
+      where: { id: characterId },
+    });
+    res.status(201).json({ character });
+  } catch (err) {
+    console.error('Error finding characters', err);
+    res.status(401).json({ message: 'couldnt get the character' });
+  }
+});
+
 app.get('/api/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
@@ -369,6 +407,141 @@ app.get('/api/user/characters', authMiddleware, async (req, res) => {
     where: { userId: req.user.id },
   });
   res.status(200).json(characters);
+});
+
+// Admin routes (for users)
+app.get('/api/users', authenticateAdmin, async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    return res.status(200).json(users);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    return res.status(500).send({ message: 'Error fetching users' });
+  }
+});
+
+app.put('/api/users/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { username, password, isAdmin } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    const updatedData = {
+      username: username || user.username,
+      isAdmin: isAdmin !== undefined ? isAdmin : user.isAdmin,
+    };
+
+    if (password) {
+      updatedData.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updatedData,
+    });
+
+    return res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error('Error updating user:', err);
+    return res.status(500).send({ message: 'Error updating user' });
+  }
+});
+
+app.delete('/api/users/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    await prisma.userCharacter.deleteMany({
+      where: { userId },
+    });
+
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    return res.status(500).send({ message: 'Error deleting user' });
+  }
+});
+
+// Admin routes (for characters)
+app.get('/api/characters', authenticateAdmin, async (req, res) => {
+  try {
+    const characters = await prisma.userCharacter.findMany();
+    return res.status(200).json(characters);
+  } catch (err) {
+    console.error('Error fetching characters:', err);
+    return res.status(500).send({ message: 'Error fetching characters' });
+  }
+});
+
+app.put('/api/characters/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const characterId = parseInt(req.params.id);
+    const { name, description, stats } = req.body;
+
+    const character = await prisma.userCharacter.findUnique({
+      where: { id: characterId },
+    });
+
+    if (!character) {
+      return res.status(404).send({ message: 'Character not found' });
+    }
+
+    const updatedCharacter = await prisma.userCharacter.update({
+      where: { id: characterId },
+      data: {
+        name: name || character.name,
+        description: description || character.description,
+        stats: stats || character.stats,
+      },
+    });
+
+    return res.status(200).json(updatedCharacter);
+  } catch (err) {
+    console.error('Error updating character:', err);
+    return res.status(500).send({ message: 'Error updating character' });
+  }
+});
+
+app.delete('/api/characters/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const characterId = parseInt(req.params.id);
+
+    const character = await prisma.userCharacter.findUnique({
+      where: { id: characterId },
+    });
+
+    if (!character) {
+      return res.status(404).send({ message: 'Character not found' });
+    }
+
+    await prisma.userCharacter.delete({
+      where: { id: characterId },
+    });
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error('Error deleting character:', err);
+    return res.status(500).send({ message: 'Error deleting character' });
+  }
 });
 
 // Middleware error handling

@@ -30,9 +30,10 @@ const Login = () => {
   return (
     <div className='login-page'>
       <Navigations />
-      
+
       <div className='form'>
         <div className='card-container'>
+          <h2 className='admin-login-h2'>Login</h2>
           <form className='login-form' onSubmit={handleLogin}>
             <div className='user-box'>
               <input

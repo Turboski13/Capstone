@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
-} from 'react-router-dom'; // pulled Switch out of import************
+} from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/SignUp';
 import AboutCharacters from './components/AboutCharacters';
@@ -19,6 +19,7 @@ import AdminLogin from './components/AdminLogin';
 import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
+import UserCharacter from './components/UserCharacter';
 import './index.css';
 
 const isAuthenticated = () => {
@@ -53,6 +54,7 @@ function App() {
           path='/about-characters'
           element={<AboutCharacters characters={characters} />}
         />
+        <Route path='/user/character/:id' element={<UserCharacter />} />
         <Route path='/characters' element={<characterList />} />
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/' element={<Home />} /> {/* Home route */}

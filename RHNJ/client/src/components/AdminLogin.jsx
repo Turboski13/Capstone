@@ -11,15 +11,16 @@ const AdminLogin = () => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('authToken');
-  //   if (token) {
-  //     navigate('/admin-home');
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      navigate('/admin-home');
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:3000/admin/login', {
         method: 'POST',
@@ -31,9 +32,10 @@ const AdminLogin = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.token) {
+        console.log('Setting token in localStorage:', data.token);
         // Store the token in localStorage
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
 
         // Redirect to admin home
         navigate('/admin-home');
@@ -42,6 +44,8 @@ const AdminLogin = () => {
       }
     } catch (err) {
       setError('Something went wrong!');
+    } finally {
+      setLoading(false);
     }
   };
 

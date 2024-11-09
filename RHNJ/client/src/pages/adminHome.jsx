@@ -13,7 +13,7 @@ const AdminHome = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editingUserId, setEditingUserId] = useState(null);
+  const [editedUserId, setEditedUserId] = useState(null);
   const [editedUser, setEditedUser] = useState({ username: '', password: '' });
   const [userCharacters, setUserCharacters] = useState([]);
   const [loadingCharacters, setLoadingCharacters] = useState(false);
@@ -21,12 +21,34 @@ const AdminHome = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token from localStorage:', token);
+    console.log('Token from localStorage in adminHome', token);
 
     if (!token) {
       navigate('/admin-login');
       return;
     }
+
+    const verifyToken = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/verify-token', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Invalid token');
+        }
+
+        // If the token is valid, fetch users
+        fetchUsers();
+      } catch (error) {
+        // Token verification failed, log out the user
+        localStorage.removeItem('authToken');
+        navigate('/admin-login');
+      }
+    };
 
     const fetchUsers = async () => {
       try {
@@ -47,8 +69,13 @@ const AdminHome = () => {
       }
     };
 
-    fetchUsers();
+    verifyToken();
   }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate('/');
+  };
 
   const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -62,8 +89,8 @@ const AdminHome = () => {
   };
 
   const handleEditClick = (user) => {
-    setEditingUserId(user.id);
-    setEditedUser({ username: user.username, password: '' }); // Clear password field for editing
+    setEditedUserId(user.id);
+    setEditedUser({ username: user.username, password: '' });
   };
 
   const handleEditChange = (e) => {
@@ -74,15 +101,15 @@ const AdminHome = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await editUser(editingUserId, editedUser);
+      await editUser(editedUserId, editedUser);
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === editingUserId
+          user.id === editedUserId
             ? { ...user, username: editedUser.username }
             : user
         )
       );
-      setEditingUserId(null); // Reset editing state
+      setEditedUserId(null); // Reset editing state
       setEditedUser({ username: '', password: '' }); // Clear edited user
     } catch (err) {
       setError('Failed to update user. Please try again.');
@@ -95,7 +122,9 @@ const AdminHome = () => {
 
   const handleViewUserCharacters = async (userId) => {
     setLoadingCharacters(true);
-    setErrorCharacters(null); // Reset error state
+    setErrorCharacters(null);
+
+    setUserCharacters([]);
 
     try {
       const characters = await searchAllUserCharacters(userId);
@@ -119,14 +148,15 @@ const AdminHome = () => {
     <div className='dm-home'>
       <Navigations />
 
-      <h2>Administrator Home</h2>
-      <p>Welcome, you are now logged in as Admin!</p>
+      <h2 className='adm-home-h2'>Administrator Home</h2>
+      <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type='text'
         placeholder='Search users...'
         value={searchQuery}
         onChange={handleSearchChange}
+        className='adm-search'
       />
       <h3 className='admin-h3'>User List</h3>
       <table className='admin-table'>
@@ -144,7 +174,7 @@ const AdminHome = () => {
           ) : (
             filteredUsers?.map((user) => (
               <tr key={user?.id}>
-                {editingUserId === user?.id ? (
+                {editedUserId === user?.id ? (
                   <td colSpan='2'>
                     <form onSubmit={handleEditSubmit}>
                       <input
@@ -164,7 +194,7 @@ const AdminHome = () => {
                       <button type='submit'>Save</button>
                       <button
                         type='button'
-                        onClick={() => setEditingUserId(null)}
+                        onClick={() => setEditedUserId(null)}
                       >
                         Cancel
                       </button>
@@ -217,6 +247,8 @@ const AdminHome = () => {
           )}
         </div>
       )}
+      {/* Logout button */}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

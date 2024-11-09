@@ -5,6 +5,7 @@ import {
   deleteUserCharacter,
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
+import Navigations from '../components/Navigations';
 
 const PlayerHome = () => {
   const navigate = useNavigate();
@@ -17,6 +18,17 @@ const PlayerHome = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
     navigate('/login'); // Redirect to the home or login page
+  };
+
+  const handleDelete = async (characterId) => {
+    try {
+      await deleteUserCharacter(characterId);
+      setCharacters((prevCharacters) =>
+        prevCharacters.filter((char) => char.id !== characterId)
+      );
+    } catch (err) {
+      console.error('Failed to delete character. Please try again.', err);
+    }
   };
 
   const fetchCharacters = async () => {
@@ -47,6 +59,8 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
+      {/* <Navigations /> */}
+
       <nav className='ph-nav'>
         <ul className='ph-ul'>
           <li>
@@ -85,6 +99,35 @@ const PlayerHome = () => {
           onCharacterSelect={handleCharacterSelect}
         />
       )}
+      <label htmlFor='character-select'>Create a Character:</label>
+      <h3>Your Characters</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {characters.map((character) => (
+            <tr key={character.id}>
+              <td>{character.name}</td>
+              <td>{character.level}</td>
+              <td>
+                <button onClick={() => handleDelete(character.id)}>
+                  Delete
+                </button>
+                <button
+                  onClick={() => navigate(`/user/character/${character.id}`)}
+                >
+                  View Details
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

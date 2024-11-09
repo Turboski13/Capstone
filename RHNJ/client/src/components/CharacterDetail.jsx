@@ -23,7 +23,7 @@ const CharacterDetail = () => {
       <p className='char-desc'>{character.description}</p>
       <h3 className='char-cp'>Catchphrase</h3>
       <p className='char-desc'>{character.catchPhrases}</p>
-      <h3 className='char-att'>Attributes:</h3>
+      {/* <h3 className='char-att'>Attributes:</h3>
       <ul className='char-att-list'>
         <li>Strength: {character.attributes.strength}</li>
         <li>Dexterity: {character.attributes.dexterity}</li>
@@ -32,7 +32,7 @@ const CharacterDetail = () => {
         <li>Wisdom: {character.attributes.wisdom}</li>
         <li>Charisma: {character.attributes.charisma}</li>
         <li>Saving Throws: {character.attributes.savingThrows.join(', ')}</li>
-      </ul>
+      </ul> */}
       <h3 className='char-att'>Skills:</h3>
       <ul>
         {character.skills.length > 0 ? (
@@ -45,11 +45,11 @@ const CharacterDetail = () => {
       <h3 className='char-att'>Single Use Skill:</h3>
       <p className='char-desc'>{character.singleUseSkill.join(', ')}</p>
 
-      <h3 className='char-att'>Hit Points:</h3>
+      {/* <h3 className='char-att'>Hit Points:</h3>
       <p>{character.hitPoints}</p>
 
       <h3 className='char-att'>Attack Roll:</h3>
-      <p className='char-desc'>{character.attackRoll}</p>
+      <p className='char-desc'>{character.attackRoll}</p> */}
 
       <Link to='/about-characters' className='char-link'>
         Back to Character List
