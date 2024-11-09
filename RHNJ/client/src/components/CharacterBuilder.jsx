@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import characters from '../utils/characterList';
+import { useNavigate } from 'react-router-dom';
 import { createCharacter } from '../api';
-import { deleteUserCharacter } from '../functions/userFunctions';
+/*import { searchAllUserCharacters, deleteUserCharacter } from '../functions/userFunctions';
+import Navigations from './Navigations'; */
 
 const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   const [selectedCharacterId, setSelectedCharacterId] = useState('');
@@ -11,13 +13,16 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   const [flaws, setFlaws] = useState('');
   const [notes, setNotes] = useState('');
   const [characterName, setCharacterName] = useState('');
+  const navigate = useNavigate();
 
   // Handle character selection from the dropdown
   const handleCharacterChange = (event) => {
     const characterId = Number(event.target.value);
+  /*   console.log("Selected Character ID:", characterId); */
 
     // Find the selected character based on ID
     const character = characters.find((char) => char.id === characterId);
+    /* console.log("Found Character:", character); */
     setSelectedCharacterId(characterId);
     setSelectedCharacter(character);
 
@@ -27,12 +32,12 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   };
 
   const saveCharacterDetails = async () => {
-    let characterData = {
-      userId: selectedCharacter.userId,
-      level: selectedCharacter.level,
-      characterName: characterName,
-      characterClass: selectedCharacter.characterClass,
-      image: selectedCharacter.image,
+    const characterData = {
+        userId: selectedCharacter.userId,
+        level: selectedCharacter.level,
+        characterName: characterName,
+        characterClass: selectedCharacter.characterClass,
+        image: selectedCharacter.image,
       attributes: {
         strength: selectedCharacter.attributes.strength,
         dexterity: selectedCharacter.attributes.dexterity,
@@ -41,6 +46,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         wisdom: selectedCharacter.attributes.wisdom,
         charisma: selectedCharacter.attributes.charisma,
       },
+      
       savingThrows: selectedCharacter.attributes.savingThrows,
       skills: selectedCharacter.skills,
       singleUseSkill: selectedCharacter.singleUseSkill,
@@ -53,7 +59,8 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       notes: notes,
     };
     setCharacterDetails(characterData);
-    console.log(characterData);
+    console.log('Character data to be sent:', characterData);
+  
     const token = localStorage.getItem('token');
     if(!token) {
       console.error('No token in local Store');
@@ -61,7 +68,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
     }
       try {
         const response = await createCharacter(token, characterData);
-
+        console.log("Response received:", response);
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -70,48 +77,19 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         console.log('Character saved:', data);
 
         setSelectedCharacter(null);
-      } catch (error) {
+        setSelectedCharacterId(null);
+
+        } catch (error) {
         console.error('Error saving character:', error);
       }
+      window.location.href = '/player-home';
   };
   
-  const handleDelete = async (characterId) => {
-    try {
-      await deleteUserCharacter(characterId);
-      setCharacters((prevCharacters) =>
-        prevCharacters.filter((char) => char.id !== characterId)
-      );
-    } catch (err) {
-      console.error('Failed to delete character. Please try again.', err);
-    }
-  };
-
+  
   return (
     <div className='char-build'>
       {/* Character Dropdown */}
-      <label htmlFor='character-select'>Choose a Character:</label>
-      {/* <h3>Your Characters</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Level</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {characters.map((character) => (
-            <tr key={character.id}>
-              <td>{character.name}</td>
-              <td>{character.level}</td>
-              <td>
-              <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => setSelectedCharacter(character)}>View Details</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
+      
       <select
         id='character-select'
         value={selectedCharacterId}
@@ -130,7 +108,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       {/* Display Selected Character's Stats */}
       {selectedCharacter && (
         <div className='character-stats'>
-          <h3 className='char-stats'>{selectedCharacter.characterName}'s Stats</h3>
+          <h3 className='char-stats'>{selectedCharacter.characterName}</h3>
           <label htmlFor='name' className='char-label'>Name:</label>
           <input
             type='text'
@@ -155,10 +133,10 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
           </ul>
           <p className='char-txt'>
             Saving Throws:{' '}
-            {selectedCharacter.savingThrows?.map((save, index) => (
+            {selectedCharacter.attributes.savingThrows?.map((save, index) => (
               <span key={index}>
                 {save}
-                {index < selectedCharacter.savingThrows.length - 1 ? ', ' : ''}
+                {index < selectedCharacter.attributes.savingThrows.length - 1 ? ', ' : ''}
               </span>
             ))}
           </p>
@@ -236,8 +214,8 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       )}
       {selectedCharacter && (
         <div className='character-details'>
-          <h3>{selectedCharacter.name}'s Details</h3>
-          <button onClick={() => saveCharacterDetails()}>Save</button>
+          <h3>{selectedCharacter.name}</h3>
+          <button onClick={async () => await saveCharacterDetails()}>Save</button>
         </div>
       )}
     </div>

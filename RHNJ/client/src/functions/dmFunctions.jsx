@@ -5,12 +5,17 @@ const API_URL = 'http://localhost:3000/api'; // Update with your API URL
 
 // Helper function for making fetch requests
 const fetchData = async (url, options) => {
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Error fetching data');
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error fetching data');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
   }
-  return response.json();
 };
 
 // Search all players
@@ -85,7 +90,7 @@ export const createTeam = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'authorization': `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ teamName, roomPassword, assets }),
     });
@@ -181,7 +186,7 @@ export const increaseCharacterXP = async (characterId, amount) => {
       body: JSON.stringify({ amount }),
     });
   } catch (error) {
-    console.error('Error increasing character XP:', error);
+    console.error(`Error increasing XP for character ${characterId}:`, error);
     throw error;
   }
 };

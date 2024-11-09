@@ -1,21 +1,28 @@
 const API_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests
 const fetchData = async (url, options) => {
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Error fetching data');
+  try {
+    const response = await fetch(url, options);
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      console.error('Error response text:', responseText);
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error fetching data');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error; // Re-throw the error after logging it
   }
-  return response.json();
 };
 
 // DM Signup
 export const DmSignUp = async (newDM) => {
   try {
     const response = await fetch(`${API_URL}/auth/dm-signup`, {
-      // Adjust the endpoint as necessary
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,6 +39,32 @@ export const DmSignUp = async (newDM) => {
   } catch (error) {
     console.error('Error during DM signup:', error);
     throw error;
+  }
+};
+
+// Create a character
+export const createCharacter = async (token, characterData) => {
+  try {
+    console.log('Creating character with token:', token);
+    console.log('Character data:', characterData);
+
+    const response = await fetch(`${API_URL}/characters`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(characterData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to save character: ${response.statusText}`);
+    }
+
+    return response.json(); // Return the character data or the response object if needed
+  } catch (error) {
+    console.error('Error in createCharacter API call:', error);
+    throw error; // Ensure errors are properly propagated for debugging
   }
 };
 
@@ -56,24 +89,79 @@ export const searchSingleUser = async (userId) => {
 };
 
 // Get all characters for a user
-export const searchAllUserCharacters = async () => {
+
+/* export const searchAllUserCharacters = async (token) => {
   try {
     return await fetchData(`${API_URL}/user/characters`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+    return response;
+  } catch (error) {
+    console.error('Error fetching user characters:', error);
+    throw error;
+  }
+}; */
+
+export const searchAllUserCharacters = async (token) => {
+  try {
+    // Check if token is passed as argument, otherwise get it from localStorage
+    const storedToken = token || localStorage.getItem('token');
+    
+    if (!storedToken) {
+      console.error('No token found');
+      throw new Error('Authorization token is missing');
+    }
+
+     /* console.log('Retrieved Token:', storedToken); */
+
+    const response = await fetch(`${API_URL}/user/characters`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${storedToken}`, // Passing token here
+      },
+    });
+    
+    
+    if (!response.ok) {
+      throw new Error('Error fetching user characters');
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching user characters:', error);
     throw error;
   }
 };
 
+
+
 // Search a single user character
 export const searchSingleUserCharacter = async (characterId) => {
+  let token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`);
+    
+    const response = await fetch(`${API_URL}/user/characters/${characterId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+
+      },
+      body: JSON.stringify({
+        characterId: Number(characterId), 
+      })
+    }
+  
+  );
+  const result = response.json();
+  return result
+
   } catch (error) {
     console.error('Error fetching character:', error);
     throw error;
@@ -82,11 +170,17 @@ export const searchSingleUserCharacter = async (characterId) => {
 
 // Edit user character
 export const editUserCharacter = async (characterId, updatedData) => {
+
+  let token = localStorage.getItem('token');
+
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+
+        'Authorization': `Bearer ${token}`,
+
       },
       body: JSON.stringify(updatedData),
     });
@@ -98,9 +192,18 @@ export const editUserCharacter = async (characterId, updatedData) => {
 
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
+
+  const token = localStorage.getItem('token');
+
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`, {
+    return await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
+      headers: {
+
+        'Content-Type': 'application/json',
+
+        Authorization: `Bearer ${token}`,
+      },
     });
   } catch (error) {
     console.error('Error deleting character:', error);

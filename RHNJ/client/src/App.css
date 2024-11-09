@@ -114,3 +114,43 @@ html {
   margin-top: 40px;
   letter-spacing: 4px;
 }
+
+/* General navigation styling */
+.navigation-bar {
+  background-color: #333;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left ul, .nav-right ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navtext, .navtext2 {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.navtext:hover, .navtext2:hover {
+  color: #ddd;
+}
+
+.nav-right button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.navtext2 {
+  font-weight: bold;
+}

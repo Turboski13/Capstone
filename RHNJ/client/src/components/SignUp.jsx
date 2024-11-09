@@ -17,14 +17,14 @@ const Signup = () => {
       const response = await signup({ username, password });
       console.log('Signup successful:', response);
       setUsername(response.username);
-      navigate('/player-home'); // Redirect to login or another page
+      navigate('/player-home'); // Redirect to login or another page 
     } catch (error) {
       console.error('Signup failed:', error.response?.data || error.message);
       alert(
         'Signup failed: ' + (error.response?.data?.error || 'An error occurred')
       );
     }
-  };
+    };
 
   return (
     <div className='signup-page'>
@@ -32,6 +32,7 @@ const Signup = () => {
 
       <div className='form'>
         <div className='card-container'>
+          <h2 className='admin-login-h2'>Signup</h2>
           <form className='signup-form' onSubmit={handleSignup}>
             <div className='user-box'>
               <input

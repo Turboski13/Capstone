@@ -15,9 +15,10 @@ const Login = () => {
     try {
       const response = await login({ username, password });
       // const results = await response.json();
+      
       console.log('Login successful:', response);
       localStorage.setItem('token', response.token);
-      // console.log('Login successful:', response.data);
+      
       navigate('/player-home'); // Redirect to home or another page
     } catch (error) {
       const errorMessage = error.response
@@ -30,9 +31,10 @@ const Login = () => {
   return (
     <div className='login-page'>
       <Navigations />
-      
+
       <div className='form'>
         <div className='card-container'>
+          <h2 className='admin-login-h2'>Login</h2>
           <form className='login-form' onSubmit={handleLogin}>
             <div className='user-box'>
               <input

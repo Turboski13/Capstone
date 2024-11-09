@@ -6,6 +6,8 @@ import {
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
 
+
+
 const PlayerHome = () => {
   const navigate = useNavigate();
   const [characters, setCharacters] = useState([]);
@@ -13,15 +15,31 @@ const PlayerHome = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
+  
   const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
     navigate('/login'); // Redirect to the home or login page
   };
 
+  const handleDelete = async (characterId) => {
+    try {
+      await deleteUserCharacter(characterId);
+      setCharacters((prevCharacters) =>
+        prevCharacters.filter((char) => char.id !== characterId)
+
+      
+      );
+    } catch (err) {
+      console.error('Failed to delete character. Please try again.', err);
+    }
+  };
+
   const fetchCharacters = async () => {
     try {
-      const allCharacters = await searchAllUserCharacters();
+      const userId = localStorage.getItem('userId');
+      const allCharacters = await searchAllUserCharacters(userId);
+      /*console.log("Characters array:", characters);*/
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');
@@ -31,7 +49,14 @@ const PlayerHome = () => {
   };
 
   useEffect(() => {
-    fetchCharacters();
+    const token = localStorage.getItem('token');
+    console.log("Token:", token); // Check if the token is present
+    if (!token) {
+      console.log("No token found, navigating to login.");
+      navigate('/login'); // Redirect to login if no token is found
+    } else {
+      fetchCharacters(); // Only fetch characters if the user is authenticated
+    }
   }, []);
 
   const toggleForm = () => {
@@ -47,8 +72,13 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-      <nav className='ph-nav'>
+       <nav className='ph-nav'>
         <ul className='ph-ul'>
+           <li>
+            <Link to='/' className='dm-nav'>
+              Home
+            </Link>
+          </li>
           <li>
             <Link to='/how-to-play' className='dm-nav'>
               How to Play
@@ -67,6 +97,7 @@ const PlayerHome = () => {
           <button onClick={handleLogout}>Logout</button>
         </ul>
       </nav>
+
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={toggleForm}>
@@ -80,6 +111,35 @@ const PlayerHome = () => {
           onCharacterSelect={handleCharacterSelect}
         />
       )}
+      <label htmlFor='character-select'>Create a Character:</label>
+      <h3>Your Characters</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Class</th>
+           </tr>
+        </thead>
+        <tbody>
+          {characters.map((character) => (
+            <tr key={character.id}>
+
+              <td>{character.characterName}</td>
+              <td>{character.level}</td>
+              <td>{character.characterClass}</td>
+              
+              
+              <td>
+              <button onClick={() => handleDelete(character.id)}>Delete</button>
+              <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
+
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
