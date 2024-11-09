@@ -5,6 +5,7 @@ import {
   deleteUserCharacter,
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
+import Navigations from '../components/Navigations';
 
 
 const PlayerHome = () => {
@@ -26,6 +27,7 @@ const PlayerHome = () => {
       await deleteUserCharacter(characterId);
       setCharacters((prevCharacters) =>
         prevCharacters.filter((char) => char.id !== characterId)
+
       
       );
     } catch (err) {
@@ -62,8 +64,15 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
+      {/* <Navigations /> */}
+
       <nav className='ph-nav'>
         <ul className='ph-ul'>
+          <li>
+            <Link to='/' className='dm-nav'>
+              Home
+            </Link>
+          </li>
           <li>
             <Link to='/how-to-play' className='dm-nav'>
               How to Play
@@ -97,20 +106,19 @@ const PlayerHome = () => {
       )}
       <label htmlFor='character-select'>Create a Character:</label>
       <h3>Your Characters</h3>
-      
+
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Level</th>
             <th>Class</th>
-            
-            
-          </tr>
+           </tr>
         </thead>
         <tbody>
           {characters.map((character) => (
             <tr key={character.id}>
+
               <td>{character.characterName}</td>
               <td>{character.level}</td>
               <td>{character.characterClass}</td>
@@ -118,6 +126,7 @@ const PlayerHome = () => {
               <td>
               <button onClick={() => handleDelete(character.id)}>Delete</button>
               <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
+
               </td>
             </tr>
           ))}

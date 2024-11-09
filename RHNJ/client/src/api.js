@@ -19,13 +19,16 @@ const request = async (endpoint, method = 'GET', data = null, token = null) => {
 
     if (!response.ok) {
       let errorData = null;
-      try{
+      try {
         errorData = await response.json();
-      }catch(parseError) {
-        console.error('Error when trying to parse the JSON: ',parseError);
+      } catch (parseError) {
+        console.error('Error when trying to parse the JSON: ', parseError);
       }
-      const errorDetails = errorData?.error || 'No additional error info to provide';
-      throw new Error(`Error: ${response.status} ${response.statusText}, Details: ${errorDetails}`);
+      const errorDetails =
+        errorData?.error || 'No additional error info to provide';
+      throw new Error(
+        `Error: ${response.status} ${response.statusText}, Details: ${errorDetails}`
+      );
     }
 
     return await response.json();
@@ -55,9 +58,9 @@ export const fetchCharacters = (token) => {
 };
 
 export const createCharacter = (token, characterData) => {
-  return request('/character', 'POST', characterData, token)
-};  
-  
+
+  return request('/characters', 'POST', characterData, token);
+};
 
 // User functions
 export const fetchUsers = (token) => {

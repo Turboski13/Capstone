@@ -44,7 +44,9 @@ const UserCharacter = () => {
       setCharacterInfo({ ...characterInfo, character: updatedCharacter });
       setIsEditing(false);
     } catch (error) {
+
       console.error("Failed to update character:", error);
+
     }
   };
 
@@ -52,6 +54,7 @@ const UserCharacter = () => {
     <>
       {characterInfo && (
         <div className='character-stats'>
+
           <h1>{isEditing ? "Edit Character" : characterInfo.character?.characterName}</h1>
 
           {isEditing ? (
@@ -74,62 +77,79 @@ const UserCharacter = () => {
               <input
                 type="number"
                 name="strength"
+
                 value={editData.attributes.strength}
                 onChange={handleEditChange}
               />
               <label>Dexterity:</label>
               <input
+
                 type="number"
                 name="dexterity"
+
                 value={editData.attributes.dexterity}
                 onChange={handleEditChange}
               />
               <label>Constitution:</label>
               <input
+
                 type="number"
                 name="constitution"
+
                 value={editData.attributes.constitution}
                 onChange={handleEditChange}
               />
               <label>Intelligence:</label>
               <input
+
                 type="number"
                 name="intelligence"
+
                 value={editData.attributes.intelligence}
                 onChange={handleEditChange}
               />
               <label>Wisdom:</label>
               <input
+
                 type="number"
                 name="wisdom"
+
                 value={editData.attributes.wisdom}
                 onChange={handleEditChange}
               />
               <label>Charisma:</label>
               <input
+
                 type="number"
                 name="charisma"
+
                 value={editData.attributes.charisma}
                 onChange={handleEditChange}
               />
               <label>Ideals:</label>
               <input
+
                 type="text"
                 name="ideals"
+
                 value={editData.ideals}
                 onChange={handleEditChange}
               />
               <label>Flaws:</label>
               <input
+
                 type="text"
                 name="flaws"
+
                 value={editData.flaws}
                 onChange={handleEditChange}
               />
               <label>Notes:</label>
               <input
+
                 type="text"
                 name="notes"
+
                 value={editData.notes}
                 onChange={handleEditChange}
               />
@@ -139,6 +159,7 @@ const UserCharacter = () => {
             </div>
           ) : (
             <div>
+
               <h3 className='char-txt'>Level: {characterInfo.character?.level}</h3>
               <h3 className='char-txt'>Status Points: {characterInfo.character?.statusPoints}</h3>
               <h2>Stats:</h2>
@@ -157,6 +178,7 @@ const UserCharacter = () => {
                     {index < characterInfo.character.attributes.savingThrows.length - 1 ? ', ' : ''}
                   </span>
                 ))}
+
               </p>
 
               <p className='char-txt'>
@@ -164,7 +186,9 @@ const UserCharacter = () => {
                 {characterInfo.character.skills?.map((skill, index) => (
                   <span key={index}>
                     {skill}
+
                     {index < characterInfo.character.skills.length - 1 ? ', ' : ''}
+
                   </span>
                 ))}
               </p>
@@ -174,12 +198,16 @@ const UserCharacter = () => {
                 {characterInfo.character.singleUseSkill?.map((skill, index) => (
                   <span key={index}>
                     {skill}
+
                     {index < characterInfo.character.singleUseSkill.length - 1 ? ', ' : ''}
+
                   </span>
                 ))}
               </p>
 
+
               <p className='char-txt'>Attack Roll: {characterInfo.character.attackRoll}</p>
+
               <h3>Ideals: {characterInfo.character.ideals}</h3>
               <h3>Flaws: {characterInfo.character.flaws}</h3>
               <h3>Notes: {characterInfo.character.notes}</h3>
@@ -192,5 +220,6 @@ const UserCharacter = () => {
     </>
   );
 };
+
 
 export default UserCharacter;

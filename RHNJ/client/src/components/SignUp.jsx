@@ -32,6 +32,7 @@ const Signup = () => {
 
       <div className='form'>
         <div className='card-container'>
+          <h2 className='admin-login-h2'>Signup</h2>
           <form className='signup-form' onSubmit={handleSignup}>
             <div className='user-box'>
               <input
