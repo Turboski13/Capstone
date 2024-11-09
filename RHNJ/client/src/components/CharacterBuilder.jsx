@@ -33,11 +33,11 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
 
   const saveCharacterDetails = async () => {
     const characterData = {
-      userId: selectedCharacter.userId,
-      level: selectedCharacter.level,
-      characterName: characterName,
-      characterClass: selectedCharacter.characterClass,
-      image: selectedCharacter.image,
+        userId: selectedCharacter.userId,
+        level: selectedCharacter.level,
+        characterName: characterName,
+        characterClass: selectedCharacter.characterClass,
+        image: selectedCharacter.image,
       attributes: {
         strength: selectedCharacter.attributes.strength,
         dexterity: selectedCharacter.attributes.dexterity,
