@@ -40,7 +40,7 @@ const Navigations = () => {
       <div className='nav-right'>
         <ul>
           <li>
-            <Link to='/dm-home' classname='navtext'>
+            <Link to='/dm-home' className='navtext'>
               DM Page
             </Link>
           </li>

@@ -14,6 +14,7 @@ import AdminLogin from './components/AdminLogin';
 import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
+import UserCharacter from './components/UserCharacter';
 import './App.css';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           path='/about-characters'
           element={<AboutCharacters characters={characters} />}
         />
+        <Route path="/user/character/:id" element={<UserCharacter />} />
         <Route path='/characters' element={<characterList />} />
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/admin-home' element={<AdminHome />} />
