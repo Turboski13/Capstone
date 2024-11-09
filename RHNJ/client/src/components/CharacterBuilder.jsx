@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import characters from '../utils/characterList';
 import { useNavigate } from 'react-router-dom';
 import { createCharacter } from '../api';
-/* import { searchAllUserCharacters, deleteUserCharacter } from '../functions/userFunctions';
+/*import { searchAllUserCharacters, deleteUserCharacter } from '../functions/userFunctions';
 import Navigations from './Navigations'; */
 
 const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {

@@ -106,7 +106,7 @@ export const searchSingleUser = async (userId) => {
   }
 }; */
 
-export const fetchAllUserCharacters = async (token) => {
+export const searchAllUserCharacters = async (token) => {
   try {
     // Check if token is passed as argument, otherwise get it from localStorage
     const storedToken = token || localStorage.getItem('token');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  fetchAllUserCharacters,
+  searchAllUserCharacters,
   deleteUserCharacter,
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
@@ -38,7 +38,8 @@ const PlayerHome = () => {
   const fetchCharacters = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      const allCharacters = await fetchAllUserCharacters(userId);
+      const allCharacters = await searchAllUserCharacters(userId);
+      /*console.log("Characters array:", characters);*/
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');
@@ -128,6 +129,7 @@ const PlayerHome = () => {
               <td>{character.characterName}</td>
               <td>{character.level}</td>
               <td>{character.characterClass}</td>
+              
               
               <td>
               <button onClick={() => handleDelete(character.id)}>Delete</button>

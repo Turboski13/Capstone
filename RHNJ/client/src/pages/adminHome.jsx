@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   searchAllUsers,
-  fetchAllUserCharacters,
+  searchAllUserCharacters,
 } from '../functions/userFunctions';
 import { deleteUser, editUser } from '../functions/adminFunctions';
 import Navigations from '../components/Navigations';
@@ -127,12 +127,15 @@ const AdminHome = () => {
     setUserCharacters([]);
 
     try {
-      const characters = await fetchAllUserCharacters(userId);
+      const characters = await searchAllUserCharacters(userId);
       setUserCharacters(characters);
     } catch (err) {
       setErrorCharacters('Failed to fetch characters for this user.');
     } finally {
       setLoadingCharacters(false);
+    }
+    return {
+      
     }
   };
 
