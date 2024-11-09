@@ -74,11 +74,11 @@ const PlayerHome = () => {
     <div className='player-home'>
        <nav className='ph-nav'>
         <ul className='ph-ul'>
-           <li>
+           {/* <li>
             <Link to='/' className='dm-nav'>
               Home
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to='/how-to-play' className='dm-nav'>
               How to Play

@@ -439,8 +439,9 @@ app.get('/api/users', async (req, res, next) => {
 });
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
+  
   const characters = await prisma.userCharacter.findMany({
-    where: { userId: req.user },
+    where: { userId: req.user.id },
 
   });
   res.status(201).json(characters);
