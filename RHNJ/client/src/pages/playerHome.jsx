@@ -103,14 +103,18 @@ const PlayerHome = () => {
           <tr>
             <th>Name</th>
             <th>Level</th>
+            <th>Class</th>
+            
             
           </tr>
         </thead>
         <tbody>
           {characters.map((character) => (
             <tr key={character.id}>
-              <td>{character.name}</td>
+              <td>{character.characterName}</td>
               <td>{character.level}</td>
+              <td>{character.characterClass}</td>
+              
               <td>
               <button onClick={() => handleDelete(character.id)}>Delete</button>
               <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
