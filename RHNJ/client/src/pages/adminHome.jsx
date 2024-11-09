@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   searchAllUsers,
-  searchAllUserCharacters,
 } from '../functions/userFunctions';
-import { deleteUser, editUser } from '../functions/adminFunctions';
+
+import { deleteUser, editUser, fetchAllUserCharacters } from '../functions/adminFunctions';
 import Navigations from '../components/Navigations';
 
 const AdminHome = () => {
@@ -18,6 +18,11 @@ const AdminHome = () => {
   const [userCharacters, setUserCharacters] = useState([]);
   const [loadingCharacters, setLoadingCharacters] = useState(false);
   const [errorCharacters, setErrorCharacters] = useState(null);
+  const [editingCharacterId, setEditingCharacterId] = useState(null);
+  const [editedCharacter, setEditedCharacter] = useState({
+    characterName: '',
+    description: '',
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -116,6 +121,41 @@ const AdminHome = () => {
     }
   };
 
+  const handleEditCharacter = (character) => {
+    setEditingCharacterId(character.id);
+    setEditedCharacter({
+      characterName: character.characterName,
+      description: character.description || '',
+    });
+  };
+
+  const handleEditChangeCharacter = (e) => {
+    const { name, value } = e.target;
+    setEditedCharacter((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveCharacter = async (characterId) => {
+    try {
+      await updateCharacter(characterId, editedCharacter); // Call to backend
+      setUserCharacters((prevCharacters) =>
+        prevCharacters.map((character) =>
+          character.id === characterId ? { ...character, ...editedCharacter } : character
+        )
+      );
+      setEditingCharacterId(null); // Exit edit mode
+    } catch (error) {
+      console.error('Error updating character:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCharacterId(null);
+    setEditedCharacter({ characterName: '', description: '' });
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -123,19 +163,16 @@ const AdminHome = () => {
   const handleViewUserCharacters = async (userId) => {
     setLoadingCharacters(true);
     setErrorCharacters(null);
-
     setUserCharacters([]);
-
+  
     try {
-      const characters = await searchAllUserCharacters(userId);
+      const characters = await fetchAllUserCharacters(userId);
+      console.log('Fetched characters data:', characters); // Log characters to confirm data structure
       setUserCharacters(characters);
     } catch (err) {
       setErrorCharacters('Failed to fetch characters for this user.');
     } finally {
       setLoadingCharacters(false);
-    }
-    return {
-      
     }
   };
 
@@ -242,16 +279,40 @@ const AdminHome = () => {
           ) : (
             <ul>
               {userCharacters?.map((character) => (
-                <li key={character?.id}>
-                  {character?.name} - {character?.description}
+                <li key={character.id}>
+                  {editingCharacterId === character.id ? (
+                    // Show edit form
+                    <div>
+                      <input
+                        type="text"
+                        name="characterName"
+                        value={editedCharacter.characterName}
+                        onChange={handleEditChange}
+                        placeholder="Character Name"
+                      />
+                      <input
+                        type="text"
+                        name="description"
+                        value={editedCharacter.description}
+                        onChange={handleEditChange}
+                        placeholder="Description"
+                      />
+                      <button onClick={() => handleSaveCharacter(character.id)}>Save</button>
+                      <button onClick={handleCancelEdit}>Cancel</button>
+                    </div>
+                  ) : (
+                    // Display character information with edit button
+                    <div>
+                      {character.characterName} - {character.description}
+                      <button onClick={() => handleEditCharacter(character)}>Edit</button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           )}
         </div>
       )}
-      {/* Logout button */}
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

@@ -251,7 +251,25 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.get('/api/user/characters', authMiddleware, async (req, res) => {
+app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
+  console.log('Accessing /api/users/:userId/characters route');
+  console.log('Authenticated user ID:', req.user.id, 'Requested user ID:', req.params.userId);
+
+  try {
+    const characters = await prisma.userCharacter.findMany({
+      where: { userId: parseInt(req.params.userId, 10) }, // Ensuring the requested user ID matches the parameter
+    });
+
+    console.log('Fetched characters from DB:', characters);
+    return res.status(200).json(characters);
+  } catch (error) {
+    console.error('Error retrieving characters:', error);
+    return res.status(500).json({ error: 'Error retrieving characters' });
+  }
+});
+
+
+app.get('/api/users/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
       where: { userId: req.user.id }, // Ensure you're only fetching characters for the authenticated user
@@ -262,6 +280,8 @@ app.get('/api/user/characters', authMiddleware, async (req, res) => {
     console.error('Error retrieving characters:', error);
   }
 });
+
+
 
 app.post('/api/character', async (req, res, next) => {
   try {
