@@ -82,6 +82,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         } catch (error) {
         console.error('Error saving character:', error);
       }
+      window.location.href = '/player-home';
   };
   
   
