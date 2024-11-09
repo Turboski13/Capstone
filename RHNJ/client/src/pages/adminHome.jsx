@@ -4,7 +4,7 @@ import {
   searchAllUsers,
 } from '../functions/userFunctions';
 
-import { deleteUser, editUser, fetchAllUserCharacters } from '../functions/adminFunctions';
+import { deleteUser, editUser, fetchAllUserCharacters, editUserCharacter, deleteUserCharacter } from '../functions/adminFunctions';
 import Navigations from '../components/Navigations';
 
 const AdminHome = () => {
@@ -21,7 +21,18 @@ const AdminHome = () => {
   const [editingCharacterId, setEditingCharacterId] = useState(null);
   const [editedCharacter, setEditedCharacter] = useState({
     characterName: '',
-    description: '',
+    level: 0,
+    attributes: {
+      strength: 0,
+      dexterity: 0,
+      constitution: 0,
+      intelligence: 0,
+      wisdom: 0,
+      charisma: 0,
+    }, 
+    ideals: '',
+    flaws: '',
+    notes: '',    
   });
 
   useEffect(() => {
@@ -45,11 +56,8 @@ const AdminHome = () => {
         if (!response.ok) {
           throw new Error('Invalid token');
         }
-
-        // If the token is valid, fetch users
         fetchUsers();
       } catch (error) {
-        // Token verification failed, log out the user
         localStorage.removeItem('authToken');
         navigate('/admin-login');
       }
@@ -131,23 +139,47 @@ const AdminHome = () => {
 
   const handleEditChangeCharacter = (e) => {
     const { name, value } = e.target;
-    setEditedCharacter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name.includes('attributes.')) {
+      const attribute = name.split('.')[1]; // e.g., "strength"
+      setEditedCharacter((prev) => ({
+        ...prev,
+        attributes: {
+          ...prev.attributes,
+          [attribute]: Number(value) // Parse value as number if needed
+        }
+      }));
+    } else {
+      setEditedCharacter((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSaveCharacter = async (characterId) => {
     try {
-      await updateCharacter(characterId, editedCharacter); // Call to backend
+      await editUserCharacter(characterId, editedCharacter);
       setUserCharacters((prevCharacters) =>
         prevCharacters.map((character) =>
           character.id === characterId ? { ...character, ...editedCharacter } : character
         )
       );
-      setEditingCharacterId(null); // Exit edit mode
+      setEditingCharacterId(null);
     } catch (error) {
-      console.error('Error updating character:', error);
+      setErrorCharacters('Error updating character.');
+    }
+  };
+
+  const handleDeleteCharacter = async (characterId) => {
+    if (window.confirm('Are you sure you want to delete this character?')) {
+      try {
+        await deleteUserCharacter(characterId);
+        setUserCharacters((prevCharacters) =>
+          prevCharacters.filter((character) => character.id !== characterId)
+        );
+      } catch (err) {
+        setErrorCharacters('Failed to delete character. Please try again.');
+      }
     }
   };
 
@@ -167,7 +199,6 @@ const AdminHome = () => {
   
     try {
       const characters = await fetchAllUserCharacters(userId);
-      console.log('Fetched characters data:', characters); // Log characters to confirm data structure
       setUserCharacters(characters);
     } catch (err) {
       setErrorCharacters('Failed to fetch characters for this user.');
@@ -187,9 +218,8 @@ const AdminHome = () => {
   return (
     <div className='dm-home'>
       <Navigations />
-
       <h2 className='adm-home-h2'>Administrator Home</h2>
-      <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p>
+      {/* <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p> */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type='text'
@@ -281,40 +311,128 @@ const AdminHome = () => {
               {userCharacters?.map((character) => (
                 <li key={character.id}>
                   {editingCharacterId === character.id ? (
-                    // Show edit form
-                    <div>
+                     <div>
+                       <label>Character Name:</label>
+                     <input
+                       type="text"
+                       name="characterName"
+                       value={editedCharacter.characterName}
+                       onChange={handleEditChangeCharacter}
+                       placeholder="Character Name"
+                     />
+                     <label>Character Level:</label>
+                     <input
+                       type="number"
+                       name="level"
+                       value={editedCharacter.level}
+                       onChange={handleEditChangeCharacter}
+                       placeholder="Description"
+                     />
+                     <label>Strength:</label>
+                      <input
+                        type="number"
+                        name="attributes.strength"
+                        value={editedCharacter.attributes?.strength || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Strength"
+                      />
+                      <label>Dexterity:</label>
+                      <input
+                        type="number"
+                        name="attributes.dexterity"
+                        value={editedCharacter.attributes?.dexterity || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Dexterity"
+                      />
+                      <label>Constitution:</label>
+                      <input
+                        type="number"
+                        name="attributes.constitution"
+                        value={editedCharacter.attributes?.constitution || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Constitution"
+                      />
+                      <label>Intelligence:</label>
+                      <input
+                        type="number"
+                        name="attributes.intelligence"
+                        value={editedCharacter.attributes?.intelligence || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Intelligence"
+                      />
+                      <label>Wisdom:</label>
+                      <input
+                        type="number"
+                        name="attributes.wisdom"
+                        value={editedCharacter.attributes?.wisdom || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Wisdom"
+                      />
+                      <label>Charisma:</label>
+                      <input
+                        type="number"
+                        name="attributes.charisma"
+                        value={editedCharacter.attributes?.charisma || 0}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Charisma"
+                      />
+                      <label>Ideals:</label>
                       <input
                         type="text"
-                        name="characterName"
-                        value={editedCharacter.characterName}
-                        onChange={handleEditChange}
-                        placeholder="Character Name"
+                        name="ideals"
+                        value={editedCharacter.ideals}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Ideals"
                       />
+                      <label>Flaws:</label>
                       <input
                         type="text"
-                        name="description"
-                        value={editedCharacter.description}
-                        onChange={handleEditChange}
-                        placeholder="Description"
+                        name="flaws"
+                        value={editedCharacter.flaws}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Flaws"
                       />
-                      <button onClick={() => handleSaveCharacter(character.id)}>Save</button>
-                      <button onClick={handleCancelEdit}>Cancel</button>
-                    </div>
-                  ) : (
-                    // Display character information with edit button
-                    <div>
-                      {character.characterName} - {character.description}
-                      <button onClick={() => handleEditCharacter(character)}>Edit</button>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-    </div>
-  );
+                      <label>Notes:</label>
+                      <input
+                        type="text"
+                        name="notes"
+                        value={editedCharacter.notes}
+                        onChange={handleEditChangeCharacter}
+                        placeholder="Notes"
+                      />
+                     <button onClick={() => handleSaveCharacter(character.id)}>Save</button>
+                     <button onClick={handleCancelEdit}>Cancel</button>
+                   </div>
+                 ) : (
+                   <div>
+                    <ul>
+                     <li>{character.characterName}</li>  
+                     <li>{character.level} </li>
+                     {/* {character.attributes.strength} 
+                      {character.attributes.dexterity} 
+                      {character.attributes.constitution} 
+                      {character.attributes.intelligence} 
+                      {character.attributes.wisdom} 
+                      {character.attributes.charisma} 
+                      {character.ideals} 
+                      {character.flaws} 
+                      {character.notes} */}
+
+                    </ul>
+                     <button onClick={() => handleEditCharacter(character)}>Edit</button>
+                     <button onClick={() => handleDeleteCharacter(character.id)}>Delete</button>
+                   </div>
+                 )}
+               </li>
+             ))}
+           </ul>
+         )}
+       </div>
+     )}
+     {/* Logout button */}
+     <button onClick={handleLogout}>Logout</button>
+   </div>
+ );
 };
 
 export default AdminHome;
