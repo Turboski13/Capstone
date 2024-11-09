@@ -174,14 +174,7 @@ const DMHome = () => {
             />
           </div>
           <div className='form-group'>
-            <label htmlFor='assets' className='team-label'>
-              Assets (JSON format):
-            </label>
-            <textarea
-              id='assets'
-              value={assets}
-              onChange={(e) => setAssets(e.target.value)}
-            />
+          //
           </div>
           <button type='submit'>Create Team</button>
         </form>

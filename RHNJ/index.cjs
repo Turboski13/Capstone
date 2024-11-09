@@ -221,6 +221,20 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+app.post('/api/user/characters/:id', authMiddleware, async(req, res, next)=> {
+  const { characterId } = req.body;
+  try{
+    const character = await prisma.userCharacter.findUnique({
+      where: { id: characterId}
+    })
+    res.status(201).json({character});
+  }catch(err){
+    console.error('Error finding characters', err);
+    res.status(401).json({ message: 'couldnt get the character'});
+  }
+
+})
+
 
 // Character routes
 app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
@@ -248,9 +262,10 @@ app.get('/api/characters', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/characters', async (req, res, next) => {
+app.post('/api/character', async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization']; //problem here
+    console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'missing or wrong jwt' });
@@ -354,7 +369,7 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
     const character = await prisma.userCharacter.findUnique({
@@ -365,7 +380,7 @@ app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
       return res.status(404).send({ error: 'Character not found' });
     }
 
-    if (character.userId !== req.user.id) {
+    if (character.userId !== req.user) {
       return res
         .status(403)
         .send({ error: 'Not authorized to delete this character' });
@@ -404,9 +419,10 @@ app.get('/api/users', async (req, res, next) => {
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
   const characters = await prisma.userCharacter.findMany({
-    where: { userId: req.user.id },
+    where: { userId: req.user },
+
   });
-  res.status(200).json(characters);
+  res.status(201).json(characters);
 });
 
 // Admin routes (for users)

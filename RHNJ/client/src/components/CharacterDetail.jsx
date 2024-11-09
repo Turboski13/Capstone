@@ -9,6 +9,7 @@ import '../index.css';
 const CharacterDetail = () => {
   const { id } = useParams();
   const character = characters.find((char) => char.id === parseInt(id));
+  
 
   if (!character) {
     return <div>Character not found</div>;
@@ -17,7 +18,7 @@ const CharacterDetail = () => {
   return (
     <div className='character-detail'>
       <Navigations />
-
+      
       <h2 className='char-class'>{character.class}</h2>
       <img src={character.image} alt={character.class} className='img2' />
       <p className='char-desc'>{character.description}</p>
