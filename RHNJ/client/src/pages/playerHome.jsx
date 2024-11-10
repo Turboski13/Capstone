@@ -73,9 +73,9 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-       <nav className='ph-nav'>
+       <nav className='navigation'>
        <Navigations />
-        <ul className='ph-ul'>
+        <ul>
           {/* <button onClick={handleLogout}>Logout</button> */}
         </ul>
       </nav> 
@@ -104,7 +104,7 @@ const PlayerHome = () => {
             <th>Name</th>
             <th>Level</th>
             <th>Class</th>
-           </tr>
+          </tr>
         </thead>
         <tbody>
           {characters.map((character) => (
@@ -116,9 +116,14 @@ const PlayerHome = () => {
               
               
               <td>
-              <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
-
+                <button onClick={() => handleDelete(character.id)}>
+                  Delete
+                </button>
+                <button
+                  onClick={() => navigate(`/user/character/${character.id}`)}
+                >
+                  View Details
+                </button>
               </td>
             </tr>
           ))}

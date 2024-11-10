@@ -20,11 +20,12 @@ import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
 import UserCharacter from './components/UserCharacter';
+// import TeamPage from './components/TeamPage';
 import './index.css';
 
-const isAuthenticated = () => {
-  return localStorage.getItem('token') !== null;
-};
+// const isAuthenticated = () => {
+//   return localStorage.getItem('token') !== null;
+// };
 
 function App() {
   const [loading, setLoading] = useState(true);
