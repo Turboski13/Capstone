@@ -259,7 +259,9 @@ const DMHome = () => {
               required
             />
           </div>
-          <div className='form-group'>//</div>
+          <div className='form-group'>
+          //
+          </div>
           <button type='submit'>Create Team</button>
         </form>
       )}

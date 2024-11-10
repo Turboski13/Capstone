@@ -7,6 +7,7 @@ import {
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
 import Navigations from '../components/Navigations';
 
+
 const PlayerHome = () => {
   const navigate = useNavigate();
   const [characters, setCharacters] = useState([]);
@@ -14,6 +15,7 @@ const PlayerHome = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
+  
   const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
@@ -25,6 +27,8 @@ const PlayerHome = () => {
       await deleteUserCharacter(characterId);
       setCharacters((prevCharacters) =>
         prevCharacters.filter((char) => char.id !== characterId)
+
+      
       );
     } catch (err) {
       console.error('Failed to delete character. Please try again.', err);
@@ -102,7 +106,8 @@ const PlayerHome = () => {
         <tbody>
           {characters.map((character) => (
             <tr key={character.id}>
-              <td>{character.name}</td>
+
+              <td>{character.characterName}</td>
               <td>{character.level}</td>
               <td>{character.characterClass}</td>
               <td>

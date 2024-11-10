@@ -18,7 +18,8 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   // Handle character selection from the dropdown
   const handleCharacterChange = (event) => {
     const characterId = Number(event.target.value);
-    /*   console.log("Selected Character ID:", characterId); */
+  /*   console.log("Selected Character ID:", characterId); */
+
 
     // Find the selected character based on ID
     const character = characters.find((char) => char.id === characterId);
@@ -66,12 +67,14 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       console.error('No token in local Store');
       return;
     }
-    try {
-      const response = await createCharacter(token, characterData);
-      console.log('Response received:', response);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
+
+      try {
+        const response = await createCharacter(token, characterData);
+        console.log("Response received:", response);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
 
       const data = await response.json();
       console.log('Character saved:', data);
@@ -83,10 +86,12 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
     }
     window.location.href = '/player-home';
   };
-
+  
+  
   return (
     <div className='char-build'>
       {/* Character Dropdown */}
+      
 
       <select
         id='character-select'
@@ -107,9 +112,9 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       {selectedCharacter && (
         <div className='character-stats'>
           <h3 className='char-stats'>{selectedCharacter.characterName}</h3>
-          <label htmlFor='name' className='char-label'>
-            Name:
-          </label>
+
+          <label htmlFor='name' className='char-label'>Name:</label>
+
           <input
             type='text'
             id='character-name'
@@ -138,9 +143,9 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
             {selectedCharacter.attributes.savingThrows?.map((save, index) => (
               <span key={index}>
                 {save}
-                {index < selectedCharacter.attributes.savingThrows.length - 1
-                  ? ', '
-                  : ''}
+
+                {index < selectedCharacter.attributes.savingThrows.length - 1 ? ', ' : ''}
+
               </span>
             ))}
           </p>
@@ -225,9 +230,9 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
       {selectedCharacter && (
         <div className='character-details'>
           <h3>{selectedCharacter.name}</h3>
-          <button onClick={async () => await saveCharacterDetails()}>
-            Save
-          </button>
+
+          <button onClick={async () => await saveCharacterDetails()}>Save</button>
+
         </div>
       )}
     </div>

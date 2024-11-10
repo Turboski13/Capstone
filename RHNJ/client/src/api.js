@@ -60,6 +60,7 @@ export const fetchCharacters = (token) => {
 export const createCharacter = (token, characterData) => {
   return request('/character', 'POST', characterData, token);
 };
+
 // User functions
 export const fetchUsers = (token) => {
   return request('/users', 'GET', null, token);

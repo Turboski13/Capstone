@@ -78,6 +78,7 @@ const Navigations = () => {
 
       <div className='nav-right'>
         <ul>
+
           {isLoggedIn ? (
             <li>
               <button onClick={handleLogout} className='navtext2'>

@@ -1,5 +1,5 @@
 const API_URL = 'http://localhost:3000/api';
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests
 const fetchData = async (url, options) => {
@@ -89,6 +89,30 @@ export const searchSingleUser = async (userId) => {
 };
 
 // Get all characters for a user
+
+/* export const searchAllUserCharacters = async (token) => {
+  try {
+    return await fetchData(`${API_URL}/user/characters`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${storedToken}`, // Passing token here
+      },
+    });
+    
+    
+    if (!response.ok) {
+      throw new Error('Error fetching user characters');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user characters:', error);
+    throw error;
+  }
+}; */
+
 export const searchAllUserCharacters = async (token) => {
   try {
     // Check if token is passed as argument, otherwise get it from localStorage
@@ -121,6 +145,9 @@ export const searchAllUserCharacters = async (token) => {
     throw error;
   }
 };
+
+
+
 // Search a single user character
 export const searchSingleUserCharacter = async (characterId) => {
   let token = localStorage.getItem('token');
@@ -150,13 +177,17 @@ export const searchSingleUserCharacter = async (characterId) => {
 
 // Edit user character
 export const editUserCharacter = async (characterId, updatedData) => {
+
   let token = localStorage.getItem('token');
+
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+
         'Authorization': `Bearer ${token}`,
+
       },
       body: JSON.stringify(updatedData),
     });
@@ -168,12 +199,16 @@ export const editUserCharacter = async (characterId, updatedData) => {
 
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
+
   const token = localStorage.getItem('token');
+
   try {
     return await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
       headers: {
+
         'Content-Type': 'application/json',
+
         Authorization: `Bearer ${token}`,
       },
     });
