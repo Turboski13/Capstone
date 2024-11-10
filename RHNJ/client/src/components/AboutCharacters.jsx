@@ -22,7 +22,7 @@ export default function AboutCharacters({
                 className='char-img'
               />
 
-              <h3>{character.characterClass}</h3>
+              <h3 className='char-cp'>{character.characterClass}</h3>
             </div>
           </Link>
         ))

@@ -84,6 +84,10 @@ export const fetchUserCharacters = (token, userId) => {
   return request(`/users/${userId}/characters`, 'GET', null, token);
 };
 
+export const fetchPlayerCharacters = (token) => {
+  return request(`/user/characters`, 'GET', null, token);
+};
+
 export const fetchCharacter = (token, characterId) => {
   return request(`/characters/${characterId}`, 'GET', null, token);
 };
