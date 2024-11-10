@@ -73,9 +73,9 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-       <nav className='ph-nav'>
+       <nav className='navigation'>
        <Navigations />
-        <ul className='ph-ul'>
+        <ul>
           {/* <button onClick={handleLogout}>Logout</button> */}
         </ul>
       </nav> 

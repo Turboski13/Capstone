@@ -202,9 +202,9 @@ const DMHome = () => {
 
   return (
     <div className='dm-home'>
-      <nav className='ph-nav'>
+      <nav className='navigation'>
        <Navigations />
-        <ul className='dm-nav-ul'>
+        <ul>
           {/* <button onClick={handleLogout}>Logout</button> */}
         </ul>
       </nav> 

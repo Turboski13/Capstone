@@ -222,7 +222,7 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.post('/api/user/characters/:id', authMiddleware, async(req, res, next)=> {
+app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   const { characterId } = req.body;
   try {
     const character = await prisma.userCharacter.findUnique({
@@ -251,7 +251,12 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
 
 app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
   console.log('Accessing /api/users/:userId/characters route');
-  console.log('Authenticated user ID:', req.user.id, 'Requested user ID:', req.params.userId);
+  console.log(
+    'Authenticated user ID:',
+    req.user.id,
+    'Requested user ID:',
+    req.params.userId
+  );
 
   try {
     const characters = await prisma.userCharacter.findMany({
@@ -266,7 +271,6 @@ app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
   }
 });
 
-
 app.get('/api/users/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
@@ -278,8 +282,6 @@ app.get('/api/users/characters', authMiddleware, async (req, res) => {
     console.error('Error retrieving characters:', error);
   }
 });
-
-
 
 app.post('/api/character', async (req, res, next) => {
   try {
@@ -412,6 +414,28 @@ app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
   res.json({ message: `Team details for ${teamId}` });
 });
 
+// Delete team
+app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
+  const { teamId } = req.params;
+
+  // Find the team to delete
+  const team = await prisma.team.findUnique({
+    where: { id: parseInt(teamId) },
+    include: { dm: true }, // Check if the logged-in user is the DM
+  });
+
+  if (!team || team.dm.id !== req.user.id) {
+    return res.status(403).json({ message: 'Only the DM can delete the team' });
+  }
+
+  // Delete the team
+  await prisma.team.delete({
+    where: { id: parseInt(teamId) },
+  });
+
+  return res.json({ message: 'Team deleted successfully' });
+});
+
 app.delete(
   '/api/teams/:teamId/users/:userId',
   authMiddleware,
@@ -493,10 +517,8 @@ app.get('/api/users', async (req, res, next) => {
 });
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
-  
   const characters = await prisma.userCharacter.findMany({
     where: { userId: req.user.id },
-
   });
   res.status(201).json(characters);
 });

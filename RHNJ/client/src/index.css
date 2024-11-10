@@ -177,11 +177,7 @@ th {
 .navigation {
   margin-left: 150px; /* Remove any left margin */
   padding-left: 10px; /* Optional: Add some padding for spacing */
-}
-
-.navigation {
-  margin-left: 150px; /* Remove any left margin */
-  padding-left: 10px; /* Optional: Add some padding for spacing */
+  justify-content: space-between;
 }
 
 .login-page,
@@ -399,7 +395,7 @@ button {
 }
 
 .ph-nav {
-  margin-left: 250px;
+  margin-left: 50px;
 }
 .ph-ul {
   display: flex; /* Enable flexbox */
@@ -434,7 +430,7 @@ button {
   text-align: center;
 }
 
-.dm-nav {
+/* .dm-nav {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -449,7 +445,7 @@ button {
 
 .dm-nav-ul {
   margin-left: 300px;
-}
+} */
 .dm-h2,
 .dm-h3 {
   margin-top: 50px;
@@ -654,4 +650,21 @@ button:hover {
 }
 .admin-th {
   color: antiquewhite;
+}
+
+/* USER CHARACTER */
+.uc-form {
+  width: 400px;
+  margin-left: 15px;
+}
+.form-field {
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+  padding: 10px;
+  display: block;
+}
+
+label {
+  margin-right: 10px;
 }

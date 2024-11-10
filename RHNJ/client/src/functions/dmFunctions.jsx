@@ -195,16 +195,51 @@ export const removePlayerFromTeam = async (teamId, playerId) => {
 
 // Delete team
 export const deleteTeam = async (teamId) => {
+  const token = localStorage.getItem('token');
+
+  // If no token, handle the error (e.g., prompt user to log in)
+  if (!token) {
+    console.error('No valid token found');
+    throw new Error('Unauthorized: No token found');
+  }
+
   try {
-    return await fetchData(`${API_URL}/teams/${teamId}`, {
+    const response = await fetch(`${API_URL}/teams/${teamId}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
+
+    // Handle the response based on the status code
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Handle unauthorized error
+        const errorText = await response.text(); // Read text response (probably 'Unauthorized')
+        console.error('Unauthorized:', errorText);
+        throw new Error(
+          'Unauthorized: You must be logged in to delete the team'
+        );
+      } else {
+        const errorResponse = await response.json(); // For other errors, parse as JSON
+        console.error(
+          'Error deleting team:',
+          errorResponse.message || 'Unknown error'
+        );
+        throw new Error(errorResponse.message || 'Failed to delete team');
+      }
+    }
+
+    // If successful, return the success message
+    const data = await response.json();
+    console.log('Team deleted successfully:', data.message);
+    return data;
   } catch (error) {
-    console.error('Error deleting team:', error);
-    throw error;
+    console.error('Error deleting team:', error.message);
+    throw error; // Re-throw the error for further handling in the UI
   }
 };
-
 // Increase XP for team
 export const increaseTeamXP = async (teamId, amount) => {
   if (amount <= 0) {
