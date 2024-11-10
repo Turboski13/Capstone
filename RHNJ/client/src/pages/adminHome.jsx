@@ -137,13 +137,13 @@ const AdminHome = () => {
     }
   };
 
-  const handleEditCharacter = (character) => {
+const handleEditCharacter = (character) => {
     setEditingCharacterId(character.id);
     setEditedCharacter({
       characterName: character.characterName,
       description: character.description || "",
     });
-  };
+  }; 
 
   const handleEditChangeCharacter = (e) => {
     const { name, value } = e.target;
@@ -193,63 +193,7 @@ const AdminHome = () => {
     }
   };
 
-  const handleEditCharacter = (character) => {
-    setEditingCharacterId(character.id);
-    setEditedCharacter({
-      characterName: character.characterName,
-      description: character.description || '',
-    });
-  };
-
-  const handleEditChangeCharacter = (e) => {
-    const { name, value } = e.target;
-    if (name.includes('attributes.')) {
-      const attribute = name.split('.')[1]; // e.g., "strength"
-      setEditedCharacter((prev) => ({
-        ...prev,
-        attributes: {
-          ...prev.attributes,
-          [attribute]: Number(value), // Parse value as number if needed
-        },
-      }));
-    } else {
-      setEditedCharacter((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleSaveCharacter = async (characterId) => {
-    try {
-      await editUserCharacter(characterId, editedCharacter);
-      setUserCharacters((prevCharacters) =>
-        prevCharacters.map((character) =>
-          character.id === characterId
-            ? { ...character, ...editedCharacter }
-            : character
-        )
-      );
-      setEditingCharacterId(null);
-    } catch (error) {
-      setErrorCharacters('Error updating character.');
-    }
-  };
-
-  const handleDeleteCharacter = async (characterId) => {
-    if (window.confirm('Are you sure you want to delete this character?')) {
-      try {
-        await deleteUserCharacter(characterId);
-        setUserCharacters((prevCharacters) =>
-          prevCharacters.filter((character) => character.id !== characterId)
-        );
-      } catch (err) {
-        setErrorCharacters('Failed to delete character. Please try again.');
-      }
-    }
-  };
-
-  const handleCancelEdit = () => {
+     const handleCancelEdit = () => {
     setEditingCharacterId(null);
     setEditedCharacter({ characterName: '', description: '' });
   };
