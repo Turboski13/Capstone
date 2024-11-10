@@ -205,7 +205,7 @@ const DMHome = () => {
       <nav className='ph-nav'>
        <Navigations />
         <ul className='dm-nav-ul'>
-          <button onClick={handleLogout}>Logout</button>
+          {/* <button onClick={handleLogout}>Logout</button> */}
         </ul>
       </nav> 
       <h2 className='dm-h2'>Diva Manager Home</h2>
