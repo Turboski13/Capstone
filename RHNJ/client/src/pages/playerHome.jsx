@@ -75,9 +75,7 @@ const PlayerHome = () => {
     <div className='player-home'>
        <nav className='ph-nav'>
        <Navigations />
-        <ul className='ph-ul'>
-          <button onClick={handleLogout}>Logout</button>
-        </ul>
+        
       </nav> 
 
       <h2>Player Homepage</h2>

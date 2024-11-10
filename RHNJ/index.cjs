@@ -21,7 +21,7 @@ const authMiddleware = (req, res, next) => {
     console.error('Authorization header missing or incorrectly formatted');
     return res.sendStatus(401);
   }
-
+  
   const token = authHeader.split(' ')[1];
   if (!token) {
     console.error('Token is undefined');
@@ -356,6 +356,33 @@ app.post('/api/teams', authMiddleware, async (req, res, next) => {
   } catch (err) {
     console.error('couldnt create a team', err);
     res.status(401).json({ message: 'couldnt make a new team', err });
+  }
+});
+
+app.delete('/api/teams/:teamId', authMiddleware, async (req, res, next) => {
+  try {
+    const { teamId } = req.params;
+    const { password } = req.body; 
+    const team = await prisma.team.findUnique({
+      where: { id: Number(teamId) },
+    });
+
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found' });
+    }
+    if (req.user !== req.user.id) {
+      return res.status(403).json({ message: 'Only the DM can delete the team' });
+    }
+    if (team.password !== password) {
+      return res.status(401).json({ message: 'Incorrect team password' });
+    }
+    await prisma.team.delete({
+      where: { id: Number(teamId) },
+    });
+    res.sendStatus(204); 
+  } catch (err) {
+    console.error('Error deleting team:', err);
+    next(err); 
   }
 });
 

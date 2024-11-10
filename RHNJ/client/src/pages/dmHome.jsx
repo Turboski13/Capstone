@@ -10,7 +10,7 @@ import {
   addPlayerToTeam,
   // invitePlayerToTeam,
   removePlayerFromTeam,
-  deleteTeam,
+  deleteDmTeam,
 } from '../functions/dmFunctions';
 
 const DMHome = () => {
@@ -67,7 +67,7 @@ const DMHome = () => {
 
   const handleDeleteTeam = async (teamId) => {
     try {
-      await deleteTeam(teamId);
+      await deleteDmTeam(teamId);
       setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
     } catch (err) {
       setError('Failed to delete team. Please try again.');
@@ -261,7 +261,7 @@ const DMHome = () => {
             />
           </div>
           <div className='form-group'>
-          //
+          
           </div>
           <button type='submit'>Create Team</button>
         </form>

@@ -98,3 +98,7 @@ export const updateCharacter = (token, characterId, characterData) => {
 export const deleteCharacter = (token, characterId) => {
   return request(`/characters/${characterId}`, 'DELETE', null, token);
 };
+
+export const deleteTeam = (token, password, teamId) => {
+  return request(`/teams/${teamId}`, 'DELETE', { password }, token);
+};

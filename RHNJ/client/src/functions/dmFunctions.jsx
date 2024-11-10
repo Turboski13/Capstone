@@ -194,16 +194,22 @@ export const removePlayerFromTeam = async (teamId, playerId) => {
 };
 
 // Delete team
-export const deleteTeam = async (teamId) => {
+export const deleteDmTeam = async (token, teamId, password) => {
   try {
     return await fetchData(`${API_URL}/teams/${teamId}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ password }),
     });
   } catch (error) {
     console.error('Error deleting team:', error);
     throw error;
   }
 };
+    
 
 // Increase XP for team
 export const increaseTeamXP = async (teamId, amount) => {
