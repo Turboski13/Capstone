@@ -225,6 +225,7 @@ const DMHome = () => {
         </li>
         <button onClick={handleLogout}>Logout</button>
       </ul>
+
       <h2 className='dm-h2'>Diva Manager Home</h2>
       {error && <p style={{ color: 'red', padding: 10 }}>{error}</p>}
       {newTeamForm && (

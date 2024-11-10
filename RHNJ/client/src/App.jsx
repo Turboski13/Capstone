@@ -51,14 +51,12 @@ function App() {
         <Route path='/how-to-play' element={<HowToPlay />} />
         <Route path='/admin-login' element={<AdminLogin />} />
         <Route path='/dm-signup' element={<DmSignUp />} />
-        <Route
-          path='/about-characters'
-          element={<AboutCharacters characters={characters} />}
-        />
+        <Route path='/about-characters' element={<AboutCharacters characters={characters} />} />
         <Route path='/user/character/:id' element={<UserCharacter />} />
         <Route path='/characters' element={<characterList />} />
         <Route path='/character/:id' element={<CharacterDetail />} />
-        <Route path='/' element={<Home />} /> {/* Home route */}
+        <Route path='/' element={<Home />} /> 
+        
         {/* Protected Routes */}
         {/* <Route
           path='/admin-home'
@@ -77,13 +75,16 @@ function App() {
         <Route
           path='/team/:teamId'
           element={isAuthenticated() ? <TeamPage /> : <Navigate to='/login' />}
+
         /> */}
         <Route path='/admin-home' element={<AdminHome />} />
         <Route path='/dm-home' element={<DMHome />} />
         <Route path='/player-home' element={<PlayerHome />} />
         <Route path='/navigations' element={<Navigations />} />
         {/* <Route path='/team/:teamId' element={<TeamPage />} /> */}
+
       </Routes>
+      
     </div>
   );
 }

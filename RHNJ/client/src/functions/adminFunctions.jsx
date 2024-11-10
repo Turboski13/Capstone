@@ -1,17 +1,17 @@
 // client/src/functions/adminFunctions.jsx
-const API_URL = 'http://localhost:3000/api';
+const API_URL = "http://localhost:3000/api";
 
 // Utility function for fetch requests
 const fetchData = async (url, options = {}) => {
   try {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      throw new Error('No token found.  Please log in again.');
+      throw new Error("No token found.  Please log in again.");
     }
 
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       ...options.headers,
     };
@@ -23,9 +23,9 @@ const fetchData = async (url, options = {}) => {
 
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) {
-        throw new Error('Unauthorized access. Please login again.');
+        throw new Error("Unauthorized access. Please login again.");
       } else if (response.status === 500) {
-        throw new Error('Server error. Please try again later.');
+        throw new Error("Server error. Please try again later.");
       }
       throw new Error(`Error: ${response.statusText}`);
     }
@@ -36,7 +36,7 @@ const fetchData = async (url, options = {}) => {
 
     return await response.json();
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error("Fetch error:", error);
     throw error;
   }
 };
@@ -52,54 +52,78 @@ export const searchSingleUser = async (userId) => {
 
 export const editUser = async (userId, userData) => {
   return await fetchData(`${API_URL}/users/${userId}`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(userData),
   });
 };
 
 export const deleteUser = async (userId) => {
   const response = await fetchData(`${API_URL}/users/${userId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   if (response === null) {
-    console.log('User successfully deleted');
+    console.log("User successfully deleted");
     return true; // Indicate successful deletion
   }
-  console.log('Error or unexpected response:', response);
+  console.log("Error or unexpected response:", response);
   return false;
 };
 
 // Character Functions
+
+/* export const fetchAllUserCharacters = async (userId) => {
+  try {
+    const response = await fetchData(`${API_URL}/users/${userId}/characters`);
+    console.log('API Response:', response); // Log the response
+    if (!response.ok) {
+      throw new Error(`Failed to fetch characters: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(
+      `Error fetching characters for user with ID ${userId}:`,
+      error
+    );
+    throw error; // Rethrow or return a custom error message
+  }
+}; */
 export const fetchAllUserCharacters = async (userId) => {
   try {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No token found. Please log in again.');
+      throw new Error("No token found. Please log in again.");
     }
 
     const apiUrl = `${API_URL}/users/${userId}/characters`;
-    console.log('Fetching characters from:', apiUrl);
+    console.log("Fetching characters from:", apiUrl);
 
     const response = await fetch(apiUrl, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+
         Authorization: `Bearer ${token}`,
       },
     });
 
+
     console.log('Raw response:', response);
+
 
     // Check if the response is OK (status code 200-299)
     if (!response.ok) {
       const errorDetails = await response.text();
+
       console.error('Error details:', errorDetails); // Log server error message
+
       throw new Error(`Failed to fetch characters: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('Fetched characters data:', data);
+
+    console.log("Fetched characters data:", data);
+
     return data;
   } catch (error) {
     console.error(
@@ -122,9 +146,9 @@ export const searchSingleUserCharacter = async (characterId) => {
 export const editUserCharacter = async (characterId, characterData) => {
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(characterData),
     });
@@ -137,16 +161,16 @@ export const editUserCharacter = async (characterId, characterData) => {
 export const deleteUserCharacter = async (characterId) => {
   try {
     const response = await fetchData(`${API_URL}/characters/${characterId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
     if (response === null) {
-      console.log('Character successfully deleted');
+      console.log("Character successfully deleted");
       return true; // Indicate successful deletion
     }
-    console.log('Unexpected response:', response);
+    console.log("Unexpected response:", response);
     return false; // If something unexpected happens
   } catch (error) {
-    console.error('Error deleting character:', error);
+    console.error("Error deleting character:", error);
     return false; // Return false in case of error
   }
 };

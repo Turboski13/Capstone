@@ -59,122 +59,107 @@ const UserCharacter = () => {
           <h1>{isEditing ? "Edit Character" : characterInfo.character?.characterName}</h1>
 
           {isEditing ? (
-            <div className='form-field'>
-              <div className='form-field'>
-                 <label>Character Name:</label>
-                <input
-                  type="text"
-                  name="characterName"
-                  value={editData.characterName}
-                  onChange={handleEditChange}
-                />
-               </div>
-              <div className='form-field'>
-                <label>Character Level:</label>
-                <input
-                  type="number"
-                  name="level"
-                  value={editData.level}
-                  onChange={handleEditChange}
-                />
-               </div>
-              <div className='form-field'>
-                <label>Strength:</label>
-                <input
-                  type="number"
-                  name="strength"
 
-                  value={editData.attributes.strength}
-                  onChange={handleEditChange}
-                />
+            <div className="form-field">
+              <div className="form-field">
+               <label>Character Name:</label>
+              <input
+                type="text"
+                name="characterName"
+                value={editData.characterName}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Dexterity:</label>
-                <input
-
-                  type="number"
-                  name="dexterity"
-
-                  value={editData.attributes.dexterity}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+               <label>Character Level:</label>
+              <input
+                type="number"
+                name="level"
+                value={editData.level}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Constitution:</label>
-                <input
-
-                  type="number"
-                  name="constitution"
-
-                  value={editData.attributes.constitution}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+               <label>Strength:</label>
+              <input
+                type="number"
+                name="strength"
+                value={editData.attributes.strength}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Intelligence:</label>
-                <input
-
-                  type="number"
-                  name="intelligence"
-
-                  value={editData.attributes.intelligence}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+              <label>Dexterity:</label>
+              <input
+                type="number"
+                name="dexterity"
+                value={editData.attributes.dexterity}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Wisdom:</label>
-                <input
-
-                  type="number"
-                  name="wisdom"
-
-                  value={editData.attributes.wisdom}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+              <label>Constitution:</label>
+              <input
+                type="number"
+                name="constitution"
+                value={editData.attributes.constitution}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Charisma:</label>
-                <input
-
-                  type="number"
-                  name="charisma"
-
-                  value={editData.attributes.charisma}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+              <label>Intelligence:</label>
+              <input
+                type="number"
+                name="intelligence"
+                value={editData.attributes.intelligence}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Ideals:</label>
-                <input
-
-                  type="text"
-                  name="ideals"
-
-                  value={editData.ideals}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+              <label>Wisdom:</label>
+              <input
+                type="number"
+                name="wisdom"
+                value={editData.attributes.wisdom}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Flaws:</label>
-                <input
-
-                  type="text"
-                  name="flaws"
-
-                  value={editData.flaws}
-                  onChange={handleEditChange}
-                />
+              <div className="form-field">
+              <label>Charisma:</label>
+              <input
+                type="number"
+                name="charisma"
+                value={editData.attributes.charisma}
+                onChange={handleEditChange}
+              />
               </div>
-              <div className='form-field'>
-                <label>Notes:</label>
-                <input
+              <div className="form-field">
+              <label>Ideals:</label>
+              <input
+                type="text"
+                name="ideals"
+                value={editData.ideals}
+                onChange={handleEditChange}
+              />
+              </div>
+              <div className="form-field">
+              <label>Flaws:</label>
+              <input
+                type="text"
+                name="flaws"
+                value={editData.flaws}
+                onChange={handleEditChange}
+              />
+              </div>
+              <div className="form-field">
+              <label>Notes:</label>
+              <input
+                type="text"
+                name="notes"
+                value={editData.notes}
+                onChange={handleEditChange}
+              />
 
-                  type="text"
-                  name="notes"
-
-                  value={editData.notes}
-                  onChange={handleEditChange}
-                />
               </div>
               <button onClick={handleEditSubmit}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>

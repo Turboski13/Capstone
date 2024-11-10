@@ -8,6 +8,7 @@ import CharacterBuilder from '../components/CharacterBuilder'; // Component for 
 import Navigations from '../components/Navigations';
 
 
+
 const PlayerHome = () => {
   const navigate = useNavigate();
   const [characters, setCharacters] = useState([]);
@@ -16,11 +17,11 @@ const PlayerHome = () => {
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
   
-  const handleLogout = () => {
+   const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
     navigate('/login'); // Redirect to the home or login page
-  };
+  }; 
 
   const handleDelete = async (characterId) => {
     try {
@@ -50,9 +51,9 @@ const PlayerHome = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Token:', token); // Check if the token is present
+    console.log('Token in PlayerHome:', token);// Check if the token is present
     if (!token) {
-      console.log('No token found, navigating to login.');
+      console.log("No token found, navigating to login.");
       navigate('/login'); // Redirect to login if no token is found
     } else {
       fetchCharacters(); // Only fetch characters if the user is authenticated
@@ -72,12 +73,12 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-      <nav className='ph-nav'>
-        <Navigations />
+       <nav className='ph-nav'>
+       <Navigations />
         <ul className='ph-ul'>
           <button onClick={handleLogout}>Logout</button>
         </ul>
-      </nav>
+      </nav> 
 
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -92,9 +93,11 @@ const PlayerHome = () => {
           onCharacterSelect={handleCharacterSelect}
         />
       )}
+      <div>
       <label htmlFor='character-select'>Create a Character:</label>
+      </div>
       <h3>Your Characters</h3>
-
+    <div >
       <table>
         <thead>
           <tr>
@@ -110,7 +113,8 @@ const PlayerHome = () => {
               <td>{character.characterName}</td>
               <td>{character.level}</td>
               <td>{character.characterClass}</td>
-              <td>
+                           
+             <td>
                 <button onClick={() => handleDelete(character.id)}>
                   Delete
                 </button>
@@ -124,6 +128,7 @@ const PlayerHome = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };
