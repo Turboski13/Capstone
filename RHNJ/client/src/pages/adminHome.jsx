@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { searchAllUsers } from '../functions/userFunctions';
+
 import {
-  searchAllUsers,
-  searchAllUserCharacters,
-} from '../functions/userFunctions';
-import { deleteUser, editUser } from '../functions/adminFunctions';
+  deleteUser,
+  editUser,
+  fetchAllUserCharacters,
+  editUserCharacter,
+  deleteUserCharacter,
+} from '../functions/adminFunctions';
 import Navigations from '../components/Navigations';
 
 const AdminHome = () => {
@@ -18,6 +22,22 @@ const AdminHome = () => {
   const [userCharacters, setUserCharacters] = useState([]);
   const [loadingCharacters, setLoadingCharacters] = useState(false);
   const [errorCharacters, setErrorCharacters] = useState(null);
+  const [editingCharacterId, setEditingCharacterId] = useState(null);
+  const [editedCharacter, setEditedCharacter] = useState({
+    characterName: '',
+    level: 0,
+    attributes: {
+      strength: 0,
+      dexterity: 0,
+      constitution: 0,
+      intelligence: 0,
+      wisdom: 0,
+      charisma: 0,
+    },
+    ideals: '',
+    flaws: '',
+    notes: '',
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -116,6 +136,67 @@ const AdminHome = () => {
     }
   };
 
+  const handleEditCharacter = (character) => {
+    setEditingCharacterId(character.id);
+    setEditedCharacter({
+      characterName: character.characterName,
+      description: character.description || '',
+    });
+  };
+
+  const handleEditChangeCharacter = (e) => {
+    const { name, value } = e.target;
+    if (name.includes('attributes.')) {
+      const attribute = name.split('.')[1]; // e.g., "strength"
+      setEditedCharacter((prev) => ({
+        ...prev,
+        attributes: {
+          ...prev.attributes,
+          [attribute]: Number(value), // Parse value as number if needed
+        },
+      }));
+    } else {
+      setEditedCharacter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSaveCharacter = async (characterId) => {
+    try {
+      await editUserCharacter(characterId, editedCharacter);
+      setUserCharacters((prevCharacters) =>
+        prevCharacters.map((character) =>
+          character.id === characterId
+            ? { ...character, ...editedCharacter }
+            : character
+        )
+      );
+      setEditingCharacterId(null);
+    } catch (error) {
+      setErrorCharacters('Error updating character.');
+    }
+  };
+
+  const handleDeleteCharacter = async (characterId) => {
+    if (window.confirm('Are you sure you want to delete this character?')) {
+      try {
+        await deleteUserCharacter(characterId);
+        setUserCharacters((prevCharacters) =>
+          prevCharacters.filter((character) => character.id !== characterId)
+        );
+      } catch (err) {
+        setErrorCharacters('Failed to delete character. Please try again.');
+      }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCharacterId(null);
+    setEditedCharacter({ characterName: '', description: '' });
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -123,11 +204,10 @@ const AdminHome = () => {
   const handleViewUserCharacters = async (userId) => {
     setLoadingCharacters(true);
     setErrorCharacters(null);
-
     setUserCharacters([]);
 
     try {
-      const characters = await searchAllUserCharacters(userId);
+      const characters = await fetchAllUserCharacters(userId);
       setUserCharacters(characters);
     } catch (err) {
       setErrorCharacters('Failed to fetch characters for this user.');
@@ -149,7 +229,7 @@ const AdminHome = () => {
       <Navigations />
 
       <h2 className='adm-home-h2'>Administrator Home</h2>
-      <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p>
+      {/* <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p> */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type='text'
@@ -240,17 +320,148 @@ const AdminHome = () => {
             <ul>
               {userCharacters?.map((character) => (
                 <li key={character?.id}>
-                  {character?.name} - {character?.description}
+                  {editingCharacterId === character.id ? (
+                    <div className='character-edit-form'>
+                      <div className='form-field'>
+                        <label>Character Name:</label>
+                        <input
+                          type='text'
+                          name='characterName'
+                          value={editedCharacter.characterName}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Character Name'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Character Level:</label>
+                        <input
+                          type='number'
+                          name='level'
+                          value={editedCharacter.level}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Description'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Strength:</label>
+                        <input
+                          type='number'
+                          name='attributes.strength'
+                          value={editedCharacter.attributes?.strength || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Strength'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Dexterity:</label>
+                        <input
+                          type='number'
+                          name='attributes.dexterity'
+                          value={editedCharacter.attributes?.dexterity || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Dexterity'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Constitution:</label>
+                        <input
+                          type='number'
+                          name='attributes.constitution'
+                          value={editedCharacter.attributes?.constitution || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Constitution'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Intelligence:</label>
+                        <input
+                          type='number'
+                          name='attributes.intelligence'
+                          value={editedCharacter.attributes?.intelligence || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Intelligence'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Wisdom:</label>
+                        <input
+                          type='number'
+                          name='attributes.wisdom'
+                          value={editedCharacter.attributes?.wisdom || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Wisdom'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Charisma:</label>
+                        <input
+                          type='number'
+                          name='attributes.charisma'
+                          value={editedCharacter.attributes?.charisma || 0}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Charisma'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Ideals:</label>
+                        <input
+                          type='text'
+                          name='ideals'
+                          value={editedCharacter.ideals}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Ideals'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Flaws:</label>
+                        <input
+                          type='text'
+                          name='flaws'
+                          value={editedCharacter.flaws}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Flaws'
+                        />
+                      </div>
+                      <div className='form-field'>
+                        <label>Notes:</label>
+                        <input
+                          type='text'
+                          name='notes'
+                          value={editedCharacter.notes}
+                          onChange={handleEditChangeCharacter}
+                          placeholder='Notes'
+                        />
+                      </div>
+
+                      <button onClick={() => handleSaveCharacter(character.id)}>
+                        Save
+                      </button>
+                      <button onClick={handleCancelEdit}>Cancel</button>
+                    </div>
+                  ) : (
+                    <div>
+                      <ul>
+                        <li>{character.characterName}</li>
+                        <li>{character.level} </li>
+                      </ul>
+                      <button onClick={() => handleEditCharacter(character)}>
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCharacter(character.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           )}
         </div>
       )}
-      {/* Logout button */}
       <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };
-
 export default AdminHome;

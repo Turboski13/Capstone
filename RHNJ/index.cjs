@@ -236,7 +236,29 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.get('/api/characters', authMiddleware, async (req, res) => {
+app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
+  console.log('Accessing /api/users/:userId/characters route');
+  console.log(
+    'Authenticated user ID:',
+    req.user.id,
+    'Requested user ID:',
+    req.params.userId
+  );
+
+  try {
+    const characters = await prisma.userCharacter.findMany({
+      where: { userId: parseInt(req.params.userId, 10) }, // Ensuring the requested user ID matches the parameter
+    });
+
+    console.log('Fetched characters from DB:', characters);
+    return res.status(200).json(characters);
+  } catch (error) {
+    console.error('Error retrieving characters:', error);
+    return res.status(500).json({ error: 'Error retrieving characters' });
+  }
+});
+
+app.get('/api/users/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
       where: { userId: req.user.id }, // Ensure you're only fetching characters for the authenticated user
@@ -248,9 +270,10 @@ app.get('/api/characters', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/characters', async (req, res, next) => {
+app.post('/api/character', async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization']; //problem here
+    console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'missing or wrong jwt' });
@@ -292,6 +315,7 @@ app.post('/api/characters', async (req, res, next) => {
   }
 });
 
+// Teams route
 app.get('/api/teams', async (req, res, next) => {
   try {
     const teams = await prisma.team.findMany();
@@ -326,7 +350,9 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   try {
     const { teamPW } = req.body;
     const { teamId } = req.params;
-    const userId = req.user;
+    const userId = req.user.id;
+    console.log('Joining team with:', { teamId, teamPW, userId });
+
     const team = await prisma.team.findUnique({
       where: { id: parseInt(teamId) },
     });
@@ -335,7 +361,7 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
       return res.status(404).json({ message: 'No teams found!' });
     }
 
-    if (team.password !== teamPW) {
+    if (team.password && team.password !== teamPW) {
       return res.status(401).json({ message: 'password is incorrect' });
     }
 
@@ -343,16 +369,68 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
       where: { id: parseInt(teamId) },
       data: {
         users: {
-          connect: { id: userId },
+          connect: {
+            id: userId,
+          },
         },
+      },
+      include: {
+        users: true,
       },
     });
     res.status(201).json({ message: 'Joined new team!: ', team: joinedTeam });
   } catch (err) {
     console.error('wrong info or error: ', err);
-    res.status(401).json({ message: 'The credentials are incorrect. ', err });
+    res.status(401).json({ message: 'The credentials are incorrect.', err });
   }
 });
+
+app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
+  const { teamId } = req.params.teamId;
+
+  const team = await prisma.team.findUnique({
+    where: { id: parseInt(teamId) },
+    include: { users: true, assets: true }, // Include users (players) and assets
+  });
+
+  if (!team) {
+    return res.status(404).json({ message: 'Team not found' });
+  }
+
+  res.json({ message: `Team details for ${teamId}` });
+});
+
+app.delete(
+  '/api/teams/:teamId/users/:userId',
+  authMiddleware,
+  async (req, res) => {
+    const { teamId, userId } = req.params;
+
+    const team = await prisma.team.findUnique({
+      where: { id: parseInt(teamId) },
+      include: { dm: true }, // Check if the logged-in user is the DM
+    });
+
+    if (!team || team.dm.id !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: 'Only the DM can remove players from the team' });
+    }
+
+    // Remove the player from the team
+    const updatedTeam = await prisma.team.update({
+      where: { id: parseInt(teamId) },
+      data: {
+        users: {
+          disconnect: { id: parseInt(userId) },
+        },
+      },
+      include: { users: true },
+    });
+
+    res.json(updatedTeam);
+  }
+);
 
 app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {

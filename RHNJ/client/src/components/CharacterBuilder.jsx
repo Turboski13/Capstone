@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import characters from '../utils/characterList';
 import { useNavigate } from 'react-router-dom';
 import { createCharacter } from '../api';
-import {
-  searchAllUserCharacters,
-  deleteUserCharacter,
-} from '../functions/userFunctions';
-import Navigations from './Navigations';
+/*import { searchAllUserCharacters, deleteUserCharacter } from '../functions/userFunctions';
+import Navigations from './Navigations'; */
 
 const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
   const [selectedCharacterId, setSelectedCharacterId] = useState('');
@@ -26,32 +23,19 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
     // Find the selected character based on ID
     const character = characters.find((char) => char.id === characterId);
     /* console.log("Found Character:", character); */
-    if (character) {
-      setSelectedCharacterId(characterId);
-      setSelectedCharacter(character);
+    setSelectedCharacterId(characterId);
+    setSelectedCharacter(character);
 
-      if (!character.userId) {
-        console.error('Character does not have a userId');
-      }
+    if (character) {
+      onCharacterSelect(character);
     }
   };
 
   const saveCharacterDetails = async () => {
-    if (!selectedCharacter) {
-      console.error('Selected character is missing');
-      return;
-    }
-
-    // Check if 'userId' is present
-    if (!selectedCharacter.userId) {
-      console.error('Selected character is missing a userId');
-      return;
-    }
-
     const characterData = {
       userId: selectedCharacter.userId,
       level: selectedCharacter.level,
-      characterName: characterName || selectedCharacter.characterName,
+      characterName: characterName,
       characterClass: selectedCharacter.characterClass,
       image: selectedCharacter.image,
       attributes: {
@@ -97,6 +81,7 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
     } catch (error) {
       console.error('Error saving character:', error);
     }
+    window.location.href = '/player-home';
   };
 
   return (

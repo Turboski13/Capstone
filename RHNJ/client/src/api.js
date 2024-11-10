@@ -58,7 +58,7 @@ export const fetchCharacters = (token) => {
 };
 
 export const createCharacter = (token, characterData) => {
-  return request('/characters', 'POST', characterData, token);
+  return request('/character', 'POST', characterData, token);
 };
 // User functions
 export const fetchUsers = (token) => {
@@ -80,6 +80,10 @@ export const updateUser = (token, userId, userData) => {
 
 export const fetchUserCharacters = (token, userId) => {
   return request(`/users/${userId}/characters`, 'GET', null, token);
+};
+
+export const fetchPlayerCharacters = (token) => {
+  return request(`/user/characters`, 'GET', null, token);
 };
 
 export const fetchCharacter = (token, characterId) => {

@@ -33,7 +33,9 @@ const PlayerHome = () => {
 
   const fetchCharacters = async () => {
     try {
-      const allCharacters = await searchAllUserCharacters();
+      const userId = localStorage.getItem('userId');
+      const allCharacters = await searchAllUserCharacters(userId);
+      /*console.log("Characters array:", characters);*/
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');
@@ -43,7 +45,14 @@ const PlayerHome = () => {
   };
 
   useEffect(() => {
-    fetchCharacters();
+    const token = localStorage.getItem('token');
+    console.log('Token:', token); // Check if the token is present
+    if (!token) {
+      console.log('No token found, navigating to login.');
+      navigate('/login'); // Redirect to login if no token is found
+    } else {
+      fetchCharacters(); // Only fetch characters if the user is authenticated
+    }
   }, []);
 
   const toggleForm = () => {
@@ -59,33 +68,13 @@ const PlayerHome = () => {
 
   return (
     <div className='player-home'>
-      {/* <Navigations /> */}
-
       <nav className='ph-nav'>
+        <Navigations />
         <ul className='ph-ul'>
-          <li>
-            <Link to='/' className='dm-nav'>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to='/how-to-play' className='dm-nav'>
-              How to Play
-            </Link>
-          </li>
-          <li>
-            <Link to='/about-characters' className='dm-nav'>
-              Characters
-            </Link>
-          </li>
-          <li>
-            <Link to='/dm-home' className='dm-nav'>
-              DM Home
-            </Link>
-          </li>
           <button onClick={handleLogout}>Logout</button>
         </ul>
       </nav>
+
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button onClick={toggleForm}>
@@ -107,6 +96,7 @@ const PlayerHome = () => {
           <tr>
             <th>Name</th>
             <th>Level</th>
+            <th>Class</th>
           </tr>
         </thead>
         <tbody>
@@ -114,6 +104,7 @@ const PlayerHome = () => {
             <tr key={character.id}>
               <td>{character.name}</td>
               <td>{character.level}</td>
+              <td>{character.characterClass}</td>
               <td>
                 <button onClick={() => handleDelete(character.id)}>
                   Delete

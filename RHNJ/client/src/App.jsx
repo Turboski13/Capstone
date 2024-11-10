@@ -20,11 +20,12 @@ import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
 import UserCharacter from './components/UserCharacter';
+// import TeamPage from './components/TeamPage';
 import './index.css';
 
-const isAuthenticated = () => {
-  return localStorage.getItem('token') !== null;
-};
+// const isAuthenticated = () => {
+//   return localStorage.getItem('token') !== null;
+// };
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -59,7 +60,7 @@ function App() {
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/' element={<Home />} /> {/* Home route */}
         {/* Protected Routes */}
-        <Route
+        {/* <Route
           path='/admin-home'
           element={isAuthenticated() ? <Navigate to='/login' /> : <AdminHome />}
         />
@@ -73,6 +74,15 @@ function App() {
             isAuthenticated() ? <Navigate to='/login' /> : <PlayerHome />
           }
         />
+        <Route
+          path='/team/:teamId'
+          element={isAuthenticated() ? <TeamPage /> : <Navigate to='/login' />}
+        /> */}
+        <Route path='/admin-home' element={<AdminHome />} />
+        <Route path='/dm-home' element={<DMHome />} />
+        <Route path='/player-home' element={<PlayerHome />} />
+        <Route path='/navigations' element={<Navigations />} />
+        {/* <Route path='/team/:teamId' element={<TeamPage />} /> */}
       </Routes>
     </div>
   );

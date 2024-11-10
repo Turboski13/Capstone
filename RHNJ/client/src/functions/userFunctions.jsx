@@ -89,40 +89,59 @@ export const searchSingleUser = async (userId) => {
 };
 
 // Get all characters for a user
-export const searchAllUserCharacters = async (userId) => {
-  const token = localStorage.getItem('token');
-  console.log('Retrieved token:', token);
-  if (!token) {
-    console.error('No token found in localStorage.');
-    throw new Error('No token found.');
-  }
-
-  if (!userId) {
-    console.error('User ID is missing or invalid.');
-    throw new Error('Invalid user ID.');
-  }
-
-  console.log('Fetching characters for userId:', userId);
-
+export const searchAllUserCharacters = async (token) => {
   try {
-    const response = await fetchData(`${API_URL}/users/${userId}/characters`, {
+    // Check if token is passed as argument, otherwise get it from localStorage
+    const storedToken = token || localStorage.getItem('token');
+    
+    if (!storedToken) {
+      console.error('No token found');
+      throw new Error('Authorization token is missing');
+    }
+
+    /* console.log('Retrieved Token:', storedToken); */
+
+    const response = await fetch(`${API_URL}/user/characters`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${storedToken}`, // Passing token here
       },
     });
-    return response;
+    
+    
+    if (!response.ok) {
+      throw new Error('Error fetching user characters');
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching user characters:', error);
     throw error;
   }
 };
-
 // Search a single user character
 export const searchSingleUserCharacter = async (characterId) => {
+  let token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`);
+    
+    const response = await fetch(`${API_URL}/user/characters/${characterId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+
+      },
+      body: JSON.stringify({
+        characterId: Number(characterId), 
+      })
+    }
+  
+  );
+  const result = response.json();
+  return result
+
   } catch (error) {
     console.error('Error fetching character:', error);
     throw error;
@@ -131,18 +150,13 @@ export const searchSingleUserCharacter = async (characterId) => {
 
 // Edit user character
 export const editUserCharacter = async (characterId, updatedData) => {
-  const token = localStorage.getItem('token'); // Ensure the token is available
-
-  if (!token) {
-    throw new Error('No token found. Please log in again.');
-  }
-
+  let token = localStorage.getItem('token');
   try {
     return await fetchData(`${API_URL}/characters/${characterId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(updatedData),
     });
@@ -154,16 +168,12 @@ export const editUserCharacter = async (characterId, updatedData) => {
 
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
-  const token = localStorage.getItem('token'); // Ensure the token is available
-
-  if (!token) {
-    throw new Error('No token found. Please log in again.');
-  }
-
+  const token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/characters/${characterId}`, {
+    return await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
