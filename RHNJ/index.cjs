@@ -328,6 +328,7 @@ app.post('/api/character', async (req, res, next) => {
   }
 });
 
+//Team routes
 app.get('/api/teams', async (req, res, next) => {
   try {
     const teams = await prisma.team.findMany();

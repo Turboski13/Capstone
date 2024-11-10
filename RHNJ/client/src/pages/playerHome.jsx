@@ -93,9 +93,11 @@ const PlayerHome = () => {
           onCharacterSelect={handleCharacterSelect}
         />
       )}
+      <div>
       <label htmlFor='character-select'>Create a Character:</label>
+      </div>
       <h3>Your Characters</h3>
-
+    <div >
       <table>
         <thead>
           <tr>
@@ -122,6 +124,7 @@ const PlayerHome = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };
