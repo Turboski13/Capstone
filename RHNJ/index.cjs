@@ -343,20 +343,23 @@ app.get('/api/teams', async (req, res, next) => {
 app.post('/api/teams', authMiddleware, async (req, res, next) => {
   try {
     const { teamName, roomPassword, assets } = req.body;
-    const dmId = req.user;
+    // const dmId = req.user;
+    const userId = req.user.id;
 
     const newTeam = await prisma.team.create({
       data: {
         name: teamName,
         password: roomPassword,
-        dmId: parseInt(dmId),
-        assets: assets ? JSON.parse(assets) : {},
+        dmId: userId,
+        assets: assets || {},
       },
     });
-    res.status(201).json(newTeam);
+    res.status(201).json({ team: newTeam });
   } catch (err) {
     console.error('couldnt create a team', err);
-    res.status(401).json({ message: 'couldnt make a new team', err });
+    res
+      .status(500)
+      .json({ message: 'couldnt make a new team', error: err.message });
   }
 });
 
@@ -418,22 +421,27 @@ app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
 app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
   const { teamId } = req.params;
 
-  // Find the team to delete
   const team = await prisma.team.findUnique({
     where: { id: parseInt(teamId) },
-    include: { dm: true }, // Check if the logged-in user is the DM
+    include: { dm: true }, // Ensure dm is included in the response
   });
 
-  if (!team || team.dm.id !== req.user.id) {
-    return res.status(403).json({ message: 'Only the DM can delete the team' });
+  if (!team || !team.dm || team.dm.id !== req.user.id) {
+    return res.status(403).json({
+      message: 'Only the DM can delete the team',
+    });
   }
 
-  // Delete the team
-  await prisma.team.delete({
-    where: { id: parseInt(teamId) },
-  });
+  try {
+    await prisma.team.delete({
+      where: { id: parseInt(teamId) },
+    });
 
-  return res.json({ message: 'Team deleted successfully' });
+    res.status(200).json({ message: 'Team successfully deleted' });
+  } catch (err) {
+    console.error('Error deleting team:', err);
+    res.status(500).json({ message: 'Failed to delete team' });
+  }
 });
 
 app.delete(

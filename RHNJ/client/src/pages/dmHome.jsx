@@ -203,11 +203,9 @@ const DMHome = () => {
   return (
     <div className='dm-home'>
       <nav className='navigation'>
-       <Navigations />
-        <ul>
-          {/* <button onClick={handleLogout}>Logout</button> */}
-        </ul>
-      </nav> 
+        <Navigations />
+        <ul>{/* <button onClick={handleLogout}>Logout</button> */}</ul>
+      </nav>
       <h2 className='dm-h2'>Diva Manager Home</h2>
       {error && <p style={{ color: 'red', padding: 10 }}>{error}</p>}
       {newTeamForm && (
@@ -242,9 +240,7 @@ const DMHome = () => {
               required
             />
           </div>
-          <div className='form-group'>
-          //
-          </div>
+          <div className='form-group'>//</div>
           <button type='submit'>Create Team</button>
         </form>
       )}
