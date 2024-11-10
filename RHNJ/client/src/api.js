@@ -58,7 +58,6 @@ export const fetchCharacters = (token) => {
 };
 
 export const createCharacter = (token, characterData) => {
-
   return request('/character', 'POST', characterData, token);
 };
 

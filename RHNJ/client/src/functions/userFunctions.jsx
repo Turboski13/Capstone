@@ -114,10 +114,17 @@ export const searchSingleUser = async (userId) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${storedToken}`, // Passing token here
       },
     });
-    return response;
+    
+    
+    if (!response.ok) {
+      throw new Error('Error fetching user characters');
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching user characters:', error);
     throw error;

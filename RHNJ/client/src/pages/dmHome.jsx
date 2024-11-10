@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigations from '../components/Navigations';
+import { searchAllUsers, searchSingleUser } from '../functions/userFunctions';
+
 import {
-  searchAllPlayers,
   searchAllTeams,
   createTeam,
   joinTeam,
+  addPlayerToTeam,
   // invitePlayerToTeam,
   removePlayerFromTeam,
+  deleteTeam,
 } from '../functions/dmFunctions';
 
 const DMHome = () => {
@@ -23,30 +26,26 @@ const DMHome = () => {
   const [teamPW, setTeamPW] = useState('');
   const [joinTeamId, setJoinTeamId] = useState(null);
   const [teamSearchInput, setTeamSearchInput] = useState('');
+  const [filteredTeams, setFilteredTeams] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState(null);
 
   useEffect(() => {
-    // const fetchPlayers = async () => {
-    //   setError(null);
-    //   try {
-    //     const allPlayers = await searchAllPlayers();
-    //     setPlayers(allPlayers);
-    //   } catch (err) {
-    //     setError('Failed to fetch players. Please try again.');
-    //   }
-    // };
-
     const fetchTeams = async () => {
       setError(null);
+      setLoading(true);
       try {
         const allTeams = await searchAllTeams();
-        setTeams(allTeams);
+        if (Array.isArray(allTeams)) {
+          setTeams(allTeams);
+        }
       } catch (err) {
         setError('Failed to fetch teams. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTeams();
-    setLoading(false);
     //uncomment this if you guys think that you want to see all players for some reason instead of all teams
     // const fetchData = async () => {
     //   await Promise.all([fetchPlayers(), fetchTeams()]);
@@ -56,78 +55,185 @@ const DMHome = () => {
     //   };
   }, []);
 
-  const handleDelete = async (playerId) => {
+  useEffect(() => {
+    if (Array.isArray(teams)) {
+      setFilteredTeams(
+        teams.filter((team) =>
+          team.name.toLowerCase().includes(teamSearchInput.toLowerCase())
+        )
+      );
+    }
+  }, [teamSearchInput, teams]);
+
+  const handleDeleteTeam = async (teamId) => {
     try {
-      await removePlayerFromTeam(playerId);
-      setPlayers((prevPlayers) =>
-        prevPlayers.filter((player) => player.id !== playerId)
+      await deleteTeam(teamId);
+      setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
+    } catch (err) {
+      setError('Failed to delete team. Please try again.');
+    }
+  };
+
+  const handleAddPlayerToTeam = async (teamId) => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    // console.log('Token:', token);
+    // console.log('User ID:', userId);
+
+    if (!userId) {
+      setError('No user ID found. Please log in again.');
+      return;
+    }
+
+    try {
+      await addPlayerToTeam(teamId, userId, token);
+      setTeams((prevTeams) =>
+        prevTeams.map((team) => {
+          if (team.id === teamId) {
+            return { ...team, users: [...team.users, userId] };
+          }
+          return team;
+        })
       );
     } catch (err) {
-      setError('Failed to delete player. Please try again.');
+      setError('Failed to add user to team. Please try again');
+    }
+  };
+
+  const handleRemovePlayerFromTeam = async (teamId, userId) => {
+    try {
+      await removePlayerFromTeam(teamId, userId);
+      setTeams((prevTeams) =>
+        prevTeams.map((team) => {
+          if (team.id === teamId) {
+            return {
+              ...team,
+              users: team.users.filter((user) => user.id !== userId),
+            };
+          }
+          return team;
+        })
+      );
+    } catch (err) {
+      setError('Failed to remove player from team. Please try again.');
     }
   };
 
   const handleLogout = () => {
-    // logout(); // Call the logout function
+    localStorage.removeItem('token'); // Clear token on logout
     navigate('/login');
     console.log('Logging out...');
   };
 
-  if (loading) {
-    return <p>Loading players and teams...</p>;
-  }
-
   const createNewTeam = async (nameOfTeam, roomCode, anyAssets) => {
-    setNewTeamForm(false);
     const token = localStorage.getItem('token');
+    if (!token) {
+      setError('You must be logged in to create a team.');
+      return;
+    }
+
+    setNewTeamForm(false);
+
     try {
       const response = await createTeam(nameOfTeam, roomCode, anyAssets, token);
-      const team = response.json();
-      console.log(team);
+      console.log('New team created:', response);
+      setTeams((prevTeams) => [...prevTeams, response.team]);
     } catch (err) {
       console.log('problem with creating team', err);
+      setError('Failed to create the team. Please try again.');
     }
-  };
-  const handleJoinSubmit = (e) => {
-    e.preventDefault();
-    handleJoin(joinTeamId, teamPW);
-  };
-  const handleJoinClick = (teamId) => {
-    setJoinTeamId(teamId);
   };
 
-  const handleJoin = async (teamId, teamPW) => {
+  const handleJoinTeam = async (teamId, teamPW) => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      setError('You must be loggied in to join a team');
+      return;
+    }
+
     try {
-      const response = await joinTeam(teamId, teamPW, token);
-      const teamInfo = response;
-      console.log(teamInfo);
+      await joinTeam(teamId, teamPW, token);
+      setSelectedTeam(teams.find((team) => team.id === teamId));
     } catch (err) {
-      console.log('couldnt join the team, sorry.', err);
+      setError('Failed to join the team.');
     }
   };
-  const filteredTeams = teams.filter((team) =>
-    team.name.toLowerCase().includes(teamSearchInput.toLowerCase())
-  );
-  // useEffect(() => {
-  //   setFilteredTeams(
-  //     teams.filter((team) => team.name.toLowerCase().includes(teamSearchInput.toLowerCase()))
-  //   );
-  // },[teamSearchInput, teams])
+
+  const handleJoinSubmit = async (e) => {
+    e.preventDefault();
+    if (!teamPW) {
+      setError('Please enter a team password');
+      return;
+    }
+    try {
+      // Get the token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('You must be logged in to join a team');
+        return;
+      }
+
+      // Join the team
+      const updatedTeam = await joinTeam(joinTeamId, teamPW, token);
+
+      // Update the team state with the updated team details
+      setTeams((prevTeams) =>
+        prevTeams.map((team) =>
+          team.id === updatedTeam.id ? updatedTeam : team
+        )
+      );
+
+      // Clear the input fields and reset the state
+      setJoinTeamId(null);
+      setTeamPW('');
+      setError(null);
+      alert('Successfully joined the team!');
+    } catch (err) {
+      setError('Failed to join the team. Please check the password.');
+    }
+  };
+
+  const handleJoinClick = (teamId) => {
+    setJoinTeamId(teamId);
+    setTeamPW('');
+    setError(null);
+  };
 
   return (
     <div className='dm-home'>
-      <nav className='ph-nav'>
-       <Navigations />
-        <ul className='dm-nav-ul'>
-          <button onClick={handleLogout}>Logout</button>
-        </ul>
-      </nav> 
+      <ul className='dm-nav-ul'>
+        <li>
+          <Link to='/' className='dm-nav'>
+            Home
+          </Link>
+        </li>
+        <li>
+          <Link to='/how-to-play' className='dm-nav'>
+            How to Play
+          </Link>
+        </li>
+        <li>
+          <Link to='/about-characters' className='dm-nav'>
+            Characters
+          </Link>
+        </li>
+        <li>
+          <Link to='/player-home' className='dm-nav'>
+            Player Home
+          </Link>
+        </li>
+        <button onClick={handleLogout}>Logout</button>
+      </ul>
+
       <h2 className='dm-h2'>Diva Manager Home</h2>
       {error && <p style={{ color: 'red', padding: 10 }}>{error}</p>}
       {newTeamForm && (
         <form
-          onSubmit={() => createNewTeam(teamName, roomPassword, assets)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            createNewTeam(teamName, roomPassword, assets);
+          }}
           className='team-name'
         >
           <div className='form-group'>
@@ -203,8 +309,9 @@ const DMHome = () => {
         value={teamSearchInput}
         onChange={(e) => setTeamSearchInput(e.target.value)}
       />
+      <h3>Teams List</h3>
       {filteredTeams.length === 0 ? (
-        <p style={{ color: 'red', padding: 10 }}>No teams available.</p>
+        <p>No teams available.</p>
       ) : (
         <table>
           <thead>
@@ -218,42 +325,90 @@ const DMHome = () => {
               <tr key={team.id}>
                 <td>{team.name}</td>
                 <td>
-                  {joinTeamId === team.id ? (
-                    <form onSubmit={handleJoinSubmit}>
-                      <div>
-                        <label htmlFor='teamPW'>Enter Password:</label>
-                        <input
-                          type='password'
-                          id='teamPW'
-                          value={teamPW}
-                          onChange={(e) => setTeamPW(e.target.value)}
-                        />
-                      </div>
-                      <button type='submit' className='submit-btn'>
-                        Submit
-                      </button>
-                    </form>
-                  ) : (
-                    <button
-                      onClick={() => handleJoinClick(team.id)}
-                      className='submit-btn'
-                    >
-                      Join
-                    </button>
-                  )}
-                  {/* <button
-                    onClick={() => handleDelete(team.id)}
-                    className='submit-btn'
-                  >
+                  <button onClick={() => handleDeleteTeam(team.id)}>
                     Delete
-                  </button> */}
+                  </button>
+                  <button onClick={() => handleJoinClick(team.id)}>Join</button>
+
+                  {/* Add/Remove Users */}
+                  {Array.isArray(team.users) && team.users.length > 0 ? (
+                    <ul>
+                      {team.users.map((user) => (
+                        <li key={user.id}>
+                          {user.username}
+                          <button
+                            onClick={() => handleAddPlayerToTeam(team.id)}
+                          >
+                            Add Player
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleRemovePlayerFromTeam(team.id, user.id)
+                            }
+                          >
+                            Remove
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No users yet</p>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      {/* Show Team Info and Functions */}
+      {selectedTeam && (
+        <div>
+          <h3>{selectedTeam.name} - Team Info</h3>
+          <ul>
+            {selectedTeam.users && selectedTeam.users.length > 0 ? (
+              selectedTeam.users.map((user) => (
+                <li key={user.id}>
+                  {user.username}
+                  <button
+                    onClick={() =>
+                      handleRemovePlayerFromTeam(selectedTeam.id, user.id)
+                    }
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))
+            ) : (
+              <p>No players in this team yet.</p>
+            )}
+          </ul>
+        </div>
+      )}
+      {/* Join team form if clicked on Join */}
+      {joinTeamId && (
+        <div className='join-team-form'>
+          <form onSubmit={handleJoinSubmit}>
+            <input
+              type='password'
+              value={teamPW}
+              onChange={(e) => setTeamPW(e.target.value)}
+              placeholder='Enter Team Password'
+              required
+            />
+            <button type='submit' disabled={loading}>
+              Submit
+            </button>
+          </form>
+
+          {/* Display error message if any */}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+
+          {/* Display loading message */}
+          {loading && <p>Loading...</p>}
+        </div>
+      )}{' '}
     </div>
   );
 };
+
 export default DMHome;

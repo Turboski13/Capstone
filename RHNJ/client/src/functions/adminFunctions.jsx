@@ -71,6 +71,7 @@ export const deleteUser = async (userId) => {
 };
 
 // Character Functions
+
 /* export const fetchAllUserCharacters = async (userId) => {
   try {
     const response = await fetchData(`${API_URL}/users/${userId}/characters`);
@@ -101,21 +102,28 @@ export const fetchAllUserCharacters = async (userId) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+
         Authorization: `Bearer ${token}`,
       },
     });
 
-    console.log("Raw response:", response);
+
+    console.log('Raw response:', response);
+
 
     // Check if the response is OK (status code 200-299)
     if (!response.ok) {
       const errorDetails = await response.text();
-      console.error("Error details:", errorDetails); // Log server error message
+
+      console.error('Error details:', errorDetails); // Log server error message
+
       throw new Error(`Failed to fetch characters: ${response.statusText}`);
     }
 
     const data = await response.json();
+
     console.log("Fetched characters data:", data);
+
     return data;
   } catch (error) {
     console.error(

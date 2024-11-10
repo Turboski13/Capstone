@@ -33,11 +33,13 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
 
   const saveCharacterDetails = async () => {
     const characterData = {
-        userId: selectedCharacter.userId,
-        level: selectedCharacter.level,
-        characterName: characterName,
-        characterClass: selectedCharacter.characterClass,
-        image: selectedCharacter.image,
+
+      userId: selectedCharacter.userId,
+      level: selectedCharacter.level,
+      characterName: characterName,
+      characterClass: selectedCharacter.characterClass,
+      image: selectedCharacter.image,
+
       attributes: {
         strength: selectedCharacter.attributes.strength,
         dexterity: selectedCharacter.attributes.dexterity,
@@ -76,13 +78,12 @@ const CharacterBuilder = ({ onCharacterSelect, setCharacters }) => {
         const data = await response.json();
         console.log('Character saved:', data);
 
-        setSelectedCharacter(null);
-        setSelectedCharacterId(null);
-
-        } catch (error) {
-        console.error('Error saving character:', error);
-      }
-      window.location.href = '/player-home';
+      setSelectedCharacter(null);
+      setSelectedCharacterId(null);
+    } catch (error) {
+      console.error('Error saving character:', error);
+    }
+    window.location.href = '/player-home';
   };
   
   

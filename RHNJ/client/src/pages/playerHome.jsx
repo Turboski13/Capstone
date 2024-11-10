@@ -104,7 +104,7 @@ const PlayerHome = () => {
             <th>Name</th>
             <th>Level</th>
             <th>Class</th>
-           </tr>
+          </tr>
         </thead>
         <tbody>
           {characters.map((character) => (
@@ -113,12 +113,16 @@ const PlayerHome = () => {
               <td>{character.characterName}</td>
               <td>{character.level}</td>
               <td>{character.characterClass}</td>
-              
-              
-              <td>
-              <button onClick={() => handleDelete(character.id)}>Delete</button>
-              <button onClick={() => navigate(`/user/character/${character.id}`)}>View Details</button>
-
+                           
+             <td>
+                <button onClick={() => handleDelete(character.id)}>
+                  Delete
+                </button>
+                <button
+                  onClick={() => navigate(`/user/character/${character.id}`)}
+                >
+                  View Details
+                </button>
               </td>
             </tr>
           ))}

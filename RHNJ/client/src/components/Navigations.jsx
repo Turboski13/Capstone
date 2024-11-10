@@ -44,6 +44,7 @@ const Navigations = () => {
       <div className="nav-left">
         <ul>
           {/* Conditionally render "Home", "About", "How to Play", "Characters" for non-Player Home and non-DM Home pages */}
+
           {!isPlayerHome && !isDMHome && renderNavLink("/", "Home")}
           {!isPlayerHome && !isDMHome && renderNavLink("/about", "About")}
           {!isPlayerHome && !isDMHome && renderNavLink("/how-to-play", "How to Play")}
@@ -66,12 +67,12 @@ const Navigations = () => {
               {renderNavLink("/about-characters", "Characters")}
               {renderNavLink("/player-home", "Player Home")}
               {renderNavLink("/dm-home", "DM Home")}
+
             </>
           )}
         </ul>
       </div>
-
-      <div className="nav-right">
+     <div className="nav-right">
         <ul>
           {isLoggedIn ? (
             <li>
@@ -82,6 +83,7 @@ const Navigations = () => {
           ) : (
             <>
               {/* Conditionally render the Login/Signup links for non-Player Home and non-DM Home */}
+
               {!isPlayerHome && !isDMHome && renderNavLink("/login", "Login")}
               {!isPlayerHome && !isDMHome && renderNavLink("/signup", "Signup")}
             </>

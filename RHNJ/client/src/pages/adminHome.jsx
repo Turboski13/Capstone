@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { searchAllUsers } from "../functions/userFunctions";
 
+
 import {
   deleteUser,
   editUser,
@@ -24,7 +25,9 @@ const AdminHome = () => {
   const [errorCharacters, setErrorCharacters] = useState(null);
   const [editingCharacterId, setEditingCharacterId] = useState(null);
   const [editedCharacter, setEditedCharacter] = useState({
-    characterName: "",
+
+    characterName: '',
+
     level: 0,
     attributes: {
       strength: 0,
@@ -34,9 +37,10 @@ const AdminHome = () => {
       wisdom: 0,
       charisma: 0,
     },
-    ideals: "",
-    flaws: "",
-    notes: "",
+    ideals: '',
+    flaws: '',
+    notes: '',
+
   });
 
   useEffect(() => {
@@ -189,9 +193,65 @@ const AdminHome = () => {
     }
   };
 
+  const handleEditCharacter = (character) => {
+    setEditingCharacterId(character.id);
+    setEditedCharacter({
+      characterName: character.characterName,
+      description: character.description || '',
+    });
+  };
+
+  const handleEditChangeCharacter = (e) => {
+    const { name, value } = e.target;
+    if (name.includes('attributes.')) {
+      const attribute = name.split('.')[1]; // e.g., "strength"
+      setEditedCharacter((prev) => ({
+        ...prev,
+        attributes: {
+          ...prev.attributes,
+          [attribute]: Number(value), // Parse value as number if needed
+        },
+      }));
+    } else {
+      setEditedCharacter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSaveCharacter = async (characterId) => {
+    try {
+      await editUserCharacter(characterId, editedCharacter);
+      setUserCharacters((prevCharacters) =>
+        prevCharacters.map((character) =>
+          character.id === characterId
+            ? { ...character, ...editedCharacter }
+            : character
+        )
+      );
+      setEditingCharacterId(null);
+    } catch (error) {
+      setErrorCharacters('Error updating character.');
+    }
+  };
+
+  const handleDeleteCharacter = async (characterId) => {
+    if (window.confirm('Are you sure you want to delete this character?')) {
+      try {
+        await deleteUserCharacter(characterId);
+        setUserCharacters((prevCharacters) =>
+          prevCharacters.filter((character) => character.id !== characterId)
+        );
+      } catch (err) {
+        setErrorCharacters('Failed to delete character. Please try again.');
+      }
+    }
+  };
+
   const handleCancelEdit = () => {
     setEditingCharacterId(null);
-    setEditedCharacter({ characterName: "", description: "" });
+    setEditedCharacter({ characterName: '', description: '' });
   };
 
   const handleSearchChange = (e) => {
@@ -224,9 +284,11 @@ const AdminHome = () => {
   return (
     <div className="dm-home">
       <Navigations />
-      <h2 className="adm-home-h2">Administrator Home</h2>
+
+      <h2 className='adm-home-h2'>Administrator Home</h2>
       {/* <p className='adm-home-p'>Welcome, you are now logged in as Admin!</p> */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       <input
         type="text"
         placeholder="Search users..."
@@ -315,117 +377,118 @@ const AdminHome = () => {
           ) : (
             <ul>
               {userCharacters?.map((character) => (
-                <li key={character.id}>
+                <li key={character?.id}>
                   {editingCharacterId === character.id ? (
-                    <div className="character-edit-form">
-                      <div className="form-field">
+                    <div className='character-edit-form'>
+                      <div className='form-field'>
                         <label>Character Name:</label>
                         <input
-                          type="text"
-                          name="characterName"
+                          type='text'
+                          name='characterName'
                           value={editedCharacter.characterName}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Character Name"
+                          placeholder='Character Name'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Character Level:</label>
                         <input
-                          type="number"
-                          name="level"
+                          type='number'
+                          name='level'
                           value={editedCharacter.level}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Description"
+                          placeholder='Description'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Strength:</label>
                         <input
-                          type="number"
-                          name="attributes.strength"
+                          type='number'
+                          name='attributes.strength'
                           value={editedCharacter.attributes?.strength || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Strength"
+                          placeholder='Strength'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Dexterity:</label>
                         <input
-                          type="number"
-                          name="attributes.dexterity"
+                          type='number'
+                          name='attributes.dexterity'
                           value={editedCharacter.attributes?.dexterity || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Dexterity"
+                          placeholder='Dexterity'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Constitution:</label>
                         <input
-                          type="number"
-                          name="attributes.constitution"
+                          type='number'
+                          name='attributes.constitution'
                           value={editedCharacter.attributes?.constitution || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Constitution"
+                          placeholder='Constitution'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Intelligence:</label>
                         <input
-                          type="number"
-                          name="attributes.intelligence"
+                          type='number'
+                          name='attributes.intelligence'
                           value={editedCharacter.attributes?.intelligence || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Intelligence"
+                          placeholder='Intelligence'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Wisdom:</label>
                         <input
-                          type="number"
-                          name="attributes.wisdom"
+                          type='number'
+                          name='attributes.wisdom'
                           value={editedCharacter.attributes?.wisdom || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Wisdom"
+                          placeholder='Wisdom'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Charisma:</label>
                         <input
-                          type="number"
-                          name="attributes.charisma"
+                          type='number'
+                          name='attributes.charisma'
                           value={editedCharacter.attributes?.charisma || 0}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Charisma"
+                          placeholder='Charisma'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Ideals:</label>
                         <input
-                          type="text"
-                          name="ideals"
+                          type='text'
+                          name='ideals'
                           value={editedCharacter.ideals}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Ideals"
+                          placeholder='Ideals'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Flaws:</label>
                         <input
-                          type="text"
-                          name="flaws"
+                          type='text'
+                          name='flaws'
                           value={editedCharacter.flaws}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Flaws"
+                          placeholder='Flaws'
                         />
                       </div>
-                      <div className="form-field">
+                      <div className='form-field'>
                         <label>Notes:</label>
                         <input
-                          type="text"
-                          name="notes"
+                          type='text'
+                          name='notes'
                           value={editedCharacter.notes}
                           onChange={handleEditChangeCharacter}
-                          placeholder="Notes"
+                          placeholder='Notes'
+
                         />
                       </div>
 
@@ -456,9 +519,10 @@ const AdminHome = () => {
           )}
         </div>
       )}
+
       {/* <button onClick={handleLogout}>Logout</button> */}
+
     </div>
   );
 };
-
 export default AdminHome;

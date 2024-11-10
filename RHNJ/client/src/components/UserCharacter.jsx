@@ -5,6 +5,7 @@ import '../index.css';
 
 const UserCharacter = () => {
   const { id } = useParams();
+  console.log('Fetched teamId from URL:', teamId);
   const [characterInfo, setCharacterInfo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
@@ -58,6 +59,7 @@ const UserCharacter = () => {
           <h1>{isEditing ? "Edit Character" : characterInfo.character?.characterName}</h1>
 
           {isEditing ? (
+
             <div className="form-field">
               <div className="form-field">
                <label>Character Name:</label>
@@ -157,6 +159,7 @@ const UserCharacter = () => {
                 value={editData.notes}
                 onChange={handleEditChange}
               />
+
               </div>
               <button onClick={handleEditSubmit}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
@@ -190,9 +193,9 @@ const UserCharacter = () => {
                 {characterInfo.character.skills?.map((skill, index) => (
                   <span key={index}>
                     {skill}
-
-                    {index < characterInfo.character.skills.length - 1 ? ', ' : ''}
-
+                    {index < characterInfo.character.skills.length - 1
+                      ? ', '
+                      : ''}
                   </span>
                 ))}
               </p>
@@ -202,16 +205,16 @@ const UserCharacter = () => {
                 {characterInfo.character.singleUseSkill?.map((skill, index) => (
                   <span key={index}>
                     {skill}
-
-                    {index < characterInfo.character.singleUseSkill.length - 1 ? ', ' : ''}
-
+                    {index < characterInfo.character.singleUseSkill.length - 1
+                      ? ', '
+                      : ''}
                   </span>
                 ))}
               </p>
 
-
-              <p className='char-txt'>Attack Roll: {characterInfo.character.attackRoll}</p>
-
+              <p className='char-txt'>
+                Attack Roll: {characterInfo.character.attackRoll}
+              </p>
               <h3>Ideals: {characterInfo.character.ideals}</h3>
               <h3>Flaws: {characterInfo.character.flaws}</h3>
               <h3>Notes: {characterInfo.character.notes}</h3>
