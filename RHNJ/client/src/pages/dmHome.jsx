@@ -202,29 +202,12 @@ const DMHome = () => {
 
   return (
     <div className='dm-home'>
-      <ul className='dm-nav-ul'>
-        <li>
-          <Link to='/' className='dm-nav'>
-            Home
-          </Link>
-        </li>
-        <li>
-          <Link to='/how-to-play' className='dm-nav'>
-            How to Play
-          </Link>
-        </li>
-        <li>
-          <Link to='/about-characters' className='dm-nav'>
-            Characters
-          </Link>
-        </li>
-        <li>
-          <Link to='/player-home' className='dm-nav'>
-            Player Home
-          </Link>
-        </li>
-        <button onClick={handleLogout}>Logout</button>
-      </ul>
+      <nav className='ph-nav'>
+       <Navigations />
+        <ul className='dm-nav-ul'>
+          <button onClick={handleLogout}>Logout</button>
+        </ul>
+      </nav> 
       <h2 className='dm-h2'>Diva Manager Home</h2>
       {error && <p style={{ color: 'red', padding: 10 }}>{error}</p>}
       {newTeamForm && (

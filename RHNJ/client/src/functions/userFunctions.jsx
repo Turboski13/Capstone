@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests
-const fetchData = async (url, options) => {
+/* const fetchData = async (url, options) => {
   try {
     const response = await fetch(url, options);
     const responseText = await response.text();
@@ -13,6 +13,24 @@ const fetchData = async (url, options) => {
       throw new Error(errorData.message || 'Error fetching data');
     }
     return response.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error; // Re-throw the error after logging it
+  }
+}; */
+const fetchData = async (url, options) => {
+  try {
+    const response = await fetch(url, options);
+
+    // If response is not OK, attempt to read the body and throw an error
+    if (!response.ok) {
+      const errorText = await response.text(); // Read text once for logging
+      console.error('Error response text:', errorText);
+      throw new Error(errorText || 'Error fetching data');
+    }
+
+    // Only attempt to parse JSON once we know the response was successful
+    return await response.json();
   } catch (error) {
     console.error('Fetch error:', error);
     throw error; // Re-throw the error after logging it
@@ -123,7 +141,7 @@ export const searchAllUserCharacters = async (token) => {
       throw new Error('Authorization token is missing');
     }
 
-    /* console.log('Retrieved Token:', storedToken); */
+     /* console.log('Retrieved Token:', storedToken); */
 
     const response = await fetch(`${API_URL}/user/characters`, {
       method: 'GET',
