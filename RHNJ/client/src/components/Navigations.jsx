@@ -4,19 +4,18 @@ import { logout } from "../api";
 
 const Navigations = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);  // State for managing logged-in status
-  const location = useLocation();  // Get current route
-  const navigate = useNavigate();  // For navigating programmatically (in logout)
-
+  const location = useLocation();  
+  const navigate = useNavigate();  
   // Check if token exists in localStorage and set the state when component mounts
   useEffect(() => {
-    const token = localStorage.getItem("authToken");  // Retrieve token from localStorage
-    console.log('Token:', token);  // Debugging log
+    const token = localStorage.getItem("token");  
+    console.log('Token in Navigations:', token);
     setIsLoggedIn(token !== null);  // Set isLoggedIn state based on whether token exists
-  }, []);  // Empty dependency array ensures this effect runs only once when the component mounts
+  }, [location.pathname]);  // Empty dependency array ensures this effect runs only once when the component mounts
 
   const handleLogout = () => {
     logout();  // Call logout from API
-    localStorage.removeItem("authToken");  // Remove authToken from localStorage
+    localStorage.removeItem("token");  // Remove token from localStorage
     setIsLoggedIn(false);  // Update isLoggedIn state to false
     navigate("/");  // Redirect to home page after logout
   };

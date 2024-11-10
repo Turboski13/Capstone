@@ -4,7 +4,7 @@ const API_URL = "http://localhost:3000/api";
 // Utility function for fetch requests
 const fetchData = async (url, options = {}) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
 
     if (!token) {
       throw new Error("No token found.  Please log in again.");
@@ -89,7 +89,7 @@ export const deleteUser = async (userId) => {
 }; */
 export const fetchAllUserCharacters = async (userId) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("No token found. Please log in again.");
     }

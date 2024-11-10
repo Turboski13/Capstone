@@ -354,7 +354,7 @@ app.post('/api/teams', authMiddleware, async (req, res, next) => {
     });
     res.status(201).json(newTeam);
   } catch (err) {
-    console.error('couldnt create a taem', err);
+    console.error('couldnt create a team', err);
     res.status(401).json({ message: 'couldnt make a new team', err });
   }
 });

@@ -40,7 +40,7 @@ const AdminHome = () => {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     console.log("Token from localStorage in adminHome", token);
 
     if (!token) {
@@ -62,7 +62,7 @@ const AdminHome = () => {
         }
         fetchUsers();
       } catch (error) {
-        localStorage.removeItem("authToken");
+        localStorage.removeItem("token");
         navigate("/admin-login");
       }
     };
@@ -79,7 +79,7 @@ const AdminHome = () => {
         setUsers(data);
       } catch (error) {
         setError("Unable to fetch user data. Please log in again.");
-        localStorage.removeItem("authToken");
+        localStorage.removeItem("token");
         navigate("/admin-login");
       } finally {
         setLoading(false);
@@ -90,7 +90,7 @@ const AdminHome = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
     navigate("/");
   };
 

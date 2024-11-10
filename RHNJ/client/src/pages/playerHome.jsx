@@ -51,7 +51,7 @@ const PlayerHome = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log("Token:", token); // Check if the token is present
+    console.log('Token in PlayerHome:', token);// Check if the token is present
     if (!token) {
       console.log("No token found, navigating to login.");
       navigate('/login'); // Redirect to login if no token is found

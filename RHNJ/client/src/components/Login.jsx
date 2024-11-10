@@ -14,12 +14,12 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login({ username, password });
-      // const results = await response.json();
       
-      console.log('Login successful:', response);
       localStorage.setItem('token', response.token);
-      
-      navigate('/player-home'); // Redirect to home or another page
+      console.log('Token immediately after set:', localStorage.getItem('token'));
+      setTimeout(() => {
+        navigate('/player-home'); // Redirect to player home
+      }, 100);
     } catch (error) {
       const errorMessage = error.response
         ? error.response.data

@@ -12,7 +12,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (token) {
       navigate('/admin-home');
     }
@@ -35,7 +35,7 @@ const AdminLogin = () => {
       if (data.token) {
         console.log('Setting token in localStorage:', data.token);
         // Store the token in localStorage
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('token', data.token);
 
         // Redirect to admin home
         navigate('/admin-home');
