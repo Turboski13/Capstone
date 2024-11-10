@@ -65,9 +65,17 @@ const DMHome = () => {
     }
   }, [teamSearchInput, teams]);
 
-  const handleDeleteTeam = async (teamId) => {
+  const handleDeleteTeam = async (teamId, password) => {
+    console.log('Team ID:', teamId); 
+  
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+      setError('No valid token found. Please log in.');
+      return;
+    }
+  
     try {
-      await deleteDmTeam(teamId);
+      await deleteDmTeam(token, teamId, password);  
       setTeams((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
     } catch (err) {
       setError('Failed to delete team. Please try again.');

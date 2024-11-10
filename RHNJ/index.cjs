@@ -370,7 +370,7 @@ app.delete('/api/teams/:teamId', authMiddleware, async (req, res, next) => {
     if (!team) {
       return res.status(404).json({ message: 'Team not found' });
     }
-    if (req.user !== req.user.id) {
+    if (req.user !== req.user.sub) {
       return res.status(403).json({ message: 'Only the DM can delete the team' });
     }
     if (team.password !== password) {

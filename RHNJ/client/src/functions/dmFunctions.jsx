@@ -196,7 +196,7 @@ export const removePlayerFromTeam = async (teamId, playerId) => {
 // Delete team
 export const deleteDmTeam = async (token, teamId, password) => {
   try {
-    return await fetchData(`${API_URL}/teams/${teamId}`, {
+    const response = await fetch(`${API_URL}/teams/${teamId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -204,6 +204,14 @@ export const deleteDmTeam = async (token, teamId, password) => {
       },
       body: JSON.stringify({ password }),
     });
+    console.log('Team ID:', teamId);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error deleting team:', errorData.message);
+      throw new Error(errorData.message);
+    }
+    
+    return response;  // If deletion is successful, return the response
   } catch (error) {
     console.error('Error deleting team:', error);
     throw error;
