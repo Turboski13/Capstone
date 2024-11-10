@@ -336,6 +336,7 @@ const DMHome = () => {
                   <button onClick={() => handleDeleteTeam(team.id)}>
                     Delete
                   </button>
+                  
                   <button onClick={() => handleJoinClick(team.id)}>Join</button>
 
                   {/* Add/Remove Users */}
