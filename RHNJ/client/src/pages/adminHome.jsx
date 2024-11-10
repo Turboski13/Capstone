@@ -456,7 +456,6 @@ const AdminHome = () => {
           )}
         </div>
       )}
-      {/* Logout button */}
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

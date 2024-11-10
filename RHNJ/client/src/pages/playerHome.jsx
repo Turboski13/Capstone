@@ -5,6 +5,7 @@ import {
   deleteUserCharacter,
 } from '../functions/userFunctions'; // Adjust imports as needed
 import CharacterBuilder from '../components/CharacterBuilder'; // Component for creating/editing characters */
+import Navigations from '../components/Navigations';
 
 
 
@@ -16,11 +17,11 @@ const PlayerHome = () => {
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
   
-  const handleLogout = () => {
+   const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
     navigate('/login'); // Redirect to the home or login page
-  };
+  }; 
 
   const handleDelete = async (characterId) => {
     try {
@@ -73,30 +74,11 @@ const PlayerHome = () => {
   return (
     <div className='player-home'>
        <nav className='ph-nav'>
+       <Navigations />
         <ul className='ph-ul'>
-           {/* <li>
-            <Link to='/' className='dm-nav'>
-              Home
-            </Link>
-          </li> */}
-          <li>
-            <Link to='/how-to-play' className='dm-nav'>
-              How to Play
-            </Link>
-          </li>
-          <li>
-            <Link to='/about-characters' className='dm-nav'>
-              Characters
-            </Link>
-          </li>
-          <li>
-            <Link to='/dm-home' className='dm-nav'>
-              DM Home
-            </Link>
-          </li>
           <button onClick={handleLogout}>Logout</button>
         </ul>
-      </nav>
+      </nav> 
 
       <h2>Player Homepage</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}

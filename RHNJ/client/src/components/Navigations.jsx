@@ -1,92 +1,90 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Import useLocation to detect current path
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Import useLocation to detect current path
 import { logout } from "../api";
 
 const Navigations = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const location = useLocation(); // Get current route
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  // State for managing logged-in status
+  const location = useLocation();  // Get current route
+  const navigate = useNavigate();  // For navigating programmatically (in logout)
 
+  // Check if token exists in localStorage and set the state when component mounts
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    setIsLoggedIn(token !== null);
-  }, []);
+    const token = localStorage.getItem("authToken");  // Retrieve token from localStorage
+    console.log('Token:', token);  // Debugging log
+    setIsLoggedIn(token !== null);  // Set isLoggedIn state based on whether token exists
+  }, []);  // Empty dependency array ensures this effect runs only once when the component mounts
 
   const handleLogout = () => {
-    logout();
-    setIsLoggedIn(false);
+    logout();  // Call logout from API
+    localStorage.removeItem("authToken");  // Remove authToken from localStorage
+    setIsLoggedIn(false);  // Update isLoggedIn state to false
+    navigate("/");  // Redirect to home page after logout
   };
+
+  // Helper function to render navigation links dynamically
+  const renderNavLink = (to, label) => {
+    return location.pathname !== to && (
+      <li>
+        <Link
+          to={to}
+          className={`navtext ${location.pathname === to ? "active" : ""}`}
+        >
+          {label}
+        </Link>
+      </li>
+    );
+  };
+
+  // Check if the current page is Player Home or DM Home
+  const isPlayerHome = location.pathname === "/player-home";  // Adjust to your Player Home path
+  const isDMHome = location.pathname === "/dm-home";  // Adjust to your DM Home path
+  const isHowToPlay = location.pathname === "/how-to-play";  // Check if current page is How to Play
 
   return (
     <nav>
       <div className="nav-left">
         <ul>
-          {/* Conditionally render the Home link */}
-          {location.pathname !== "/" && (
-            <li>
-              <Link
-                to="/"
-                className={`navtext ${location.pathname === "/" ? "active" : ""}`}
-              >
-                Home
-              </Link>
-            </li>
-          )}
-          {/* Conditionally render the About link */}
-          {location.pathname !== "/about" && (
-            <li>
-              <Link
-                to="/about"
-                className={`navtext ${location.pathname === "/about" ? "active" : ""}`}
-              >
-                About
-              </Link>
-            </li>
-          )}
-          {/* Conditionally render the How to Play link */}
-          {location.pathname !== "/how-to-play" && (
-            <li>
-              <Link
-                to="/how-to-play"
-                className={`navtext ${location.pathname === "/how-to-play" ? "active" : ""}`}
-              >
-                How to Play
-              </Link>
-            </li>
-          )}
-          {/* Conditionally render the Characters link */}
-          {location.pathname !== "/about-characters" && (
-            <li>
-              <Link
-                to="/about-characters"
-                className={`navtext ${location.pathname === "/about-characters" ? "active" : ""}`}
-              >
-                Characters
-              </Link>
-            </li>
+          {/* Conditionally render "Home", "About", "How to Play", "Characters" for non-Player Home and non-DM Home pages */}
+          {!isPlayerHome && !isDMHome && renderNavLink("/", "Home")}
+          {!isPlayerHome && !isDMHome && renderNavLink("/about", "About")}
+          {!isPlayerHome && !isDMHome && renderNavLink("/how-to-play", "How to Play")}
+          {!isPlayerHome && !isDMHome && renderNavLink("/about-characters", "Characters")}
+
+          {/* Render specific links for Player Home page */}
+          {isPlayerHome && renderNavLink("/how-to-play", "How to Play")}
+          {isPlayerHome && renderNavLink("/about-characters", "Characters")}
+          {isPlayerHome && renderNavLink("/player-home", "Player Home")}
+          {isPlayerHome && renderNavLink("/dm-home", "DM Home")} {/* DM Home link on Player Home */}
+
+          {/* Render specific links for DM Home page */}
+          {isDMHome && renderNavLink("/how-to-play", "How to Play")}
+          {isDMHome && renderNavLink("/about-characters", "Characters")}
+          {isDMHome && renderNavLink("/player-home", "Player Home")} {/* Player Home link on DM Home */}
+
+          {/* If the user is logged in and on the "How to Play" page, add these links */}
+          {isHowToPlay && isLoggedIn && (
+            <>
+              {renderNavLink("/about-characters", "Characters")}
+              {renderNavLink("/player-home", "Player Home")}
+              {renderNavLink("/dm-home", "DM Home")}
+            </>
           )}
         </ul>
       </div>
-      <div className='nav-right'>
-        <ul>
 
+      <div className="nav-right">
+        <ul>
           {isLoggedIn ? (
             <li>
-              <button onClick={handleLogout} className='navtext2'>
+              <button onClick={handleLogout} className="navtext2">
                 Logout
               </button>
             </li>
           ) : (
             <>
-              <li>
-                <Link to='/login' className='navtext2'>
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link to='/signup' className='navtext2'>
-                  Signup
-                </Link>
-              </li>
+              {/* Conditionally render the Login/Signup links for non-Player Home and non-DM Home */}
+              {!isPlayerHome && !isDMHome && renderNavLink("/login", "Login")}
+              {!isPlayerHome && !isDMHome && renderNavLink("/signup", "Signup")}
             </>
           )}
         </ul>

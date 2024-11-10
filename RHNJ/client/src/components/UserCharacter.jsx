@@ -51,7 +51,7 @@ const UserCharacter = () => {
   };
 
   return (
-    <>
+    <div className='player-home'>
       {characterInfo && (
         <div className='character-stats'>
 
@@ -221,7 +221,7 @@ const UserCharacter = () => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
