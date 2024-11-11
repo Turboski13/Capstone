@@ -1,5 +1,5 @@
 const request = require('supertest');
-require('dotenv').config(); // Load .env file
+// require('dotenv').config();
 
 const express = require('express');
 const { createServer } = require('../index.cjs');
