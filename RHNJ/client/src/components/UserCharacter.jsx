@@ -60,7 +60,7 @@ const UserCharacter = () => {
 
       {characterInfo && (
         <div className='character-stats'>
-          <h1>
+          <h1 className='charc-name'>
             {isEditing
               ? 'Edit Character'
               : characterInfo.character?.characterName}

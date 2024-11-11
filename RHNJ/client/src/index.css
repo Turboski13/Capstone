@@ -492,6 +492,7 @@ button {
   margin-top: 15px;
   margin-bottom: 5px;
   color: aliceblue;
+  font-size: 16px;
 }
 
 #team-search {
@@ -500,7 +501,6 @@ button {
   align-content: center;
   align-items: center;
   margin: auto;
-  padding-top: 10px;
 }
 
 /* Character Builder */
@@ -531,6 +531,9 @@ button {
   font-weight: bold;
   line-height: 1.5;
   color: aliceblue;
+}
+.charc-name {
+  color: antiquewhite;
 }
 .char-input {
   width: 80%;
@@ -667,4 +670,24 @@ button:hover {
 
 label {
   margin-right: 10px;
+}
+
+/* TEAMS */
+.team-join {
+  margin-top: 20px;
+  width: 300px;
+}
+.team-table {
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+}
+.team-btn {
+  margin-left: 10px;
+  margin-top: 20px;
+  color: whitesmoke;
+}
+.team-h3 {
+  margin-top: 30px;
+  font-size: 22px;
 }

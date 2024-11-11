@@ -278,7 +278,7 @@ const DMHome = () => {
           </tbody>
         </table>
       )} */}
-      <h3 className='dm-h3'>Teams List</h3>
+      <h3 className='team-h3'>Teams List</h3>
       <h3 id='search-label'>Search for a specific team</h3>
       <input
         id='team-search'
@@ -287,11 +287,10 @@ const DMHome = () => {
         value={teamSearchInput}
         onChange={(e) => setTeamSearchInput(e.target.value)}
       />
-      <h3>Teams List</h3>
       {filteredTeams.length === 0 ? (
         <p>No teams available.</p>
       ) : (
-        <table>
+        <table className='team-table'>
           <thead>
             <tr>
               <th>Team Name</th>
@@ -302,11 +301,19 @@ const DMHome = () => {
             {filteredTeams.map((team) => (
               <tr key={team.id}>
                 <td>{team.name}</td>
-                <td>
-                  <button onClick={() => handleDeleteTeam(team.id)}>
+                <td className='team-td'>
+                  <button
+                    onClick={() => handleDeleteTeam(team.id)}
+                    className='team-btn'
+                  >
                     Delete
                   </button>
-                  <button onClick={() => handleJoinClick(team.id)}>Join</button>
+                  <button
+                    onClick={() => handleJoinClick(team.id)}
+                    className='team-btn'
+                  >
+                    Join
+                  </button>
 
                   {/* Add/Remove Users */}
                   {Array.isArray(team.users) && team.users.length > 0 ? (
@@ -372,6 +379,7 @@ const DMHome = () => {
               onChange={(e) => setTeamPW(e.target.value)}
               placeholder='Enter Team Password'
               required
+              className='team-join'
             />
             <button type='submit' disabled={loading}>
               Submit
