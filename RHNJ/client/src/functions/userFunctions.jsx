@@ -175,7 +175,7 @@ export const searchSingleUserCharacter = async (characterId) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
 
       },
       body: JSON.stringify({
@@ -204,7 +204,7 @@ export const editUserCharacter = async (characterId, updatedData) => {
       headers: {
         'Content-Type': 'application/json',
 
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
 
       },
       body: JSON.stringify(updatedData),
@@ -218,16 +218,19 @@ export const editUserCharacter = async (characterId, updatedData) => {
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
   const token = localStorage.getItem('token');
+  console.log("Token being sent:", token);  // Log token here
   try {
-    return await fetch(`${API_URL}/user/characters/${characterId}`, {
+    const response = await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+    const result = await response.json();
+    console.log('Result:', result);
   } catch (error) {
     console.error('Error deleting character:', error);
     throw error;
   }
-};
+}; 
