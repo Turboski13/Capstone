@@ -217,16 +217,12 @@ export const editUserCharacter = async (characterId, updatedData) => {
 
 // Delete user character
 export const deleteUserCharacter = async (characterId) => {
-
   const token = localStorage.getItem('token');
-
   try {
     return await fetch(`${API_URL}/user/characters/${characterId}`, {
       method: 'DELETE',
       headers: {
-
         'Content-Type': 'application/json',
-
         Authorization: `Bearer ${token}`,
       },
     });

@@ -476,7 +476,7 @@ app.delete(
   }
 );
 
-app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
     const character = await prisma.userCharacter.findUnique({

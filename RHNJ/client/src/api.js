@@ -99,3 +99,7 @@ export const updateCharacter = (token, characterId, characterData) => {
 export const deleteCharacter = (token, characterId) => {
   return request(`/characters/${characterId}`, 'DELETE', null, token);
 };
+
+export const deleteUserCharacter = (token, characterId) => {
+  return request(`/user/characters/${characterId}`, 'DELETE', null, token);
+};
