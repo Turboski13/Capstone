@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // Added this line
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
 // JWT Verfication Middleware
 const authMiddleware = (req, res, next) => {
   console.log('Request Headers:', req.headers);
