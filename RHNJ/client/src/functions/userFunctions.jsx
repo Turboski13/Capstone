@@ -1,4 +1,4 @@
-const API_URL = `${process.env.API_URL}/api`;
+const API_URL = `/api`;
 const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests

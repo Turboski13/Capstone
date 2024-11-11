@@ -1,5 +1,5 @@
 // client/src/functions/adminFunctions.jsx
-const API_URL = `${process.env.API_URL}/api`;
+const API_URL = `/api`;
 
 // Utility function for fetch requests
 const fetchData = async (url, options = {}) => {
