@@ -87,7 +87,7 @@ const AdminHome = () => {
     };
 
     verifyToken();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
