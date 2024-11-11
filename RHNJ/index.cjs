@@ -74,12 +74,12 @@ app.get('/test', (req, res) => {
 });
 
 // Protected admin route
-app.get('/admin-home', authenticateAdmin, (req, res) => {
+app.get('/admin-home', authenticateAdmin, (req, res, next) => {
   res.send('Welcome to Admin Home');
 });
 
 // Verify Token Route
-app.post('/api/verify-token', (req, res) => {
+app.post('/api/verify-token', (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).send({
@@ -537,7 +537,7 @@ app.get('/api/user/characters', authMiddleware, async (req, res) => {
 });
 
 // Admin routes (for users)
-app.get('/api/users', authenticateAdmin, async (req, res) => {
+app.get('/api/users', authenticateAdmin, async (req, res, next) => {
   try {
     const users = await prisma.user.findMany();
     return res.status(200).json(users);
@@ -547,7 +547,7 @@ app.get('/api/users', authenticateAdmin, async (req, res) => {
   }
 });
 
-app.put('/api/users/:id', authenticateAdmin, async (req, res) => {
+app.put('/api/users/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const { username, password, isAdmin } = req.body;
@@ -581,7 +581,7 @@ app.put('/api/users/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
-app.delete('/api/users/:id', authenticateAdmin, async (req, res) => {
+app.delete('/api/users/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
 
@@ -609,7 +609,7 @@ app.delete('/api/users/:id', authenticateAdmin, async (req, res) => {
 });
 
 // Admin routes (for characters)
-app.get('/api/characters', authenticateAdmin, async (req, res) => {
+app.get('/api/characters', authenticateAdmin, async (req, res, next) => {
   try {
     const characters = await prisma.userCharacter.findMany();
     return res.status(200).json(characters);
@@ -619,7 +619,7 @@ app.get('/api/characters', authenticateAdmin, async (req, res) => {
   }
 });
 
-app.put('/api/characters/:id', authenticateAdmin, async (req, res) => {
+app.put('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const characterId = parseInt(req.params.id);
     const { name, description, stats } = req.body;
@@ -648,7 +648,7 @@ app.put('/api/characters/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
-app.delete('/api/characters/:id', authenticateAdmin, async (req, res) => {
+app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
   try {
     const characterId = parseInt(req.params.id);
 
