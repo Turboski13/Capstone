@@ -222,20 +222,18 @@ app.delete('/api/auth/me', authMiddleware, async (req, res, next) => {
   }
 });
 
-app.post('/api/user/characters/:id', authMiddleware, async(req, res, next)=> {
+app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   const { characterId } = req.body;
-  try{
+  try {
     const character = await prisma.userCharacter.findUnique({
-      where: { id: characterId}
-    })
-    res.status(201).json({character});
-  }catch(err){
+      where: { id: characterId },
+    });
+    res.status(201).json({ character });
+  } catch (err) {
     console.error('Error finding characters', err);
-    res.status(401).json({ message: 'couldnt get the character'});
+    res.status(401).json({ message: 'couldnt get the character' });
   }
-
-})
-
+});
 
 // Character routes
 app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
@@ -253,7 +251,12 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
 
 app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
   console.log('Accessing /api/users/:userId/characters route');
-  console.log('Authenticated user ID:', req.user.id, 'Requested user ID:', req.params.userId);
+  console.log(
+    'Authenticated user ID:',
+    req.user.id,
+    'Requested user ID:',
+    req.params.userId
+  );
 
   try {
     const characters = await prisma.userCharacter.findMany({
@@ -268,7 +271,6 @@ app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
   }
 });
 
-
 app.get('/api/users/characters', authMiddleware, async (req, res) => {
   try {
     const characters = await prisma.userCharacter.findMany({
@@ -281,11 +283,10 @@ app.get('/api/users/characters', authMiddleware, async (req, res) => {
   }
 });
 
-
-
 app.post('/api/character', async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization']; //problem here
+    console.log('Authorization Header:', authHeader);
     console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -342,20 +343,23 @@ app.get('/api/teams', async (req, res, next) => {
 app.post('/api/teams', authMiddleware, async (req, res, next) => {
   try {
     const { teamName, roomPassword, assets } = req.body;
-    const dmId = req.user;
+    // const dmId = req.user;
+    const userId = req.user.id;
 
     const newTeam = await prisma.team.create({
       data: {
         name: teamName,
         password: roomPassword,
-        dmId: parseInt(dmId),
-        assets: assets ? JSON.parse(assets) : {},
+        dmId: userId,
+        assets: assets || {},
       },
     });
-    res.status(201).json(newTeam);
+    res.status(201).json({ team: newTeam });
   } catch (err) {
     console.error('couldnt create a team', err);
-    res.status(401).json({ message: 'couldnt make a new team', err });
+    res
+      .status(500)
+      .json({ message: 'couldnt make a new team', error: err.message });
   }
 });
 
@@ -363,7 +367,9 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   try {
     const { teamPW } = req.body;
     const { teamId } = req.params;
-    const userId = req.user;
+    const userId = req.user.id;
+    console.log('Joining team with:', { teamId, teamPW, userId });
+
     const team = await prisma.team.findUnique({
       where: { id: parseInt(teamId) },
     });
@@ -372,7 +378,7 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
       return res.status(404).json({ message: 'No teams found!' });
     }
 
-    if (team.password !== teamPW) {
+    if (team.password && team.password !== teamPW) {
       return res.status(401).json({ message: 'password is incorrect' });
     }
 
@@ -380,18 +386,97 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
       where: { id: parseInt(teamId) },
       data: {
         users: {
-          connect: { id: userId },
+          connect: {
+            id: userId,
+          },
         },
+      },
+      include: {
+        users: true,
       },
     });
     res.status(201).json({ message: 'Joined new team!: ', team: joinedTeam });
   } catch (err) {
     console.error('wrong info or error: ', err);
-    res.status(401).json({ message: 'The credentials are incorrect. ', err });
+    res.status(401).json({ message: 'The credentials are incorrect.', err });
   }
 });
 
-app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
+app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
+  const { teamId } = req.params.teamId;
+
+  const team = await prisma.team.findUnique({
+    where: { id: parseInt(teamId) },
+    include: { users: true, assets: true }, // Include users (players) and assets
+  });
+
+  if (!team) {
+    return res.status(404).json({ message: 'Team not found' });
+  }
+
+  res.json({ message: `Team details for ${teamId}` });
+});
+
+// Delete team
+app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
+  const { teamId } = req.params;
+
+  const team = await prisma.team.findUnique({
+    where: { id: parseInt(teamId) },
+    include: { dm: true }, // Ensure dm is included in the response
+  });
+
+  if (!team || !team.dm || team.dm.id !== req.user.id) {
+    return res.status(403).json({
+      message: 'Only the DM can delete the team',
+    });
+  }
+
+  try {
+    await prisma.team.delete({
+      where: { id: parseInt(teamId) },
+    });
+
+    res.status(200).json({ message: 'Team successfully deleted' });
+  } catch (err) {
+    console.error('Error deleting team:', err);
+    res.status(500).json({ message: 'Failed to delete team' });
+  }
+});
+
+app.delete(
+  '/api/teams/:teamId/users/:userId',
+  authMiddleware,
+  async (req, res) => {
+    const { teamId, userId } = req.params;
+
+    const team = await prisma.team.findUnique({
+      where: { id: parseInt(teamId) },
+      include: { dm: true }, // Check if the logged-in user is the DM
+    });
+
+    if (!team || team.dm.id !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: 'Only the DM can remove players from the team' });
+    }
+
+    // Remove the player from the team
+    const updatedTeam = await prisma.team.update({
+      where: { id: parseInt(teamId) },
+      data: {
+        users: {
+          disconnect: { id: parseInt(userId) },
+        },
+      },
+      include: { users: true },
+    });
+
+    res.json(updatedTeam);
+  }
+);
+
+app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
     const character = await prisma.userCharacter.findUnique({
@@ -440,10 +525,8 @@ app.get('/api/users', async (req, res, next) => {
 });
 
 app.get('/api/user/characters', authMiddleware, async (req, res) => {
-  
   const characters = await prisma.userCharacter.findMany({
     where: { userId: req.user.id },
-
   });
   res.status(201).json(characters);
 });

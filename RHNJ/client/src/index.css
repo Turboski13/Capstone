@@ -177,11 +177,7 @@ th {
 .navigation {
   margin-left: 150px; /* Remove any left margin */
   padding-left: 10px; /* Optional: Add some padding for spacing */
-}
-
-.navigation {
-  margin-left: 150px; /* Remove any left margin */
-  padding-left: 10px; /* Optional: Add some padding for spacing */
+  justify-content: space-between;
 }
 
 .login-page,
@@ -399,7 +395,7 @@ button {
 }
 
 .ph-nav {
-  margin-left: 250px;
+  margin-left: 50px;
 }
 .ph-ul {
   display: flex; /* Enable flexbox */
@@ -434,7 +430,7 @@ button {
   text-align: center;
 }
 
-.dm-nav {
+/* .dm-nav {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -449,7 +445,7 @@ button {
 
 .dm-nav-ul {
   margin-left: 300px;
-}
+} */
 .dm-h2,
 .dm-h3 {
   margin-top: 50px;
@@ -496,6 +492,7 @@ button {
   margin-top: 15px;
   margin-bottom: 5px;
   color: aliceblue;
+  font-size: 16px;
 }
 
 #team-search {
@@ -504,7 +501,6 @@ button {
   align-content: center;
   align-items: center;
   margin: auto;
-  padding-top: 10px;
 }
 
 /* Character Builder */
@@ -535,6 +531,9 @@ button {
   font-weight: bold;
   line-height: 1.5;
   color: aliceblue;
+}
+.charc-name {
+  color: antiquewhite;
 }
 .char-input {
   width: 80%;
@@ -654,4 +653,41 @@ button:hover {
 }
 .admin-th {
   color: antiquewhite;
+}
+
+/* USER CHARACTER */
+.uc-form {
+  width: 400px;
+  margin-left: 15px;
+}
+.form-field {
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+  padding: 10px;
+  display: block;
+}
+
+label {
+  margin-right: 10px;
+}
+
+/* TEAMS */
+.team-join {
+  margin-top: 20px;
+  width: 300px;
+}
+.team-table {
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+}
+.team-btn {
+  margin-left: 10px;
+  margin-top: 20px;
+  color: whitesmoke;
+}
+.team-h3 {
+  margin-top: 30px;
+  font-size: 22px;
 }

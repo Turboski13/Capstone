@@ -7,35 +7,32 @@ const API_URL = 'http://localhost:3000/api'; // Update with your API URL
 const fetchData = async (url, options) => {
   try {
     const response = await fetch(url, options);
+    const responseData = await response.json();
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error fetching data');
+      console.error('Response Error:', responseData);
+      throw new Error(responseData.message || 'Error fetching data');
     }
-    return await response.json();
+    return responseData;
   } catch (error) {
     console.error('Fetch error:', error);
     throw error;
   }
 };
 
-// Search all players
-export const searchAllPlayers = async () => {
-  try {
-    return await fetchData(`${API_URL}/players`);
-  } catch (error) {
-    console.error('Error fetching players:', error);
-    throw error;
-  }
-};
+// // Search all players
+// export const searchAllPlayers = async () => {
+//   try {
+//     return await fetchData(`${API_URL}/players`);
+//   } catch (error) {
+//     console.error('Error fetching players:', error);
+//     throw error;
+//   }
+// };
 
 // Search all teams
 export const searchAllTeams = async () => {
   try {
-    const response = await fetch(`${API_URL}/teams`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return await response.json();
+    return await fetchData(`${API_URL}/teams`);
   } catch (error) {
     console.error('Error fetching teams:', error);
     throw error;
@@ -82,7 +79,7 @@ export const editUserCharacter = async (characterId, updatedData) => {
 export const createTeam = async (
   teamName,
   roomPassword = '',
-  assets,
+  assets = {},
   token
 ) => {
   try {
@@ -102,35 +99,84 @@ export const createTeam = async (
 
 export const joinTeam = async (teamId, teamPW, token) => {
   try {
-    return await fetchData(`${API_URL}/teams/${teamId}/join`, {
+    console.log('Joining team with:', { teamId, teamPW, token });
+
+    if (!token) {
+      throw new Error('No valid token found.');
+    }
+
+    const response = await fetch(`${API_URL}/teams/${teamId}/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        teamId,
         teamPW,
       }),
     });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Failed to join team: ${errorMessage}`);
+    }
+
+    const data = await response.json();
+    console.log('Team joined successfully:', data);
+    return data;
   } catch (error) {
-    console.error('error joining the team:', error);
+    console.error('error joining the team:', error.message);
     throw error;
   }
 };
 
-// Invite player to team
-export const invitePlayerToTeam = async (teamId, playerId) => {
+// Add player to team
+export const addPlayerToTeam = async (teamId, userId) => {
+  const token = localStorage.getItem('token');
   try {
-    return await fetchData(`${API_URL}/teams/${teamId}/invite`, {
+    return await fetch(`${API_URL}/teams/${teamId}/join`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ playerId }),
+      body: JSON.stringify({ userId }),
     });
   } catch (error) {
-    console.error('Error inviting player to team:', error);
+    console.error('Failed to add player:', error);
+    throw error;
+  }
+};
+
+// // Invite player to team
+// export const invitePlayerToTeam = async (teamId, playerId) => {
+//   try {
+//     return await fetchData(`${API_URL}/teams/${teamId}/invite`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ playerId }),
+//     });
+//   } catch (error) {
+//     console.error('Error inviting player to team:', error);
+//     throw error;
+//   }
+// };
+
+// Fetch team details by teamId
+export const getTeamDetails = async (teamId) => {
+  const token = localStorage.getItem('token'); // Make sure you get the token correctly
+  try {
+    return await fetch(`${API_URL}/teams/${teamId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Pass token here if required
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching team details:', error);
     throw error;
   }
 };
@@ -149,18 +195,56 @@ export const removePlayerFromTeam = async (teamId, playerId) => {
 
 // Delete team
 export const deleteTeam = async (teamId) => {
+  const token = localStorage.getItem('token');
+
+  // If no token, handle the error (e.g., prompt user to log in)
+  if (!token) {
+    console.error('No valid token found');
+    throw new Error('Unauthorized: No token found');
+  }
+
   try {
-    return await fetchData(`${API_URL}/teams/${teamId}`, {
+    const response = await fetch(`${API_URL}/teams/${teamId}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
+
+    // Handle the response based on the status code
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Handle unauthorized error
+        const errorText = await response.text(); // Read text response (probably 'Unauthorized')
+        console.error('Unauthorized:', errorText);
+        throw new Error(
+          'Unauthorized: You must be logged in to delete the team'
+        );
+      } else {
+        const errorResponse = await response.json(); // For other errors, parse as JSON
+        console.error(
+          'Error deleting team:',
+          errorResponse.message || 'Unknown error'
+        );
+        throw new Error(errorResponse.message || 'Failed to delete team');
+      }
+    }
+
+    // If successful, return the success message
+    const data = await response.json();
+    console.log('Team deleted successfully:', data.message);
+    return data;
   } catch (error) {
-    console.error('Error deleting team:', error);
-    throw error;
+    console.error('Error deleting team:', error.message);
+    throw error; // Re-throw the error for further handling in the UI
   }
 };
-
 // Increase XP for team
 export const increaseTeamXP = async (teamId, amount) => {
+  if (amount <= 0) {
+    throw new Error('XP amount must be greater than 0');
+  }
   try {
     return await fetchData(`${API_URL}/teams/${teamId}/xp`, {
       method: 'PATCH',
@@ -177,6 +261,9 @@ export const increaseTeamXP = async (teamId, amount) => {
 
 // Increase XP for single character
 export const increaseCharacterXP = async (characterId, amount) => {
+  if (amount <= 0) {
+    throw new Error('XP amount must be greater than 0');
+  }
   try {
     return await fetchData(`${API_URL}/characters/${characterId}/xp`, {
       method: 'PATCH',
