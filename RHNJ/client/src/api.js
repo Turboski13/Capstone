@@ -1,4 +1,3 @@
-require('dotenv').config();
 const baseURL = `${process.env.API_URL}/api`;
 
 // Helper function to handle fetch requests
