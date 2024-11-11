@@ -678,7 +678,7 @@ app.use((err, req, res, next) => {
 
 // Start the server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${PORT}`);
   });
 }
