@@ -12,7 +12,7 @@ const characters = [
       'When I speak, everyone listens—whether they want to or not.',
     ],
 
-    image: '/Images/BardImage.png',
+    image: './assets/Images/BardImage.png',
     attributes: {
       strength: 8,
       dexterity: 14,
@@ -46,7 +46,7 @@ const characters = [
       'I don’t preach—I protect, and heaven help anyone who crosses me.',
     ],
 
-    image: '/Images/ClericImage.png',
+    image: './assets/Images/ClericImage.png',
     attributes: {
       strength: 13,
       dexterity: 10,
@@ -73,7 +73,7 @@ const characters = [
       'I don’t start fights, but you better believe I finish them.',
       'Mess with me or mine, and you’ll wish you hadn’t.',
     ],
-    image: '/Images/FighterImage.png',
+    image: './assets/Images/FighterImage.png',
     attributes: {
       strength: 15,
       dexterity: 14,
@@ -106,7 +106,7 @@ const characters = [
       'Keep your enemies close—especially when you know their secrets.',
       'You may not see me coming, but you’ll definitely feel the sting.',
     ],
-    image: '/Images/RogueImage.png',
+    image: './assets/Images/RogueImage.png',
     attributes: {
       strength: 8,
       dexterity: 15,
@@ -140,7 +140,7 @@ const characters = [
       'They call me calculating, but honey, that’s just called being smarter than you.',
     ],
 
-    image: '/Images/WizardImage.png',
+    image: './assets/Images/WizardImage.png',
     attributes: {
       strength: 10,
       dexterity: 13,
