@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { searchAllUsers } from "../functions/userFunctions";
+require('dotenv').config();
 
 import {
   deleteUser,
@@ -50,7 +51,7 @@ const AdminHome = () => {
 
     const verifyToken = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/verify-token", {
+        const response = await fetch(`${process.env.API_URL}/api/verify-token`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +70,7 @@ const AdminHome = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/users", {
+        const response = await fetch(`${process.env.API_URL}/api/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) {
