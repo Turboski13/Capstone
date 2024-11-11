@@ -50,7 +50,7 @@ const AdminHome = () => {
 
     const verifyToken = async () => {
       try {
-        const response = await fetch(`${process.env.API_URL}/api/verify-token`, {
+        const response = await fetch(`/api/verify-token`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const AdminHome = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${process.env.API_URL}/api/users`, {
+        const response = await fetch(`/api/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) {
