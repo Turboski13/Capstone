@@ -22,7 +22,7 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.API_URL}/admin/login`, {
+      const response = await fetch(`/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
