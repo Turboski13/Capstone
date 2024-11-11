@@ -1,4 +1,3 @@
-require('dotenv').config();
 const API_URL = `${process.env.API_URL}/api`;
 const token = localStorage.getItem('jwtToken');
 

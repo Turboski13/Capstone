@@ -1,5 +1,4 @@
 // client/src/functions/adminFunctions.jsx
-require('dotenv').config();
 const API_URL = `${process.env.API_URL}/api`;
 
 // Utility function for fetch requests
