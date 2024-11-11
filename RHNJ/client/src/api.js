@@ -1,4 +1,5 @@
-const baseURL = 'http://localhost:3000/api';
+require('dotenv').config();
+const baseURL = `${process.env.API_URL}/api`;
 
 // Helper function to handle fetch requests
 const request = async (endpoint, method = 'GET', data = null, token = null) => {
@@ -98,4 +99,8 @@ export const updateCharacter = (token, characterId, characterData) => {
 
 export const deleteCharacter = (token, characterId) => {
   return request(`/characters/${characterId}`, 'DELETE', null, token);
+};
+
+export const deleteUserCharacter = (token, characterId) => {
+  return request(`/user/characters/${characterId}`, 'DELETE', null, token);
 };

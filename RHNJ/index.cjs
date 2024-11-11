@@ -476,27 +476,29 @@ app.delete(
   }
 );
 
-app.delete('/api/characters/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {
     const characterId = Number(req.params.id);
     const character = await prisma.userCharacter.findUnique({
       where: { id: characterId },
     });
+    console.log('Requesting user ID:', req.user);
+console.log('Character owner ID:', character.userId);
 
     if (!character) {
       return res.status(404).send({ error: 'Character not found' });
     }
 
-    if (character.userId !== req.user) {
+    if (character.userId !== req.user.id) {
       return res
         .status(403)
         .send({ error: 'Not authorized to delete this character' });
     }
 
-    await prisma.userCharacter.delete({
+      await prisma.userCharacter.delete({
       where: { id: characterId },
     });
-    res.sendStatus(204);
+    res.status(201).json({ message: 'Character deleted successfully' });
   } catch (error) {
     console.error('Error deleting character:', error);
     next(error);

@@ -17,11 +17,11 @@ const PlayerHome = () => {
   const [showForm, setShowForm] = useState(false); // To toggle the character form
 
   
-   const handleLogout = () => {
+   /* const handleLogout = () => {
     console.log('Logging out...');
     localStorage.removeItem('token'); // Remove token from storage
     navigate('/login'); // Redirect to the home or login page
-  }; 
+  };  */
 
   const handleDelete = async (characterId) => {
     try {

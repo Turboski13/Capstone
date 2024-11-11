@@ -1,5 +1,6 @@
 // client/src/functions/adminFunctions.jsx
-const API_URL = "http://localhost:3000/api";
+require('dotenv').config();
+const API_URL = `${process.env.API_URL}/api`;
 
 // Utility function for fetch requests
 const fetchData = async (url, options = {}) => {
@@ -71,22 +72,7 @@ export const deleteUser = async (userId) => {
 };
 
 // Character Functions
-/* export const fetchAllUserCharacters = async (userId) => {
-  try {
-    const response = await fetchData(`${API_URL}/users/${userId}/characters`);
-    console.log('API Response:', response); // Log the response
-    if (!response.ok) {
-      throw new Error(`Failed to fetch characters: ${response.statusText}`);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(
-      `Error fetching characters for user with ID ${userId}:`,
-      error
-    );
-    throw error; // Rethrow or return a custom error message
-  }
-}; */
+
 export const fetchAllUserCharacters = async (userId) => {
   try {
     const token = localStorage.getItem("token");
