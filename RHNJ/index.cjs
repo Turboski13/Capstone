@@ -671,12 +671,18 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
+app.get('/', (req, res, next)=>{
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
+
+app.get('*', (req, res, next)=> {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
+
 // Middleware error handling
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res
-    .status(500)
-    .send({ error: 'Internal server error', message: err.message });
+  res.status(500).send({ error: 'Internal server error', message: err.message });
 });
 
 // Start the server
