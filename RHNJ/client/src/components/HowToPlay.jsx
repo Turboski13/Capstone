@@ -185,6 +185,12 @@ export default function HowToPlay() {
           </tbody>
         </table>
       </div>
+      <div className='admin-login-container'>
+        <Link to='/admin-login' className='navtext3'>
+          Admin Login
+        </Link>
+      </div>
     </div>
+    
   );
 }

@@ -53,12 +53,12 @@ const Navigations = () => {
           {isPlayerHome && renderNavLink("/how-to-play", "How to Play")}
           {isPlayerHome && renderNavLink("/about-characters", "Characters")}
           {isPlayerHome && renderNavLink("/player-home", "Player Home")}
-          {isPlayerHome && renderNavLink("/dm-home", "DM Home")} {/* DM Home link on Player Home */}
+          {isPlayerHome && renderNavLink("/dm-home", "DM Home")}
 
           {/* Render specific links for DM Home page */}
           {isDMHome && renderNavLink("/how-to-play", "How to Play")}
           {isDMHome && renderNavLink("/about-characters", "Characters")}
-          {isDMHome && renderNavLink("/player-home", "Player Home")} {/* Player Home link on DM Home */}
+          {isDMHome && renderNavLink("/player-home", "Player Home")} 
 
           {/* If the user is logged in and on the "How to Play" page, add these links */}
           {isHowToPlay && isLoggedIn && (

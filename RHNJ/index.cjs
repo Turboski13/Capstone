@@ -74,12 +74,12 @@ app.get('/test', (req, res) => {
 });
 
 // Protected admin route
-app.get('/admin-home', authenticateAdmin, (req, res, next) => {
+app.get(`/admin-home`, authenticateAdmin, (req, res, next) => {
   res.send('Welcome to Admin Home');
 });
 
 // Verify Token Route
-app.post('/api/verify-token', (req, res, next) => {
+app.post(`${process.env.DEV_URL}/api/verify-token`, (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).send({
@@ -104,7 +104,7 @@ app.post('/api/verify-token', (req, res, next) => {
 });
 
 // Sign-up
-app.post('/api/auth/signup', async (req, res, next) => {
+app.post(`/api/auth/signup`, async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
@@ -130,7 +130,7 @@ app.post('/api/auth/signup', async (req, res, next) => {
 });
 
 // User login
-app.post('/api/auth/login', async (req, res) => {
+app.post(`/api/auth/login`, async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await prisma.user.findUnique({ where: { username } });

@@ -11,8 +11,6 @@ import AboutCharacters from './components/AboutCharacters';
 import AdminHome from './pages/adminHome';
 import DMHome from './pages/dmHome';
 import PlayerHome from './pages/playerHome';
-import Navigations from './components/Navigations';
-import Home from './components/Home';
 import About from './components/About';
 import HowToPlay from './components/HowToPlay';
 import AdminLogin from './components/AdminLogin';
@@ -42,7 +40,7 @@ function App() {
 
   return (
     <div>
-      <Navigations /> {/* This renders the navigation bar globally */}
+      
       <Routes>
         {/* Public Routes */}
         <Route path='/signup' element={<Signup />} />
@@ -53,9 +51,9 @@ function App() {
         <Route path='/dm-signup' element={<DmSignUp />} />
         <Route path='/about-characters' element={<AboutCharacters characters={characters} />} />
         <Route path='/user/character/:id' element={<UserCharacter />} />
-        <Route path='/characters' element={<characterList />} />
+        {/* <Route path='/characters' element={<characterList />} /> */}
         <Route path='/character/:id' element={<CharacterDetail />} />
-        <Route path='/' element={<Home />} /> 
+        <Route path='/' element={<HowToPlay />} /> 
         
         {/* Protected Routes */}
         {/* <Route
@@ -73,7 +71,7 @@ function App() {
         <Route path='/admin-home' element={<AdminHome />} />
         <Route path='/dm-home' element={<DMHome />} />
         <Route path='/player-home' element={<PlayerHome />} />
-        <Route path='/navigations' element={<Navigations />} />
+        
 
       </Routes>
       
