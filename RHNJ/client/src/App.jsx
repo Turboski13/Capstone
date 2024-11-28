@@ -18,6 +18,7 @@ import DmSignUp from './components/DmSignUp';
 import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
 import UserCharacter from './components/UserCharacter';
+import PlayArea from './components/PlayArea';
 // import TeamPage from './components/TeamPage';
 import './index.css';
 
@@ -53,7 +54,8 @@ function App() {
         <Route path='/user/character/:id' element={<UserCharacter />} />
         {/* <Route path='/characters' element={<characterList />} /> */}
         <Route path='/character/:id' element={<CharacterDetail />} />
-        <Route path='/' element={<HowToPlay />} /> 
+        <Route path='/' element={<HowToPlay />} />
+        <Route path='/play-area' element={<PlayArea />} />
         
         {/* Protected Routes */}
         {/* <Route

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const path = require('path');
+const csv = require('csvtojson');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -447,6 +448,26 @@ app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
   }
 });
 
+//upload info to a team
+app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
+
+  const { teamId, csvData } = req.body;
+  try{
+    const jsonData = await csv().fromString(csvData);
+    const infoUpload = await prisma.team.update({
+      where: { id: +teamId},
+      data: {
+        assets: jsonData,
+      },
+    });
+    res.status(201).json({message: 'upload success!', infoUpload});
+
+  }catch(err){
+    console.error('couldnt add the info to the team', err);
+  }
+})
+
+
 app.delete(
   '/api/teams/:teamId/users/:userId',
   authMiddleware,
@@ -478,6 +499,7 @@ app.delete(
     res.json(updatedTeam);
   }
 );
+
 
 app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {

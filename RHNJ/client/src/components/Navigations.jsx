@@ -38,6 +38,8 @@ const Navigations = () => {
   const isPlayerHome = location.pathname === "/player-home";  // Adjust to your Player Home path
   const isDMHome = location.pathname === "/dm-home";  // Adjust to your DM Home path
   const isHowToPlay = location.pathname === "/how-to-play";  // Check if current page is How to Play
+  const isAboutChar = location.pathname === '/about-characters';
+
 
   return (
     <nav>
@@ -54,11 +56,17 @@ const Navigations = () => {
           {isPlayerHome && renderNavLink("/about-characters", "Characters")}
           {isPlayerHome && renderNavLink("/player-home", "Player Home")}
           {isPlayerHome && renderNavLink("/dm-home", "DM Home")}
+          {isPlayerHome && renderNavLink('/play-area', 'Play Area')}
+
+          {/* {isAboutChar && renderNavLink("/player-home", "Player Home")} 
+          {isAboutChar && renderNavLink("/dm-home", "DM Home")}
+          {isAboutChar && renderNavLink('/play-area', 'Play Area')} */}
 
           {/* Render specific links for DM Home page */}
           {isDMHome && renderNavLink("/how-to-play", "How to Play")}
           {isDMHome && renderNavLink("/about-characters", "Characters")}
-          {isDMHome && renderNavLink("/player-home", "Player Home")} 
+          {isDMHome && renderNavLink("/player-home", "Player Home")}
+          {isDMHome && renderNavLink('/play-area', 'Play Area')} 
 
           {/* If the user is logged in and on the "How to Play" page, add these links */}
           {isHowToPlay && isLoggedIn && (
@@ -66,6 +74,7 @@ const Navigations = () => {
               {renderNavLink("/about-characters", "Characters")}
               {renderNavLink("/player-home", "Player Home")}
               {renderNavLink("/dm-home", "DM Home")}
+              {renderNavLink('/play-area', 'Play Area')}
             </>
           )}
         </ul>
