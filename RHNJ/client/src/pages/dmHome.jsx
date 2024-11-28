@@ -176,6 +176,7 @@ const DMHome = () => {
 
       // Join the team
       const updatedTeam = await joinTeam(joinTeamId, teamPW, token);
+      console.log(updatedTeam);
 
       // Update the team state with the updated team details
       setTeams((prevTeams) =>
@@ -189,6 +190,7 @@ const DMHome = () => {
       setTeamPW('');
       setError(null);
       alert('Successfully joined the team!');
+      navigate(`/play-area/${joinTeamId}`)
     } catch (err) {
       setError('Failed to join the team. Please check the password.');
     }
@@ -250,34 +252,7 @@ const DMHome = () => {
       >
         {newTeamForm ? 'Cancel' : 'Create New Team'}
       </button>
-      {/* add the below back if you guys want the player list to show up again. Also did you mean character list and not player? */}
-      {/* <h3 className='dm-h3'>Player List</h3>
-      {players.length === 0 ? (
-        <p>No players available.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Player Name</th>
-              <th>Email</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player) => (
-              <tr key={player.id}>
-                <td>{player.username}</td>
-                <td>{player.email}</td>
-                <td>
-                  <button onClick={() => handleDelete(player.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )} */}
+
       <h3 className='team-h3'>Teams List</h3>
       <h3 id='search-label'>Search for a specific team</h3>
       <input

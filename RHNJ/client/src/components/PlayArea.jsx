@@ -1,18 +1,47 @@
 import Navigations from "./Navigations";
 import csv from 'csvtojson';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 
 const PlayArea = () => {
   const [teamName, setTeamName] = useState('');
   const [csvFile, setCsvFile] = useState(null);
+  const [teamId, setTeamId] = useState(null);
 
-  const uploadEnemySheet = async(teamId, csvData) => {
-    const csvData = await csvFile.text();
+
+  const { teamId: paramTeamId } = useParams();
+
+  useEffect(() => {
+    if(paramTeamId){
+      setTeamId(paramTeamId);
+      getTeamInfo(paramTeamId);
+    }
+
+  },[paramTeamId])
+  const getTeamInfo = async(teamId) => {
+    const token = localStorage.getItem('token');
+    try{
+      const response = await fetch(`http://localhost:3000/api/teams/${teamId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      console.log(result);
+
+    }catch(err){
+      console.log('error trying to get all info', err);
+    }
+  };
+
+  const uploadEnemySheet = async(teamId, csvInfo) => {
+    const csvData = await csvInfo.text();
     const token = localStorage.getItem('token');
 
     try{
-      const response = await fetch(`/api/teams/upload`, {
+      const response = await fetch(`http://localhost:3000/api/teams/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,14 +55,14 @@ const PlayArea = () => {
     }catch(err){
       console.log(err);
     }
-  }
+  };
 
   return (
     <>
     <Navigations />
     <div id="container">
       <form id="dm-upload"
-      onSubmit={(e) => {e.preventDefault(); uploadEnemySheet(teamName, csvInfo);}}>
+      onSubmit={(e) => {e.preventDefault(); uploadEnemySheet(teamName, csvFile);}}>
         
       <input id="team-id" //this might change since I will probably set the teamId on successful pw join
       type="text"
@@ -47,6 +76,7 @@ const PlayArea = () => {
       accept=".csv"
       onChange={(e) => setCsvFile(e.target.files[0])}
       />
+      <button onClick={() => uploadEnemySheet(teamName, csvFile)}>Upload</button>
         </form>
     </div>
     </>
