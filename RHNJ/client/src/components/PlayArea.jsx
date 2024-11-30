@@ -2,6 +2,7 @@ import Navigations from "./Navigations";
 import csv from 'csvtojson';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { searchAllUserCharacters } from "../functions/userFunctions";
 
 
 const PlayArea = () => {
@@ -10,6 +11,8 @@ const PlayArea = () => {
   const [csvFile, setCsvFile] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [isDm, setIsDm] = useState(false);
+  const [showChars, setShowChars] = useState(false);
+  const [userChars, setUserChars] = useState([]);
 
 
   const { teamId: paramTeamId } = useParams();
@@ -20,6 +23,34 @@ const PlayArea = () => {
       getTeamInfo(paramTeamId);
     }
   },[paramTeamId])
+
+  const showUserChars = async() => {
+    const userChars = await searchAllUserCharacters();
+    setUserChars(userChars);
+    setShowChars(true);
+  };
+
+  const addCharToTeam = async(charId) => {
+    const teamPW = teamInfo.password;
+    const token = localStorage.getItem('token');
+
+    try{
+      const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ teamPW, charId }),
+      });
+      const result = await response.json()
+      console.log(result);
+
+    }catch(err){
+      console.log('couldnt add the character to the team', err);
+    }
+
+  }
 
   const getTeamInfo = async(teamId) => {
     const token = localStorage.getItem('token');
@@ -86,7 +117,18 @@ const PlayArea = () => {
         </form>
     </div>
     )}
-    <h1>normal users only see this</h1>
+    <button onClick={() => showUserChars()}>Add Your Character To This Adventure</button>
+    {showChars && (
+      userChars.map((char) => (
+        <div key={char.id}>
+          <img src={char.image} />
+          <h3>{char.characterName}</h3>
+          <h3>{char.level}</h3>
+          <h3>{char.characterClass}</h3>
+          <button onClick={() => addCharToTeam(char.id)}>Join With This Character</button>
+        </div>
+      ))
+    )}
     </>
   )
 

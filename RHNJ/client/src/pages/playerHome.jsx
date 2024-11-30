@@ -39,8 +39,7 @@ const PlayerHome = () => {
 
   const fetchCharacters = async () => {
     try {
-      const userId = localStorage.getItem('userId');
-      const allCharacters = await searchAllUserCharacters(userId);
+      const allCharacters = await searchAllUserCharacters();
       /*console.log("Characters array:", characters);*/
       console.log(allCharacters);
       
@@ -58,7 +57,6 @@ const PlayerHome = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Token in PlayerHome:', token);// Check if the token is present
     if (!token) {
       console.log("No token found, navigating to login.");
       navigate('/login'); // Redirect to login if no token is found

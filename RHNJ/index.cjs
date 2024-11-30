@@ -408,6 +408,42 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   }
 });
 
+app.post('/api/teams/:teamId/char-join', authMiddleware, async(req, res, next) => {
+  const { teamPW, charId } = req.body;
+  const { id } = req.user;
+  const { teamId } = req.params;
+
+  try{
+    const team = await prisma.team.findUnique({
+      where: { id: +teamId },
+    });
+
+    if(!team || team.password !== teamPW){
+      return res.status(404).json({message: 'couldnt find the team or incorrect PW'});
+    }
+
+    const isTheirChar = await prisma.userCharacter.findUnique({
+      where: { id: +charId },
+      include: { user: true },
+    });
+    console.log(isTheirChar);
+    if(isTheirChar.userId !== id){
+      return res.status(403).json({message: "unauthorized to add this character to this team"});
+    }
+
+    const joinTeam = await prisma.userCharacter.update({
+      where: { id: +charId },
+      data: {
+        teamId: +teamId
+      },
+    });
+    res.status(201).json({message: 'successfully joined the team', joinTeam});
+
+  }catch(err){
+    console.error('Couldnt add the char to the current team', err);
+  }
+})
+
 app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
   const { id } = req.user;
   const { teamId } = req.params;
