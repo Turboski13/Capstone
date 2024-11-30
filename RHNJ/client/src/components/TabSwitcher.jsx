@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './TabSwitcher.css';
 
-const TabSwitcher = ({ teamName, dmId, assets, characters, enemies, users }) => {
+const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users }) => {
   const [activeTab, setActiveTab] = useState("inventory");
 
   const renderContent = () => {

@@ -36,6 +36,7 @@ const PlayArea = () => {
     const userChars = await searchAllUserCharacters();
     setUserChars(userChars);
     setShowChars(true);
+    console.log(userChars);
   };
 
   const addCharToTeam = async(charId) => {
@@ -73,9 +74,11 @@ const PlayArea = () => {
       console.log('getTeamInfo return: ', result);
       const { team } = result;
       setTeamInfo(team)
-      setIsDm(team.dmId === result.id);
+      setIsDm(team.dmId === result.id);7
 
-      const enemies = team.assets.filter((asset) => asset.Enemy);
+      const assets = Array.isArray(team.assets) ? team.assets : [];
+      const enemies = assets.filter((asset) => asset.Enemy);
+
       setAllData({
         teamName: team.name || '',
         dmId: team.dmId || null,
@@ -138,15 +141,16 @@ const PlayArea = () => {
       userChars.map((char) => (
         <div key={char.id}>
           <img src={char.image} />
-          <h3>{char.characterName}</h3>
-          <h3>{char.level}</h3>
-          <h3>{char.characterClass}</h3>
+          <h3>Name: {char.characterName}</h3>
+          <h3>Team id: {char.teamId || 'Not on a team yet'}</h3>
+          <h3>Level: {char.level}</h3>
+          <h3>Class: {char.characterClass}</h3>
           <button onClick={() => addCharToTeam(char.id)}>Join With This Character</button>
         </div>
       ))
     )}
     <h1>Team: {allData.teamName}</h1>
-    <TabSwitcher teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
+    <TabSwitcher isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
     </>
   )
 
