@@ -9,9 +9,8 @@ const Navigations = () => {
   // Check if token exists in localStorage and set the state when component mounts
   useEffect(() => {
     const token = localStorage.getItem("token");  
-    console.log('Token in Navigations:', token);
     setIsLoggedIn(token !== null);  // Set isLoggedIn state based on whether token exists
-  }, [location.pathname]);  // Empty dependency array ensures this effect runs only once when the component mounts
+  }, []);  // Empty dependency array ensures this effect runs only once when the component mounts
 
   const handleLogout = () => {
     logout();  // Call logout from API
@@ -38,7 +37,6 @@ const Navigations = () => {
   const isPlayerHome = location.pathname === "/player-home";  // Adjust to your Player Home path
   const isDMHome = location.pathname === "/dm-home";  // Adjust to your DM Home path
   const isHowToPlay = location.pathname === "/how-to-play";  // Check if current page is How to Play
-  const isAboutChar = location.pathname === '/about-characters';
 
 
   return (
@@ -55,8 +53,8 @@ const Navigations = () => {
           {isPlayerHome && renderNavLink("/how-to-play", "How to Play")}
           {isPlayerHome && renderNavLink("/about-characters", "Characters")}
           {isPlayerHome && renderNavLink("/player-home", "Player Home")}
-          {isPlayerHome && renderNavLink("/dm-home", "DM Home")}
-          {isPlayerHome && renderNavLink('/play-area', 'Play Area')}
+          {isPlayerHome && renderNavLink("/dm-home", "Join A Game")}
+     
 
           {/* {isAboutChar && renderNavLink("/player-home", "Player Home")} 
           {isAboutChar && renderNavLink("/dm-home", "DM Home")}
@@ -66,15 +64,15 @@ const Navigations = () => {
           {isDMHome && renderNavLink("/how-to-play", "How to Play")}
           {isDMHome && renderNavLink("/about-characters", "Characters")}
           {isDMHome && renderNavLink("/player-home", "Player Home")}
-          {isDMHome && renderNavLink('/play-area', 'Play Area')} 
+       
 
           {/* If the user is logged in and on the "How to Play" page, add these links */}
           {isHowToPlay && isLoggedIn && (
             <>
               {renderNavLink("/about-characters", "Characters")}
               {renderNavLink("/player-home", "Player Home")}
-              {renderNavLink("/dm-home", "DM Home")}
-              {renderNavLink('/play-area', 'Play Area')}
+              {renderNavLink("/dm-home", "Join A Game")}
+         
             </>
           )}
         </ul>

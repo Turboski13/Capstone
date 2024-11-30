@@ -6,8 +6,10 @@ import { useParams } from "react-router-dom";
 
 const PlayArea = () => {
   const [teamName, setTeamName] = useState('');
+  const [teamInfo, setTeamInfo] = useState(null);
   const [csvFile, setCsvFile] = useState(null);
   const [teamId, setTeamId] = useState(null);
+  const [isDm, setIsDm] = useState(false);
 
 
   const { teamId: paramTeamId } = useParams();
@@ -17,8 +19,8 @@ const PlayArea = () => {
       setTeamId(paramTeamId);
       getTeamInfo(paramTeamId);
     }
-
   },[paramTeamId])
+
   const getTeamInfo = async(teamId) => {
     const token = localStorage.getItem('token');
     try{
@@ -29,7 +31,9 @@ const PlayArea = () => {
         },
       });
       const result = await response.json();
-      console.log(result);
+      console.log('getTeamInfo return: ', result);
+      setTeamInfo(result.team)
+      setIsDm(result.team.dmId === result.id);
 
     }catch(err){
       console.log('error trying to get all info', err);
@@ -60,7 +64,9 @@ const PlayArea = () => {
   return (
     <>
     <Navigations />
-    <div id="container">
+    {isDm && (
+
+      <div id="container">
       <form id="dm-upload"
       onSubmit={(e) => {e.preventDefault(); uploadEnemySheet(teamName, csvFile);}}>
         
@@ -79,6 +85,8 @@ const PlayArea = () => {
       <button onClick={() => uploadEnemySheet(teamName, csvFile)}>Upload</button>
         </form>
     </div>
+    )}
+    <h1>normal users only see this</h1>
     </>
   )
 

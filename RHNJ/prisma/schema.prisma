@@ -21,6 +21,7 @@ model UserCharacter {
   id             Int      @id @default(autoincrement())
   userId         Int
   characterName  String
+  teamId         Int?
   description    String?
   characterClass String
   level          Int
@@ -38,7 +39,9 @@ model UserCharacter {
   notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
   user           User     @relation(fields: [userId], references: [id])
+  team           Team?     @relation(fields: [teamId], references: [id])
 }
 
 model Team {
@@ -51,4 +54,5 @@ model Team {
   updatedAt DateTime @updatedAt
   dm        User?    @relation("DMTeams", fields: [dmId], references: [id])
   users     User[]   @relation("UserTeams")
+  characters  UserCharacter[]
 }

@@ -344,6 +344,7 @@ app.get('/api/teams', async (req, res, next) => {
   }
 });
 
+//create team
 app.post('/api/teams', authMiddleware, async (req, res, next) => {
   try {
     const { teamName, roomPassword, assets } = req.body;
@@ -367,6 +368,7 @@ app.post('/api/teams', authMiddleware, async (req, res, next) => {
   }
 });
 
+//join team
 app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   try {
     const { teamPW } = req.body;
@@ -407,18 +409,19 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
 });
 
 app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
-  const { teamId } = req.params.teamId;
+  const { id } = req.user;
+  const { teamId } = req.params;
 
   const team = await prisma.team.findUnique({
     where: { id: parseInt(teamId) },
-    include: { users: true, assets: true }, // Include users (players) and assets
+    include: { users: true, }, // Include users (players) and assets
   });
 
   if (!team) {
     return res.status(404).json({ message: 'Team not found' });
   }
 
-  res.json({ message: `Team details for ${teamId}` });
+  res.status(201).json({ message: `Team details for ${teamId}`, team, id });
 });
 
 // Delete team
