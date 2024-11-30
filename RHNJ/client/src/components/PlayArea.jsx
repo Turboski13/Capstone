@@ -117,7 +117,11 @@ const PlayArea = () => {
         </form>
     </div>
     )}
-    <button onClick={() => showUserChars()}>Add Your Character To This Adventure</button>
+    {
+      !showChars ? 
+      <button onClick={() => showUserChars()}>Add Your Character To This Adventure</button>
+      : <button onClick={() => setShowChars(false)}>Hide Character Panel</button>
+    }
     {showChars && (
       userChars.map((char) => (
         <div key={char.id}>
