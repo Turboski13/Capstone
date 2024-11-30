@@ -51,9 +51,9 @@ const PlayArea = () => {
         },
         body: JSON.stringify({ teamPW, charId }),
       });
-      const result = await response.json()
-      console.log(result);
-
+      const result = await response.json();
+      setShowChars(false);
+      getTeamInfo(teamId);
     }catch(err){
       console.log('couldnt add the character to the team', err);
     }
