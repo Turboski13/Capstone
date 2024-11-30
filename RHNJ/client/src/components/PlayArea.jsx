@@ -3,16 +3,24 @@ import csv from 'csvtojson';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { searchAllUserCharacters } from "../functions/userFunctions";
+import TabSwitcher from "./TabSwitcher";
 
 
 const PlayArea = () => {
-  const [teamName, setTeamName] = useState('');
   const [teamInfo, setTeamInfo] = useState(null);
   const [csvFile, setCsvFile] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [isDm, setIsDm] = useState(false);
   const [showChars, setShowChars] = useState(false);
   const [userChars, setUserChars] = useState([]);
+  const [allData, setAllData] = useState({
+    teamName: '',
+    dmId: null,
+    assets: [],
+    characters: [],
+    enemies: [],
+    users: [],
+  });
 
 
   const { teamId: paramTeamId } = useParams();
@@ -63,8 +71,19 @@ const PlayArea = () => {
       });
       const result = await response.json();
       console.log('getTeamInfo return: ', result);
-      setTeamInfo(result.team)
-      setIsDm(result.team.dmId === result.id);
+      const { team } = result;
+      setTeamInfo(team)
+      setIsDm(team.dmId === result.id);
+
+      const enemies = team.assets.filter((asset) => asset.Enemy);
+      setAllData({
+        teamName: team.name || '',
+        dmId: team.dmId || null,
+        assets: team.assets || [],
+        characters: team.characters || [],
+        enemies,
+        users: team.users || [],
+      })
 
     }catch(err){
       console.log('error trying to get all info', err);
@@ -99,21 +118,14 @@ const PlayArea = () => {
 
       <div id="container">
       <form id="dm-upload"
-      onSubmit={(e) => {e.preventDefault(); uploadEnemySheet(teamName, csvFile);}}>
-        
-      <input id="team-id" //this might change since I will probably set the teamId on successful pw join
-      type="text"
-      placeholder="Team Name"
-      value={teamName}
-      onChange={(e) => setTeamName(e.target.value)}>
-      </input>
+      onSubmit={(e) => {e.preventDefault(); uploadEnemySheet(teamId, csvFile);}}>
 
       <input id="csv-input"
       type="file"
       accept=".csv"
       onChange={(e) => setCsvFile(e.target.files[0])}
       />
-      <button onClick={() => uploadEnemySheet(teamName, csvFile)}>Upload</button>
+      <button onClick={() => uploadEnemySheet(teamId, csvFile)}>Upload</button>
         </form>
     </div>
     )}
@@ -133,6 +145,8 @@ const PlayArea = () => {
         </div>
       ))
     )}
+    <h1>Team: {allData.teamName}</h1>
+    <TabSwitcher teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
     </>
   )
 

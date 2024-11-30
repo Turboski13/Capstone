@@ -39,6 +39,7 @@ model UserCharacter {
   notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  items          String[]
 
   user           User     @relation(fields: [userId], references: [id])
   team           Team?     @relation(fields: [teamId], references: [id])

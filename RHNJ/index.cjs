@@ -431,13 +431,13 @@ app.post('/api/teams/:teamId/char-join', authMiddleware, async(req, res, next) =
       return res.status(403).json({message: "unauthorized to add this character to this team"});
     }
 
-    const joinTeam = await prisma.userCharacter.update({
+    const joinTeam = await prisma.userCharacter.update({ //this will actually equal the character that joined. 
       where: { id: +charId },
       data: {
         teamId: +teamId
       },
     });
-    res.status(201).json({message: 'successfully joined the team', joinTeam});
+    res.status(201).json({message: 'successfully joined the team'});
 
   }catch(err){
     console.error('Couldnt add the char to the current team', err);
@@ -461,7 +461,7 @@ app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
 
   const team = await prisma.team.findUnique({
     where: { id: parseInt(teamId) },
-    include: { users: true, }, // Include users (players) and assets
+    include: { users: true, characters: true, }, // Include users (players) and assets
   });
 
   if (!team) {

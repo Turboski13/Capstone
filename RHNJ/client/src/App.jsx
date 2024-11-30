@@ -63,10 +63,6 @@ function App() {
           element={isAuthenticated() ? <Navigate to='/login' /> : <AdminHome />}
         />
         <Route
-          path='/dm-home'
-          element={isAuthenticated() ? <Navigate to='/login' /> : <DMHome />}
-        />
-        <Route
           path='/player-home'
           element={isAuthenticated() ? <Navigate to='/login' /> : <PlayerHome />}
         /> */}
