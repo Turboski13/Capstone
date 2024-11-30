@@ -412,6 +412,17 @@ app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
   const { id } = req.user;
   const { teamId } = req.params;
 
+  const user = await prisma.user.findUnique({
+    where: { id: +id },
+    include: { teams: true },
+  });
+
+  const isOnTeam = user.teams.some((team) => team.id === parseInt(teamId));
+
+  if(!isOnTeam){
+    return res.status(401).json({message: 'Unauthorized to this team!'});
+  }
+
   const team = await prisma.team.findUnique({
     where: { id: parseInt(teamId) },
     include: { users: true, }, // Include users (players) and assets
