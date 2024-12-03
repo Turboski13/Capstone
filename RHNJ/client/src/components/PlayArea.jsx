@@ -90,7 +90,7 @@ const PlayArea = () => {
       setIsDm(team.dmId === result.id);
 
       const assets = Array.isArray(team.assets) ? team.assets : [];
-      const enemies = assets.filter((asset) => asset.Enemy);
+      const enemies = assets.filter((asset) => asset.Type === "Enemy" || asset.Type === "Boss");
 
       setAllData({
         teamName: team.name || '',
@@ -163,7 +163,7 @@ const PlayArea = () => {
       ))
     )}
     <h1>Team: {allData.teamName}</h1>
-    <TabSwitcher socket={socket} userId={userId} isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
+    <TabSwitcher teamId={teamId} socket={socket} userId={userId} isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
     </>
   )
 

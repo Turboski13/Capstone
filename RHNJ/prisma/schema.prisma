@@ -45,15 +45,25 @@ model UserCharacter {
   team           Team?     @relation(fields: [teamId], references: [id])
 }
 
+model Asset {
+  id          Int      @id @default(autoincrement())
+  teamId      Int
+  properties  Json
+  createdAt   DateTime @default(now())
+  team        Team     @relation(fields: [teamId], references: [id], name: "AssetToTeam")
+}
+
 model Team {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   password  String?
   dmId      Int?
-  assets    Json?
+  visibleProperties Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   dm        User?    @relation("DMTeams", fields: [dmId], references: [id])
   users     User[]   @relation("UserTeams")
-  characters  UserCharacter[]
+  characters UserCharacter[]
+  assets    Asset[]  @relation("AssetToTeam")
 }
+

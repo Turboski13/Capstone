@@ -1,41 +1,40 @@
 import React, { useState, useEffect } from "react";
 import './TabSwitcher.css';
+import DmUi from "./DmUi";
 
-const TabSwitcher = ({ userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
+const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
   const [activeTab, setActiveTab] = useState("inventory");
   const [characterData, setCharacterData] = useState(characters);
   const [enemyData, setEnemyData] = useState(enemies);
   const [userData, setUserData] = useState(users);
-  const [selfUpdateId, setSelfUpdateId] = useState(null);
-  
-// const updateStatus = async(characterId, change) => {
-//   try{
-//     setSelfUpdateId(characterId);
-//     setCharacterData((prevData) => prevData.map((char) => char.id === characterId ? 
-//   { ...char, statusPoints: char.statusPoints + change }
-//   : char));
+  const [dmSelectedProperties, setDmSelectedProperties] = useState({});
+  const [filteredAssets, setFilteredAssets] = useState({});
 
-//   socket.emit('updateStatusPoints', { characterId, change });
 
-//   }catch(err){
-//     console.log(err);
-//   }
-// }
-
-const updateCharacterProperty = async(characterId, property, change) => {
-  try{
-    setSelfUpdateId(characterId);
-    setCharacterData((prevData) => 
-      prevData.map((char) => 
-        char.id === characterId 
-    ? { ...char, [property]: char[property] + change }
-  : char));
-
-    socket.emit('updateCharacterProperty', { characterId, property, change });
-  }catch(err){
-    console.log(err);
+  const getFilteredAssets = async() => {
+    try{
+      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {});
+      const result = await response.json();
+      setFilteredAssets(result);
+      console.log(result);
+    }catch(err){
+      console.log(err);
+    }
   }
-}
+
+  const updateCharacterProperty = async(characterId, property, change) => {
+    try{
+      setCharacterData((prevData) => 
+        prevData.map((char) => 
+          char.id === characterId 
+      ? { ...char, [property]: char[property] + change }
+    : char));
+
+      socket.emit('updateCharacterProperty', { characterId, property, change });
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     if (socket) {
@@ -45,6 +44,9 @@ const updateCharacterProperty = async(characterId, property, change) => {
             char.id === updatedCharacter.id ? updatedCharacter : char
           )
         );
+      });
+      socket.on("updateSharedAssets", (updatedAssets) => {
+        setFilteredAssets(updatedAssets);
       });
       socket.on("updateEnemyData", (updatedEnemy) => {
         setEnemyData((prevData) =>
@@ -76,6 +78,7 @@ const updateCharacterProperty = async(characterId, property, change) => {
         socket.off("updateEnemyData");
         socket.off("updateUserData");
         socket.off("updateCharacterProperty");
+        socket.off("updateSharedAssets");
       }
     };
   }, [socket]);
@@ -217,7 +220,7 @@ const updateCharacterProperty = async(characterId, property, change) => {
       <div className="enemy-grid">
         {enemyData.map((enemy, index) => (
           <div key={index} className="enemy-card">
-            <h3>{enemy.Enemy}</h3>
+            <h3>{enemy.Name}</h3>
             <div className="enemy-details-grid">
               <div className="detail">
                 <strong>Armor Class:</strong>
@@ -235,27 +238,27 @@ const updateCharacterProperty = async(characterId, property, change) => {
               </div>
               <div className="detail">
                 <strong>Strength:</strong>
-                <span>{enemy.Strength}</span>
+                <span>{enemy.St}</span>
               </div>
               <div className="detail">
                 <strong>Dexterity:</strong>
-                <span>{enemy.Dexterity}</span>
+                <span>{enemy.Dex}</span>
               </div>
               <div className="detail">
                 <strong>Constitution:</strong>
-                <span>{enemy.Constitution}</span>
+                <span>{enemy.Con}</span>
               </div>
               <div className="detail">
                 <strong>Intelligence:</strong>
-                <span>{enemy.Intelligence}</span>
+                <span>{enemy.Int}</span>
               </div>
               <div className="detail">
                 <strong>Wisdom:</strong>
-                <span>{enemy.Wisdom}</span>
+                <span>{enemy.Wis}</span>
               </div>
               <div className="detail">
                 <strong>Charisma:</strong>
-                <span>{enemy.Charisma}</span>
+                <span>{enemy.Cha}</span>
               </div>
               </div>
               <div className="detail">
@@ -265,15 +268,23 @@ const updateCharacterProperty = async(characterId, property, change) => {
               <div className="detail">
                 <strong>Attack Action 1:</strong>
                 <span>{enemy["attack action 1"]}</span>
+                <span>{enemy["description 1"]}</span>
               </div>
               <div className="detail">
                 <strong>Attack Action 2:</strong>
                 <span>{enemy["attack action 2"]}</span>
+                <span>{enemy["description 2"]}</span>
+              </div>
+              <div className="detail">
+                <strong>Attack Action 3:</strong>
+                <span>{enemy["attack action 3"]}</span>
+                <span>{enemy["description 3"]}</span>
               </div>
               <div className="detail">
                 <strong>Damage Immunities:</strong>
                 <span>{enemy["damage immunities"]}</span>
               </div>
+              <img src={enemy.Image} />
             </div>
           </div>
         ))}
@@ -300,6 +311,7 @@ const updateCharacterProperty = async(characterId, property, change) => {
 
   return (
     <div>
+      {isDm && <DmUi teamId={teamId} assets={assets} socket={socket}/>}
       <div className="tabs">
         <button
           onClick={() => setActiveTab("inventory")}

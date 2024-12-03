@@ -455,6 +455,32 @@ app.post('/api/teams/:teamId/char-join', authMiddleware, async(req, res, next) =
   }
 })
 
+app.get('/api/assets/:teamId', async(req, res, next) => {
+  const { teamId } = req.params;
+
+  try{
+    const team = await prisma.team.findUnique({
+      where: { id: +teamId },
+    });
+    const { assets, visibleProperties } = team;
+
+    const filteredAssets = assets.map((asset) => {
+      const assetId = asset.id || asset.name;
+      const visibleProps = visibleProperties[assetId] || [];
+      return Object.keys(asset).reduce((filtered, key) => {
+        if(visibleProps.includes(key)) {
+          filtered[key] = asset[key];
+        }
+        return filtered;
+      }, {});
+    });
+
+    res.json(filteredAssets);
+  }catch(err){
+    console.error('couldnt get any assets', err);
+  }
+})
+
 app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
   const { id } = req.user;
   const { teamId } = req.params;
@@ -514,14 +540,17 @@ app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
 
   const { teamId, csvData } = req.body;
   try{
-    const jsonData = await csv().fromString(csvData);
-    const infoUpload = await prisma.team.update({
-      where: { id: +teamId},
-      data: {
-        assets: jsonData,
-      },
-    });
-    res.status(201).json({message: 'upload success!', infoUpload});
+    const assets = await csv().fromString(csvData);
+    
+    const assetRecords = assets.map((row) => ({
+      teamId,
+      properties: row,
+    }));
+
+    await prisma.asset.createMany({
+      data: assetRecords,
+    })
+    res.status(201).json({message: 'upload success!', assetRecords });
 
   }catch(err){
     console.error('couldnt add the info to the team', err);
@@ -756,6 +785,28 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
+  socket.on("addSharedAsset", async ({ teamId, assetId, visibleProperties }) => {
+    try {
+      // Update visibility settings in the database
+      await prisma.team.update({
+        where: { id: +teamId },
+        data: {
+          visibleProperties: {
+            [assetId]: visibleProperties,
+          },
+        },
+      });
+
+      // Broadcast the updated shared assets to all users in the team
+      const updatedAssets = await prisma.team.findUnique({
+        where: { id: +teamId },
+        select: { assets: true },
+      });
+      io.to(`team_${teamId}`).emit("updateSharedAssets", updatedAssets.assets);
+    } catch (err) {
+      console.error("Error sharing asset:", err);
+    }
+  });
 
   socket.on("updateCharacterProperty", async ({ characterId, property, change }) => {
     try {
