@@ -757,25 +757,24 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  socket.on("updateStatusPoints", async ({ characterId, change }) => {
+  socket.on("updateCharacterProperty", async ({ characterId, property, change }) => {
     try {
-      // Update the database
       const updatedCharacter = await prisma.userCharacter.update({
         where: { id: characterId },
         data: {
-          statusPoints: {
-            increment: change, // Increment or decrement
-          },
+          [property]: { increment: change }, // this chooses the property to change and the change amount
         },
       });
-
-      // Broadcast the updated character to all clients
-      io.emit("updateCharacterStatus", {
+      const updatedValue = updatedCharacter[property];
+  
+      // Broadcast the update to all clients
+      io.emit("updateCharacterProperty", {
         characterId: updatedCharacter.id,
-        change,
+        property: property,
+        value: updatedValue,
       });
-    } catch (error) {
-      console.error("Error updating character status points:", error);
+    } catch (err) {
+      console.error(`Error updating ${property}:`, err);
     }
   });
 

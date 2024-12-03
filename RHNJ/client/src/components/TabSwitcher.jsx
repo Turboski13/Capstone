@@ -8,15 +8,30 @@ const TabSwitcher = ({ userId, isDm, teamName, dmId, assets, characters, enemies
   const [userData, setUserData] = useState(users);
   const [selfUpdateId, setSelfUpdateId] = useState(null);
   
-const updateStatus = async(characterId, change) => {
+// const updateStatus = async(characterId, change) => {
+//   try{
+//     setSelfUpdateId(characterId);
+//     setCharacterData((prevData) => prevData.map((char) => char.id === characterId ? 
+//   { ...char, statusPoints: char.statusPoints + change }
+//   : char));
+
+//   socket.emit('updateStatusPoints', { characterId, change });
+
+//   }catch(err){
+//     console.log(err);
+//   }
+// }
+
+const updateCharacterProperty = async(characterId, property, change) => {
   try{
     setSelfUpdateId(characterId);
-    setCharacterData((prevData) => prevData.map((char) => char.id === characterId ? 
-  { ...char, statusPoints: char.statusPoints + change }
+    setCharacterData((prevData) => 
+      prevData.map((char) => 
+        char.id === characterId 
+    ? { ...char, [property]: char[property] + change }
   : char));
 
-  socket.emit('updateStatusPoints', { characterId, change });
-
+    socket.emit('updateCharacterProperty', { characterId, property, change });
   }catch(err){
     console.log(err);
   }
@@ -30,17 +45,6 @@ const updateStatus = async(characterId, change) => {
             char.id === updatedCharacter.id ? updatedCharacter : char
           )
         );
-      });
-      socket.on("updateCharacterStatus", ({ characterId, change }) => {
-        if(characterId === selfUpdateId) {
-          setSelfUpdateId(null);
-          return;
-        }
-        setCharacterData((prevData) => 
-          prevData.map((char) => 
-            char.id === characterId ? 
-            { ...char, statusPoints: char.statusPoints + change }
-             : char));
       });
       socket.on("updateEnemyData", (updatedEnemy) => {
         setEnemyData((prevData) =>
@@ -56,16 +60,25 @@ const updateStatus = async(characterId, change) => {
           )
         );
       });
+      socket.on("updateCharacterProperty", ({ characterId, property, value }) => {
+        setCharacterData((prevData) =>
+          prevData.map((char) =>
+            char.id === characterId
+              ? { ...char, [property]: value }
+              : char
+          )
+        );
+      });
     }
     return () => {
       if (socket) {
         socket.off("updateCharacterData");
         socket.off("updateEnemyData");
         socket.off("updateUserData");
-        socket.off("updateCharacterStatus");
+        socket.off("updateCharacterProperty");
       }
     };
-  }, [socket, selfUpdateId]);
+  }, [socket]);
 
   //this is for setting the original props to local state on the first mount. 
   useEffect(() => {
@@ -74,8 +87,6 @@ const updateStatus = async(characterId, change) => {
     setUserData(users || []);
   }, [characters, enemies, users])
 
-
-  console.log(characterData);
   const renderContent = () => {
     switch (activeTab) {
       case "inventory":
@@ -108,13 +119,14 @@ const updateStatus = async(characterId, change) => {
                       <div className="detail">
                         <strong>Level:</strong>
                         <span>{character.level}</span>
+                        <button id="level-btn" onClick={() => updateCharacterProperty(character.id, "level", 1)}>Level up</button>
                       </div>
                       <div className="detail">
                         <strong>Status Points:</strong>
                         <span>{character.statusPoints}</span>
                         <div id="status-div">
-                        <button id="status-btn" onClick={() => updateStatus(character.id, -1)}>-1</button>
-                        <button id="status-btn" onClick={() => updateStatus(character.id, 1)}>+1</button>
+                        <button id="status-btn" onClick={() => updateCharacterProperty(character.id, "statusPoints", -1)}>-1</button>
+                        <button id="status-btn" onClick={() => updateCharacterProperty(character.id, "statusPoints", 1)}>+1</button>
                         </div>
                       </div>
                       <div className="detail">
