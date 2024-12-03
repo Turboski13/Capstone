@@ -770,7 +770,10 @@ io.on("connection", (socket) => {
       });
 
       // Broadcast the updated character to all clients
-      io.emit("updateCharacterStatus", updatedCharacter);
+      io.emit("updateCharacterStatus", {
+        characterId: updatedCharacter.id,
+        change,
+      });
     } catch (error) {
       console.error("Error updating character status points:", error);
     }

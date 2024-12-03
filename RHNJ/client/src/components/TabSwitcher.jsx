@@ -6,9 +6,11 @@ const TabSwitcher = ({ userId, isDm, teamName, dmId, assets, characters, enemies
   const [characterData, setCharacterData] = useState(characters);
   const [enemyData, setEnemyData] = useState(enemies);
   const [userData, setUserData] = useState(users);
+  const [selfUpdateId, setSelfUpdateId] = useState(null);
   
 const updateStatus = async(characterId, change) => {
   try{
+    setSelfUpdateId(characterId);
     setCharacterData((prevData) => prevData.map((char) => char.id === characterId ? 
   { ...char, statusPoints: char.statusPoints + change }
   : char));
@@ -28,6 +30,17 @@ const updateStatus = async(characterId, change) => {
             char.id === updatedCharacter.id ? updatedCharacter : char
           )
         );
+      });
+      socket.on("updateCharacterStatus", ({ characterId, change }) => {
+        if(characterId === selfUpdateId) {
+          setSelfUpdateId(null);
+          return;
+        }
+        setCharacterData((prevData) => 
+          prevData.map((char) => 
+            char.id === characterId ? 
+            { ...char, statusPoints: char.statusPoints + change }
+             : char));
       });
       socket.on("updateEnemyData", (updatedEnemy) => {
         setEnemyData((prevData) =>
@@ -49,9 +62,10 @@ const updateStatus = async(characterId, change) => {
         socket.off("updateCharacterData");
         socket.off("updateEnemyData");
         socket.off("updateUserData");
+        socket.off("updateCharacterStatus");
       }
     };
-  }, [socket]);
+  }, [socket, selfUpdateId]);
 
   //this is for setting the original props to local state on the first mount. 
   useEffect(() => {
