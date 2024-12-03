@@ -6,12 +6,23 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const path = require('path');
 const csv = require('csvtojson');
+const http = require("http");
+const { Server } = require("socket.io");
+
 
 const prisma = new PrismaClient();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-app.use(cors()); // Added this line
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+app.use(cors()); 
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'client/dist')));
@@ -743,6 +754,33 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
   }
 });
 
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("updateStatusPoints", async ({ characterId, change }) => {
+    try {
+      // Update the database
+      const updatedCharacter = await prisma.userCharacter.update({
+        where: { id: characterId },
+        data: {
+          statusPoints: {
+            increment: change, // Increment or decrement
+          },
+        },
+      });
+
+      // Broadcast the updated character to all clients
+      io.emit("updateCharacterStatus", updatedCharacter);
+    } catch (error) {
+      console.error("Error updating character status points:", error);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});
+
 app.get('/', (req, res, next)=>{
   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
@@ -757,12 +795,9 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Internal server error', message: err.message });
 });
 
-// Start the server
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(process.env.PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+server.listen(process.env.PORT || 3000, () => {
+  console.log(`Listening on port ${PORT}`);
   });
-}
 
 app.get('/test', (req, res) => {
   res.send('Server is up and running!');

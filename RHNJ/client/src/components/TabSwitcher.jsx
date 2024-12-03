@@ -1,32 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './TabSwitcher.css';
 
-const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users }) => {
+const TabSwitcher = ({ userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
   const [activeTab, setActiveTab] = useState("inventory");
+  const [characterData, setCharacterData] = useState(characters);
+  const [enemyData, setEnemyData] = useState(enemies);
+  const [userData, setUserData] = useState(users);
+  
+const updateStatus = async(characterId, change) => {
+  try{
+    setCharacterData((prevData) => prevData.map((char) => char.id === characterId ? 
+  { ...char, statusPoints: char.statusPoints + change }
+  : char));
 
+  socket.emit('updateStatusPoints', { characterId, change });
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("updateCharacterData", (updatedCharacter) => {
+        setCharacterData((prevData) =>
+          prevData.map((char) =>
+            char.id === updatedCharacter.id ? updatedCharacter : char
+          )
+        );
+      });
+      socket.on("updateEnemyData", (updatedEnemy) => {
+        setEnemyData((prevData) =>
+          prevData.map((enemy) =>
+            enemy.Enemy === updatedEnemy.Enemy ? updatedEnemy : enemy
+          )
+        );
+      });
+      socket.on("updateUserData", (updatedUser) => {
+        setUserData((prevData) =>
+          prevData.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user
+          )
+        );
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off("updateCharacterData");
+        socket.off("updateEnemyData");
+        socket.off("updateUserData");
+      }
+    };
+  }, [socket]);
+
+  //this is for setting the original props to local state on the first mount. 
+  useEffect(() => {
+    setCharacterData(characters || []);
+    setEnemyData(enemies || []);
+    setUserData(users || []);
+  }, [characters, enemies, users])
+
+
+  console.log(characterData);
   const renderContent = () => {
     switch (activeTab) {
       case "inventory":
         return (
           <div>
-            <h2>Inventory</h2>
-            <ul>
-              {characters.items && (
-                characters.items.map((item, index) => (
-                  <li key={index}>
+          <h2>Inventory</h2>
+          <ul>
+            {characterData.items &&
+              characterData.items.map((item, index) => (
+                <li key={index}>
                   {item.Description || "Unnamed Asset"} - {item.Image}
                 </li>
-                )
               ))}
-            </ul>
-          </div>
-        );
+          </ul>
+        </div>
+      );
         case "stats":
           return (
             <div>
               <h2>Character Stats</h2>
               <div className="character-grid">
-                {characters.map((character, index) => (
+                {characterData.map((character, index) => (
                   <div key={index} className="character-card">
                     <h3>{character.characterName}</h3>
                     <div className="character-details-grid">
@@ -41,6 +98,10 @@ const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users 
                       <div className="detail">
                         <strong>Status Points:</strong>
                         <span>{character.statusPoints}</span>
+                        <div id="status-div">
+                        <button id="status-btn" onClick={() => updateStatus(character.id, -1)}>-1</button>
+                        <button id="status-btn" onClick={() => updateStatus(character.id, 1)}>+1</button>
+                        </div>
                       </div>
                       <div className="detail">
                         <strong>Attack Roll:</strong>
@@ -73,6 +134,9 @@ const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users 
                         <strong>Catch Phrases:</strong>
                         <span>{character.catchPhrases.join(" | ")}</span>
                       </div>
+                      {
+                        userId === character.userId ?
+                      <div>
                       <div className="detail">
                         <strong>Flaws:</strong>
                         <span>{character.flaws}</span>
@@ -85,6 +149,24 @@ const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users 
                         <strong>Notes:</strong>
                         <span>{character.notes}</span>
                       </div>
+                      </div> 
+                      : 
+                      <div>
+                      <div className="detail">
+                      <strong>Flaws:</strong>
+                      <span>Hidden</span>
+                    </div>
+                    <div className="detail">
+                      <strong>Ideals:</strong>
+                      <span>Hidden</span>
+                    </div>
+                    <div className="detail">
+                      <strong>Notes:</strong>
+                      <span>Hidden</span>
+                    </div> 
+                    </div>
+                        
+                      }
                       <div className="detail">
                         <strong>Image:</strong>
                         <span>
@@ -107,7 +189,7 @@ const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users 
           <div>
       <h2>Enemies</h2>
       <div className="enemy-grid">
-        {enemies.map((enemy, index) => (
+        {enemyData.map((enemy, index) => (
           <div key={index} className="enemy-card">
             <h3>{enemy.Enemy}</h3>
             <div className="enemy-details-grid">
@@ -177,7 +259,7 @@ const TabSwitcher = ({ isDm, teamName, dmId, assets, characters, enemies, users 
           <div>
             <h2>Teamates</h2>
             <ul>
-              {users.map((user) => (
+              {userData.map((user) => (
                 <li key={user.id}>
                   {user.username} - {user.isAdmin ? "Admin" : "Player"}
                 </li>

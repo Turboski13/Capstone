@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { searchAllUserCharacters } from "../functions/userFunctions";
 import TabSwitcher from "./TabSwitcher";
+import { io } from 'socket.io-client';
 
 
 const PlayArea = () => {
@@ -11,8 +12,10 @@ const PlayArea = () => {
   const [csvFile, setCsvFile] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [isDm, setIsDm] = useState(false);
+  const [socket, setSocket] = useState(null);
   const [showChars, setShowChars] = useState(false);
   const [userChars, setUserChars] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [allData, setAllData] = useState({
     teamName: '',
     dmId: null,
@@ -31,6 +34,15 @@ const PlayArea = () => {
       getTeamInfo(paramTeamId);
     }
   },[paramTeamId])
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:3000');
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   const showUserChars = async() => {
     const userChars = await searchAllUserCharacters();
@@ -73,8 +85,9 @@ const PlayArea = () => {
       const result = await response.json();
       console.log('getTeamInfo return: ', result);
       const { team } = result;
+      setUserId(result.id);
       setTeamInfo(team)
-      setIsDm(team.dmId === result.id);7
+      setIsDm(team.dmId === result.id);
 
       const assets = Array.isArray(team.assets) ? team.assets : [];
       const enemies = assets.filter((asset) => asset.Enemy);
@@ -150,7 +163,7 @@ const PlayArea = () => {
       ))
     )}
     <h1>Team: {allData.teamName}</h1>
-    <TabSwitcher isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
+    <TabSwitcher socket={socket} userId={userId} isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
     </>
   )
 

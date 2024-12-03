@@ -162,3 +162,8 @@
   position: relative;
   z-index: 1;
 }
+
+#status-btn {
+  width: 10px;
+  height: 30px;
+}
