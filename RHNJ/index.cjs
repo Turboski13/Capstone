@@ -455,32 +455,6 @@ app.post('/api/teams/:teamId/char-join', authMiddleware, async(req, res, next) =
   }
 })
 
-app.get('/api/assets/:teamId', async(req, res, next) => {
-  const { teamId } = req.params;
-
-  try{
-    const team = await prisma.team.findUnique({
-      where: { id: +teamId },
-    });
-    const { assets, visibleProperties } = team;
-
-    const filteredAssets = assets.map((asset) => {
-      const assetId = asset.id || asset.name;
-      const visibleProps = visibleProperties[assetId] || [];
-      return Object.keys(asset).reduce((filtered, key) => {
-        if(visibleProps.includes(key)) {
-          filtered[key] = asset[key];
-        }
-        return filtered;
-      }, {});
-    });
-
-    res.json(filteredAssets);
-  }catch(err){
-    console.error('couldnt get any assets', err);
-  }
-})
-
 app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
   const { id } = req.user;
   const { teamId } = req.params;
@@ -535,6 +509,33 @@ app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
   }
 });
 
+//get filtered and visible assets from the db. 
+app.get('/api/assets/:teamId', async(req, res, next) => {
+  const { teamId } = req.params;
+
+  try{
+    const team = await prisma.team.findUnique({
+      where: { id: +teamId },
+    });
+    const { assets, visibleProperties } = team;
+
+    const filteredAssets = assets.map((asset) => {
+      const assetId = asset.id || asset.name;
+      const visibleProps = visibleProperties[assetId] || [];
+      return Object.keys(asset).reduce((filtered, key) => {
+        if(visibleProps.includes(key)) {
+          filtered[key] = asset[key];
+        }
+        return filtered;
+      }, {});
+    });
+
+    res.json(filteredAssets);
+  }catch(err){
+    console.error('couldnt get any assets', err);
+  }
+})
+
 //upload info to a team
 app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
 
@@ -542,10 +543,14 @@ app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
   try{
     const assets = await csv().fromString(csvData);
     
-    const assetRecords = assets.map((row) => ({
-      teamId,
-      properties: row,
-    }));
+    const assetRecords = assets.map((row) => {
+      const { Type, ...rest } = row;
+      return {
+        teamId: +teamId,
+        type: Type || 'Uknown',
+        properties: row,
+      };
+    });
 
     await prisma.asset.createMany({
       data: assetRecords,
