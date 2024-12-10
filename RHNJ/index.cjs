@@ -514,16 +514,16 @@ app.get('/api/assets/:teamId', async(req, res, next) => {
   const { teamId } = req.params;
 
   try{
-    const team = await prisma.team.findUnique({
-      where: { id: +teamId },
+    const teamAssets = await prisma.asset.findMany({
+      where: { teamId: +teamId },
     });
-    const { assets, visibleProperties } = team;
+    const { type, properties } = teamAssets;
 
-    const filteredAssets = assets.map((asset) => {
-      const assetId = asset.id || asset.name;
-      const visibleProps = visibleProperties[assetId] || [];
+    const filteredAssets = teamAssets.map((asset) => {
+      const assetId = asset.id;
+      // const visibleProps = visibleProperties[assetId] || [];
       return Object.keys(asset).reduce((filtered, key) => {
-        if(visibleProps.includes(key)) {
+        if(assetId.includes(key)) {
           filtered[key] = asset[key];
         }
         return filtered;

@@ -32,6 +32,7 @@ const PlayArea = () => {
     if(paramTeamId){
       setTeamId(paramTeamId);
       getTeamInfo(paramTeamId);
+      getAssets(paramTeamId); 
     }
   },[paramTeamId])
 
@@ -67,6 +68,7 @@ const PlayArea = () => {
       const result = await response.json();
       setShowChars(false);
       getTeamInfo(teamId);
+       
     }catch(err){
       console.log('couldnt add the character to the team', err);
     }
@@ -105,6 +107,16 @@ const PlayArea = () => {
       console.log('error trying to get all info', err);
     }
   };
+
+  const getAssets = async(teamId) => {
+    try{
+      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {});
+      const result = await response.json();
+      console.log(result);
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   const uploadEnemySheet = async(teamId, csvInfo) => {
     const csvData = await csvInfo.text();
