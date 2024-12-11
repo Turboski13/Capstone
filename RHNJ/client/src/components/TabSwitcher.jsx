@@ -11,16 +11,25 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
   const [filteredAssets, setFilteredAssets] = useState({});
 
 
-  const getFilteredAssets = async() => {
+  const getFilteredAssets = async(teamId) => {
+    const token = localStorage.getItem('token');
     try{
-      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {});
+      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const result = await response.json();
-      setFilteredAssets(result);
-      console.log(result);
+      setFilteredAssets((prev) => ({...prev, result}));
+      console.log('RESLT: ', result);
+      const enemies = result.filter((asset) => asset.type === 'Enemy' || asset.type === 'Boss');
+      setEnemyData(enemies);
     }catch(err){
       console.log(err);
     }
   }
+  
 
   const updateCharacterProperty = async(characterId, property, change) => {
     try{
@@ -46,8 +55,17 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
         );
       });
       socket.on("updateSharedAssets", (updatedAssets) => {
+        // Filter the enemies directly from updatedAssets before setting state
+        const enemyTypes = updatedAssets?.filter(
+          (asset) => asset.type === "Enemy" || asset.type === "Boss"
+        );
+      
+        // Set filtered assets and enemy data
         setFilteredAssets(updatedAssets);
+        setEnemyData(enemyTypes);
+        console.log('FILTERED:', updatedAssets);
       });
+      
       socket.on("updateEnemyData", (updatedEnemy) => {
         setEnemyData((prevData) =>
           prevData.map((enemy) =>
@@ -86,9 +104,10 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
   //this is for setting the original props to local state on the first mount. 
   useEffect(() => {
     setCharacterData(characters || []);
-    setEnemyData(enemies || []);
+    // setEnemyData(enemies || []);
     setUserData(users || []);
-  }, [characters, enemies, users])
+    getFilteredAssets(teamId);
+  }, [characters, users])
 
   const renderContent = () => {
     switch (activeTab) {
@@ -212,89 +231,90 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
               </div>
             </div>
           );
-        
-      case "enemies":
-        return (
-          <div>
+          
+          case "enemies":
+            return (
+              <div>
       <h2>Enemies</h2>
       <div className="enemy-grid">
-       {console.log(enemyData)}
-        {enemyData.map((enemy, index) => (
-          <div key={index} className="enemy-card">
-            <h3>{enemy.Name}</h3>
-            <div className="enemy-details-grid">
-              <div className="detail">
+
+            {
+              enemyData.map((enemy) => (
+                <div key={enemy.id} className="enemy-card">
+                <h3>{enemy.properties?.Name}</h3>
+                <div className="enemy-details-grid">
+                <div className="detail">
                 <strong>Armor Class:</strong>
-                <span>{enemy["Armor class"]}</span>
-              </div>
-              <div className="detail">
+                <span>{enemy.properties["Armor class"]}</span>
+                </div>
+                <div className="detail">
                 <strong>Hit Points:</strong>
-                <span>{enemy["Hit Points"]}</span>
+                <span>{enemy.properties["Hit Points"]}</span>
               </div>
               <div id="stat-box">
 
               <div className="detail">
                 <strong>Speed:</strong>
-                <span>{enemy.Speed}</span>
+                <span>{enemy.properties?.Speed}</span>
               </div>
               <div className="detail">
                 <strong>Strength:</strong>
-                <span>{enemy.St}</span>
+                <span>{enemy.properties?.St}</span>
               </div>
               <div className="detail">
                 <strong>Dexterity:</strong>
-                <span>{enemy.Dex}</span>
+                <span>{enemy.properties?.Dex}</span>
               </div>
               <div className="detail">
                 <strong>Constitution:</strong>
-                <span>{enemy.Con}</span>
+                <span>{enemy.properties?.Con}</span>
               </div>
               <div className="detail">
                 <strong>Intelligence:</strong>
-                <span>{enemy.Int}</span>
+                <span>{enemy.properties?.Int}</span>
               </div>
               <div className="detail">
                 <strong>Wisdom:</strong>
-                <span>{enemy.Wis}</span>
+                <span>{enemy.properties?.Wis}</span>
               </div>
               <div className="detail">
                 <strong>Charisma:</strong>
-                <span>{enemy.Cha}</span>
+                <span>{enemy.properties?.Cha}</span>
               </div>
               </div>
               <div className="detail">
                 <strong>Description:</strong>
-                <span>{enemy.Description}</span>
+                <span>{enemy.properties?.Description}</span>
               </div>
               <div className="detail">
                 <strong>Attack Action 1:</strong>
-                <span>{enemy["attack action 1"]}</span>
-                <span>{enemy["description 1"]}</span>
+                <span>{enemy.properties["attack action 1"]}</span>
+                <span>{enemy.properties["description 1"]}</span>
               </div>
               <div className="detail">
                 <strong>Attack Action 2:</strong>
-                <span>{enemy["attack action 2"]}</span>
-                <span>{enemy["description 2"]}</span>
+                <span>{enemy.properties["attack action 2"]}</span>
+                <span>{enemy.properties["description 2"]}</span>
               </div>
               <div className="detail">
                 <strong>Attack Action 3:</strong>
-                <span>{enemy["attack action 3"]}</span>
-                <span>{enemy["description 3"]}</span>
+                <span>{enemy.properties["attack action 3"]}</span>
+                <span>{enemy.properties["description 3"]}</span>
               </div>
               <div className="detail">
                 <strong>Damage Immunities:</strong>
-                <span>{enemy["damage immunities"]}</span>
+                <span>{enemy.properties["damage immunities"]}</span>
               </div>
-              <img src={enemy.Image} />
-            </div>
+              <img src={enemy.properties.Image} />
+              </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+          </div>
         );
-      case "teamStats":
-        return (
-          <div>
+        case "teamStats":
+          return (
+            <div>
             <h2>Teamates</h2>
             <ul>
               {userData.map((user) => (

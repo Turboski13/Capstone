@@ -882,6 +882,7 @@ io.on("connection", (socket) => {
         };
       });
 
+      console.log(filteredAssets);
       // Emit the updated filtered assets to the team room
       io.to(`team-${teamId}`).emit('updateSharedAssets', filteredAssets);
     } catch (err) {
