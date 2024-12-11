@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Import useLocation to detect current path
+import { Link, useNavigate } from "react-router-dom"; // Import useLocation to detect current path
 import { logout } from "../api";
 
 const Navigations = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);  // State for managing logged-in status
-  const location = useLocation();  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);  // State for managing logged-in status 
   const navigate = useNavigate();  
   // Check if token exists in localStorage and set the state when component mounts
   useEffect(() => {
