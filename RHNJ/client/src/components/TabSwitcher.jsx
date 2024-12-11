@@ -218,6 +218,7 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
           <div>
       <h2>Enemies</h2>
       <div className="enemy-grid">
+       {console.log(enemyData)}
         {enemyData.map((enemy, index) => (
           <div key={index} className="enemy-card">
             <h3>{enemy.Name}</h3>

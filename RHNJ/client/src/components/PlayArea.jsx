@@ -38,12 +38,15 @@ const PlayArea = () => {
 
   useEffect(() => {
     const newSocket = io('http://localhost:3000');
+    if (paramTeamId) {
+      newSocket.emit("joinTeam", { teamId: paramTeamId });
+    }
     setSocket(newSocket);
-
+  
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [paramTeamId]);
 
   const showUserChars = async() => {
     const userChars = await searchAllUserCharacters();
@@ -94,14 +97,13 @@ const PlayArea = () => {
       const assets = Array.isArray(team.assets) ? team.assets : [];
       const enemies = assets.filter((asset) => asset.Type === "Enemy" || asset.Type === "Boss");
 
-      setAllData({
+      setAllData((prev) => ({
+        ...prev,
         teamName: team.name || '',
         dmId: team.dmId || null,
-        assets: team.assets || [],
         characters: team.characters || [],
-        enemies,
         users: team.users || [],
-      })
+      }));
 
     }catch(err){
       console.log('error trying to get all info', err);
@@ -109,10 +111,26 @@ const PlayArea = () => {
   };
 
   const getAssets = async(teamId) => {
+    const token = localStorage.getItem('token');
     try{
-      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {});
-      const result = await response.json();
-      console.log(result);
+      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const team = await response.json();
+      console.log(team);
+
+      const assets = Array.isArray(team) ? team : [];
+      const enemies = assets.filter((asset) => asset.Type === "Enemy" || asset.Type === "Boss");
+
+      setAllData((prev) => ({
+        ...prev,
+        assets,
+        enemies,
+      }));
+
     }catch(err){
       console.log(err);
     }

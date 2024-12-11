@@ -46,13 +46,15 @@ model UserCharacter {
 }
 
 model Asset {
-  id          Int      @id @default(autoincrement())
-  teamId      Int
-  type        String   
-  properties  Json
-  createdAt   DateTime @default(now())
-  team        Team     @relation(fields: [teamId], references: [id], name: "AssetToTeam")
+  id               Int      @id @default(autoincrement())
+  teamId           Int
+  type             String   
+  properties       Json
+  visibleProperties Json?   
+  createdAt        DateTime @default(now())
+  team             Team     @relation(fields: [teamId], references: [id], name: "AssetToTeam")
 }
+
 
 model Team {
   id        Int      @id @default(autoincrement())

@@ -509,32 +509,70 @@ app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
   }
 });
 
-//get filtered and visible assets from the db. 
-app.get('/api/assets/:teamId', async(req, res, next) => {
+app.get('/api/assets/:teamId', authMiddleware, async (req, res, next) => { 
   const { teamId } = req.params;
+  const { id: userId } = req.user; // The currently authenticated user's ID
 
-  try{
+  try {
+    // Fetch the team info to check who the DM is
+    const team = await prisma.team.findUnique({
+      where: { id: Number(teamId) },
+      select: { dmId: true }
+    });
+
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    // Determine if this user is the DM
+    const isDm = team.dmId === userId;
+
     const teamAssets = await prisma.asset.findMany({
       where: { teamId: +teamId },
+      select: {
+        id: true,
+        type: true,
+        properties: true,
+        visibleProperties: true
+      }
     });
-    const { type, properties } = teamAssets;
 
-    const filteredAssets = teamAssets.map((asset) => {
-      const assetId = asset.id;
-      // const visibleProps = visibleProperties[assetId] || [];
-      return Object.keys(asset).reduce((filtered, key) => {
-        if(assetId.includes(key)) {
-          filtered[key] = asset[key];
+    const transformedAssets = teamAssets.map((asset) => {
+      const { id, type, properties, visibleProperties } = asset;
+
+      // If the user is the DM, return all properties unfiltered
+      if (isDm) {
+        return {
+          id,
+          type,
+          properties // Return full properties
+        };
+      }
+
+      // Otherwise, filter according to visibleProperties
+      const filteredProps = {};
+      if (visibleProperties && typeof visibleProperties === 'object') {
+        for (const propKey in properties) {
+          if (visibleProperties[propKey]) {
+            filteredProps[propKey] = properties[propKey];
+          }
         }
-        return filtered;
-      }, {});
+      }
+
+      return {
+        id,
+        type,
+        properties: filteredProps
+      };
     });
 
-    res.json(filteredAssets);
-  }catch(err){
-    console.error('couldnt get any assets', err);
+    res.json(transformedAssets);
+  } catch (err) {
+    console.error('Error fetching filtered assets', err);
+    next(err);
   }
-})
+});
+
 
 //upload info to a team
 app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
@@ -790,26 +828,64 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
+
+  // Client should call this when they join a team
+  socket.on("joinTeam", ({ teamId }) => {
+    socket.join(`team-${teamId}`);
+    console.log(`User ${socket.id} joined room team-${teamId}`);
+  });
+
   socket.on("addSharedAsset", async ({ teamId, assetId, visibleProperties }) => {
     try {
-      // Update visibility settings in the database
-      await prisma.team.update({
-        where: { id: +teamId },
+      // Convert visibleProperties array into an object with keys set to true
+      const visiblePropsObject = {};
+      if (Array.isArray(visibleProperties)) {
+        for (const prop of visibleProperties) {
+          visiblePropsObject[prop] = true;
+        }
+      }
+
+      // Update the asset with the new visibleProperties
+      await prisma.asset.update({
+        where: { id: +assetId },
         data: {
-          visibleProperties: {
-            [assetId]: visibleProperties,
-          },
+          visibleProperties: visiblePropsObject,
         },
       });
 
-      // Broadcast the updated shared assets to all users in the team
-      const updatedAssets = await prisma.team.findUnique({
-        where: { id: +teamId },
-        select: { assets: true },
+      // After updating, fetch all team assets and filter them before sharing
+      const teamAssets = await prisma.asset.findMany({
+        where: { teamId: +teamId },
+        select: {
+          id: true,
+          type: true,
+          properties: true,
+          visibleProperties: true
+        }
       });
-      io.to(`team_${teamId}`).emit("updateSharedAssets", updatedAssets.assets);
+
+      // Filter the assets' properties based on visibleProperties
+      const filteredAssets = teamAssets.map((asset) => {
+        const { id, type, properties, visibleProperties } = asset;
+        const filteredProps = {};
+        if (visibleProperties && typeof visibleProperties === 'object') {
+          for (const propKey in properties) {
+            if (visibleProperties[propKey]) {
+              filteredProps[propKey] = properties[propKey];
+            }
+          }
+        }
+        return {
+          id,
+          type,
+          properties: filteredProps
+        };
+      });
+
+      // Emit the updated filtered assets to the team room
+      io.to(`team-${teamId}`).emit('updateSharedAssets', filteredAssets);
     } catch (err) {
-      console.error("Error sharing asset:", err);
+      console.error('Could not update visibleProperties for the asset:', err);
     }
   });
 
@@ -818,15 +894,14 @@ io.on("connection", (socket) => {
       const updatedCharacter = await prisma.userCharacter.update({
         where: { id: characterId },
         data: {
-          [property]: { increment: change }, // this chooses the property to change and the change amount
+          [property]: { increment: change },
         },
       });
       const updatedValue = updatedCharacter[property];
-  
-      // Broadcast the update to all clients
-      io.emit("updateCharacterProperty", {
+
+      io.to(`team-${updatedCharacter.teamId}`).emit("updateCharacterProperty", {
         characterId: updatedCharacter.id,
-        property: property,
+        property,
         value: updatedValue,
       });
     } catch (err) {
@@ -838,6 +913,7 @@ io.on("connection", (socket) => {
     console.log("A user disconnected:", socket.id);
   });
 });
+
 
 app.get('/', (req, res, next)=>{
   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));

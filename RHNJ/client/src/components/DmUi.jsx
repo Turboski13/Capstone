@@ -8,7 +8,7 @@ const DmUi = ({ teamId, assets, socket }) => {
 
 
   const assetsByType = assets.reduce((acc, asset) => {
-    const type = asset.Type || "Unknown";
+    const type = asset.properties.Type || "Unknown";
     if (!acc[type]) acc[type] = [];
     acc[type].push(asset);
     return acc;
@@ -34,13 +34,10 @@ const DmUi = ({ teamId, assets, socket }) => {
     }));
   };
 
-
   const handleAddToShared = () => {
     if (selectedAsset) {
-      setSharedAssets((prev) => [...prev, selectedAsset]);
-      const visibleProperties = Object.keys(
-        visibilitySettings[selectedAsset.id] || {}
-      ).filter((key) => visibilitySettings[selectedAsset.id][key]);
+      const visibleProperties = Object.keys(visibilitySettings[selectedAsset.id] || {})
+        .filter((key) => visibilitySettings[selectedAsset.id][key]);
 
       // Emit shared asset data to the server
       socket.emit("addSharedAsset", {
@@ -55,6 +52,7 @@ const DmUi = ({ teamId, assets, socket }) => {
       <>
        <div className="dm-ui">
       <div className="tabs">
+        {Object.keys(assetsByType) ? <button onClick={() => {setActiveTab(null); setSelectedAsset(null)}}>Hide Share Panel</button> : null}
         {Object.keys(assetsByType).map((type) => (
           <button
             key={type}
@@ -78,7 +76,7 @@ const DmUi = ({ teamId, assets, socket }) => {
                 }`}
                 onClick={() => handleSelectAsset(asset)}
               >
-                <h4>{asset.Name || "Unnamed Asset"}</h4>
+                <h4>{asset.properties.Name || "Unnamed Asset"}</h4>
               </div>
             ))}
           </div>
@@ -87,15 +85,13 @@ const DmUi = ({ teamId, assets, socket }) => {
 
       {selectedAsset && (
         <div className="asset-details">
-          <h3>{selectedAsset.Name || "Unnamed Asset"} Details</h3>
+          <h3>{selectedAsset.properties.Name || "Unnamed Asset"} Details</h3>
           <div className="property-list">
-            {Object.keys(selectedAsset).map((property) => (
+            {Object.keys(selectedAsset.properties).map((property) => (
               <label key={property}>
                 <input
                   type="checkbox"
-                  checked={
-                    visibilitySettings[selectedAsset.id]?.[property] || false
-                  }
+                  checked={visibilitySettings[selectedAsset.id]?.[property] || false}
                   onChange={() => handleToggleProperty(property)}
                 />
                 {property}
@@ -105,6 +101,7 @@ const DmUi = ({ teamId, assets, socket }) => {
           <button onClick={handleAddToShared}>Add to Shared Assets</button>
         </div>
       )}
+
     </div>
     </>
   )
