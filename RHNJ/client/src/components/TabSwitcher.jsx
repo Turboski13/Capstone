@@ -22,8 +22,8 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
       });
       const result = await response.json();
       setFilteredAssets((prev) => ({...prev, result}));
-      console.log('RESLT: ', result);
-      const enemies = result.filter((asset) => asset.type === 'Enemy' || asset.type === 'Boss');
+      const enemies = result.filter((asset) => (asset.type === 'Enemy' || 'Boss') && (asset.properties.Name));
+      console.log('enem: ', enemies);
       setEnemyData(enemies);
     }catch(err){
       console.log(err);
@@ -57,8 +57,7 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
       socket.on("updateSharedAssets", (updatedAssets) => {
         // Filter the enemies directly from updatedAssets before setting state
         const enemyTypes = updatedAssets?.filter(
-          (asset) => asset.type === "Enemy" || asset.type === "Boss"
-        );
+          (asset) => (asset.type === "Enemy" || "Boss") && asset.properties.Name);
       
         // Set filtered assets and enemy data
         setFilteredAssets(updatedAssets);
