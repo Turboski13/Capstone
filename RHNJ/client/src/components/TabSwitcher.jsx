@@ -9,6 +9,8 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
   const [userData, setUserData] = useState(users);
   const [dmSelectedProperties, setDmSelectedProperties] = useState({});
   const [filteredAssets, setFilteredAssets] = useState({});
+  const [myAbilities, setMyAbilities] = useState({});
+
 
 
   const getFilteredAssets = async(teamId) => {
@@ -23,11 +25,23 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
       const result = await response.json();
       setFilteredAssets((prev) => ({...prev, result}));
       const enemies = result.filter((asset) => (asset.type === 'Enemy' || 'Boss') && (asset.properties.Name));
+      const abilities = result.filter((asset) => asset.type === "ability");
       console.log('enem: ', enemies);
       setEnemyData(enemies);
+      setUserAbilities(userId, abilities);
+      
     }catch(err){
       console.log(err);
     }
+  }
+
+  const setUserAbilities = (userId, abilities) => {
+    const myChar = characterData.filter((char) => char.userId === userId);
+    const myClass = myChar[0].characterClass;
+    console.log('CLASS: ', myClass);
+    console.log('ABILITIES: ', abilities);
+    const filteredAbilities = abilities.filter((ability) => myClass.includes(ability.properties.Class));
+    setMyAbilities(filteredAbilities);
   }
   
 
@@ -230,6 +244,60 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
               </div>
             </div>
           );
+
+          case "abilities":
+            return (
+              <div>
+                <h2>Abilities</h2>
+                <div className="enemy-grid">
+                  {
+                    myAbilities.map((ability) => (
+                      <div key={ability.id} >
+                        <button className="enemy-card">
+                          <h3>{ability.properties.Name}</h3>
+                          <div className="attributes-grid">
+
+                         
+                          <div className="detail">
+                            <strong>Damage: </strong>
+                            <span>{ability.properties.Damage}</span>
+                        </div>
+                        <div className="detail">
+                          <strong>Stat Needed To Succeed: </strong>
+                          <span>{ability.properties.StatToSucceed}</span>
+                        </div>
+                        <div className="detail">
+                          <strong>Enemy Defense Stat: </strong>
+                          <span>{ability.properties.EnemyDefendStat}</span>
+                        </div>
+                        <div className="detail">
+                          <strong>Healing:</strong>
+                          <span>{ability.properties.Healing}</span>
+                        </div>
+                        <div className="detail">
+                          <strong>Cast Per Rest: </strong>
+                          <span>{ability.properties.CastPerRest}</span>
+                        </div>
+                        </div>
+                        <div className="detail">
+                          <strong>Description: </strong>
+                          <span>{ability.properties.Description}</span>
+                        </div>
+                        <div className="detail">
+                          <strong>Notes:</strong>
+                          <span>{ability.properties.Notes}</span>
+                        </div>
+                        <span>
+                          <img src={ability.properties.Image} style={{ maxWidth: "100px", maxHeight: "100px" }} alt={`${ability.properties.Name} notes: ${ability.properties.Notes}`} />
+                        </span>
+
+                        </button>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            );
           
           case "enemies":
             return (
@@ -350,7 +418,9 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
           className={activeTab === "enemies" ? "active" : ""}
         >
           Enemies
-        </button>
+          </button>
+        <button onClick={() => setActiveTab("abilities")}
+        className={activeTab === "abilities" ? "active" : ""}>Abilities</button>
         <button
           onClick={() => setActiveTab("teamStats")}
           className={activeTab === "teamStats" ? "active" : ""}
