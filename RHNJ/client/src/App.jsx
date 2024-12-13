@@ -19,6 +19,7 @@ import characters from './utils/characterList';
 import CharacterDetail from './components/CharacterDetail';
 import UserCharacter from './components/UserCharacter';
 import PlayArea from './components/PlayArea';
+import DiceRoller from './components/DiceRoller';
 // import TeamPage from './components/TeamPage';
 import './index.css';
 
@@ -56,6 +57,7 @@ function App() {
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/' element={<HowToPlay />} />
         <Route path='/play-area/:teamId' element={<PlayArea />} />
+        <Route path='/roll' element={<DiceRoller />} />
         
         {/* Protected Routes */}
         {/* <Route

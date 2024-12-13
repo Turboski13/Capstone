@@ -26,6 +26,7 @@ const Navigations = () => {
       <Link to='/about-characters'>Characters</Link>
       <Link to='/player-home'>Player Home</Link>
       <Link to="/dm-home">Join a game</Link>
+      <Link to='/roll'>Dice</Link>
 
       <div className="nav-right">
         <ul>

@@ -1,0 +1,59 @@
+/* body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f0f0f0;
+  margin: 0;
+}
+
+.dice-roller-container {
+  text-align: center;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+label {
+  margin-right: 10px;
+}
+
+input {
+  width: 50px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.dice-container {
+  perspective: 1000px;
+  margin: 20px auto;
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.dice {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+}
+
+.face {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: white;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Consider smaller faces or bigger dice container if sides are large */
+} */
