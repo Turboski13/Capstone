@@ -516,7 +516,7 @@ app.get('/api/assets/:teamId', authMiddleware, async (req, res, next) => {
   try {
     // Fetch the team info to check who the DM is
     const team = await prisma.team.findUnique({
-      where: { id: Number(teamId) },
+      where: { id: +teamId },
       select: { dmId: true }
     });
 
@@ -577,19 +577,25 @@ app.get('/api/assets/:teamId', authMiddleware, async (req, res, next) => {
 //upload info to a team
 app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
 
-  const { teamId, csvData } = req.body;
+  const { teamId, csvData, shareAll=false } = req.body;
   try{
     const assets = await csv().fromString(csvData);
-    
+  
     const assetRecords = assets.map((row) => {
       const { Type, ...rest } = row;
+
+      const visibleProperties = Object.keys(rest).reduce((acc, key) => {
+        acc[key] = shareAll;
+        return acc;
+      }, {});
       return {
         teamId: +teamId,
         type: Type || 'Uknown',
         properties: row,
+        visibleProperties
       };
     });
-
+    console.log(assetRecords.length);
     await prisma.asset.createMany({
       data: assetRecords,
     })

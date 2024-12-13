@@ -16,6 +16,8 @@ const PlayArea = () => {
   const [showChars, setShowChars] = useState(false);
   const [userChars, setUserChars] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [shareAll, setShareAll] = useState(false);
+  const [selectedAbility, setSelectedAbility] = useState({});
   const [allData, setAllData] = useState({
     teamName: '',
     dmId: null,
@@ -109,7 +111,9 @@ const PlayArea = () => {
       console.log('error trying to get all info', err);
     }
   };
-
+useEffect(() => {
+  console.log(selectedAbility);
+}, [selectedAbility])
   const getAssets = async(teamId) => {
     const token = localStorage.getItem('token');
     try{
@@ -147,7 +151,7 @@ const PlayArea = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ teamId, csvData }),
+        body: JSON.stringify({ teamId, csvData, shareAll }),
       });
       const result = await response.json();
       console.log(result);
@@ -171,7 +175,8 @@ const PlayArea = () => {
       accept=".csv"
       onChange={(e) => setCsvFile(e.target.files[0])}
       />
-      <button onClick={() => uploadEnemySheet(teamId, csvFile)}>Upload</button>
+      <input type="checkbox" checked={shareAll || false} onChange={() => shareAll ? setShareAll(false) : setShareAll(true)}/>
+      <button>Upload</button>
         </form>
     </div>
     )}
@@ -193,7 +198,7 @@ const PlayArea = () => {
       ))
     )}
     <h1>Team: {allData.teamName}</h1>
-    <TabSwitcher teamId={teamId} socket={socket} userId={userId} isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
+    <TabSwitcher selectedAbility={selectedAbility} setSelectedAbility={setSelectedAbility} teamId={teamId} socket={socket} userId={userId} isDm={isDm} teamName={allData.teamName} dmId={allData.dmId} assets={allData.assets} characters={allData.characters} enemies={allData.enemies} users={allData.users}/>
     </>
   )
 

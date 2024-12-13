@@ -5,6 +5,7 @@ const DmUi = ({ teamId, assets, socket }) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [visibilitySettings, setVisibilitySettings] = useState({});
   const [sharedAssets, setSharedAssets] = useState([]);
+  
 
 
   const assetsByType = assets.reduce((acc, asset) => {

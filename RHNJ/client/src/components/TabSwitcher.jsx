@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import './TabSwitcher.css';
 import DmUi from "./DmUi";
 
-const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
+const TabSwitcher = ({ selectedAbility, setSelectedAbility, teamId,userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
   const [activeTab, setActiveTab] = useState("inventory");
   const [characterData, setCharacterData] = useState(characters);
-  const [enemyData, setEnemyData] = useState(enemies);
+  const [enemyData, setEnemyData] = useState();
   const [userData, setUserData] = useState(users);
-  const [dmSelectedProperties, setDmSelectedProperties] = useState({});
   const [filteredAssets, setFilteredAssets] = useState({});
   const [myAbilities, setMyAbilities] = useState({});
 
@@ -24,10 +23,10 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
       });
       const result = await response.json();
       setFilteredAssets((prev) => ({...prev, result}));
-      const enemies = result.filter((asset) => (asset.type === 'Enemy' || 'Boss') && (asset.properties.Name));
+      const enemyArray = result.filter((asset) => (asset.type === 'Enemy' || asset.type === 'Boss') && (asset.properties.Name));
       const abilities = result.filter((asset) => asset.type === "ability");
       console.log('enem: ', enemies);
-      setEnemyData(enemies);
+      setEnemyData(enemyArray);
       setUserAbilities(userId, abilities);
       
     }catch(err){
@@ -71,7 +70,7 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
       socket.on("updateSharedAssets", (updatedAssets) => {
         // Filter the enemies directly from updatedAssets before setting state
         const enemyTypes = updatedAssets?.filter(
-          (asset) => (asset.type === "Enemy" || "Boss") && asset.properties.Name);
+          (asset) => (asset.type === "Enemy" || asset.type === "Boss") && asset.properties.Name);
       
         // Set filtered assets and enemy data
         setFilteredAssets(updatedAssets);
@@ -253,7 +252,8 @@ const TabSwitcher = ({ teamId,userId, isDm, teamName, dmId, assets, characters, 
                   {
                     myAbilities.map((ability) => (
                       <div key={ability.id} >
-                        <button className="enemy-card">
+                        <button className="enemy-card"
+                        onClick={() => setSelectedAbility(ability.id)}>
                           <h3>{ability.properties.Name}</h3>
                           <div className="attributes-grid">
 
