@@ -19,6 +19,7 @@
     "@react-three/fiber": "^8.17.10",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "cannon-es": "^0.20.0",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "dotenv": "^16.4.5",
