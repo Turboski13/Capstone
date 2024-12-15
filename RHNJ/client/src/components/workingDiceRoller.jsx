@@ -61,37 +61,15 @@ function Floor() {
   )
 }
 
-const faceValues = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-
-// Face mapping object
-const faceMap = {
-  11: 16,
-  16: 3,
-  5: 13,
-  4: 5,
-  9: 18,
-  2: 7,
-  18: 4,
-  15: 8,
-  10: 12,
-  20: 10,
-  8: 11,
-  6: 17,
-  13: 14,
-  19: 2,
-  7: 19,
-  14: 20,
-  17: 9,
-  3: 15,
-  12: 6,
-  1: 1
-};
-
 const Dice = forwardRef(({ rotation }, ref) => {
   const fbx = useFBX('/assets/d20/source/dadoD20.fbx')
+
   const perfectD20Geometry = useMemo(() => new THREE.IcosahedronGeometry(1, 0), [])
+
+  // Scale factor if needed
   const scaleFactor = 0.1
 
+  // Set up the physics for the perfect D20
   const [perfectD20Ref, api] = useConvexPolyhedron(() => ({
     mass: 0.5,
     args: [vertices.map(([x, y, z]) => [x * scaleFactor, y * scaleFactor, z * scaleFactor]), faces],
@@ -121,12 +99,12 @@ const Dice = forwardRef(({ rotation }, ref) => {
   }, [fbx])
 
   const logTopFace = () => {
-    if (!perfectD20Ref.current) return null
+    if (!perfectD20Ref.current) return
     const geom = perfectD20Ref.current.geometry
-    if (!geom) return null
+    if (!geom) return
 
     const position = geom.attributes.position
-    if (!position) return null
+    if (!position) return
 
     const index = geom.index
     const normal = new THREE.Vector3()
@@ -163,22 +141,22 @@ const Dice = forwardRef(({ rotation }, ref) => {
     if (index) {
       for (let i = 0; i < index.count; i += 3) {
         const a = index.array[i]
-        const b = index.array[i+1]
-        const c = index.array[i+2]
+        const b = index.array[i + 1]
+        const c = index.array[i + 2]
         processFace(a, b, c, i / 3)
       }
     } else {
       for (let i = 0; i < position.count; i += 3) {
-        processFace(i, i+1, i+2, i / 3)
+        processFace(i, i + 1, i + 2, i / 3)
       }
     }
 
     if (topFaceIndex === -1) {
       console.warn("No top face found.")
-      return null
     } else {
-      const topFaceValue = faceValues[topFaceIndex]
-      return topFaceValue
+      const faceValues = Array.from({ length: 20 }, (_, i) => i + 1)
+      console.log("The top face index is:", topFaceIndex)
+      console.log("Top face value:", faceValues[topFaceIndex])
     }
   }
 
@@ -201,15 +179,11 @@ const Dice = forwardRef(({ rotation }, ref) => {
         (Math.random() - 0.5) * 30,
         (Math.random() - 0.5) * 30
       )
-
-      // After some delay, log the top face
-      setTimeout(() => {
-        const topFaceValue = logTopFace()
-        if (topFaceValue != null) {
-          const mappedValue = faceMap[topFaceValue]
-          console.log(`Face: ${topFaceValue}, Shown: ${mappedValue}`)
-        }
-      }, 2200) // Wait 2 seconds for dice to settle (adjust as needed)
+    },
+    nudgeRotation: (rx = 0, ry = 0, rz = 0) => {
+      api.rotation.set((x, y, z) => {
+        api.rotation.set(x + rx, y + ry, z + rz)
+      })
     },
     logNumberOfFaces: () => {
       const geom = perfectD20Ref.current.geometry
@@ -223,18 +197,21 @@ const Dice = forwardRef(({ rotation }, ref) => {
       console.log("Number of faces on the current D20 shape:", numberOfFaces)
     },
     logTopFace: () => {
-      const tf = logTopFace()
-      console.log("Top Face Value:", tf)
+      logTopFace()
     }
   }))
 
+
   return (
-    <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
-      <meshStandardMaterial color="green" opacity={0} visible={false} />
-      <group rotation={[rotation.x, rotation.y, rotation.z]}>
-        <primitive object={fbx} scale={0.4} />
-      </group>
-    </mesh>
+    <>
+      <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <meshStandardMaterial color="green" opacity={0} visible={false} />
+        {/* The detailed dice as a child, with adjustable rotation */}
+        <group rotation={[-0.4, -0.5, -0.65]}>
+          <primitive object={fbx} scale={0.4} />
+        </group>
+      </mesh>
+    </>
   )
 })
 
@@ -251,7 +228,8 @@ function InvisibleWalls() {
 
 export default function DiceRoller() {
   const diceRef = useRef()
-  const [rotation, setRotation] = useState({ x: -0.4, y: -0.5, z: -0.65 })
+
+  const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 })
   const increment = 0.05
 
   const adjustRotation = (axis, delta) => {
@@ -268,6 +246,12 @@ export default function DiceRoller() {
     }
   }
 
+  const handleNudge = () => {
+    if (diceRef.current?.nudgeRotation) {
+      diceRef.current.nudgeRotation(0.05, 0, 0)
+    }
+  }
+
   const handleLogTopFace = () => {
     if (diceRef.current?.logTopFace) {
       diceRef.current.logTopFace()
@@ -276,19 +260,12 @@ export default function DiceRoller() {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <button 
-        onClick={handleRoll} 
-      >
-        Roll the Dice
-      </button>
-      
-      <button 
-        onClick={handleLogTopFace} 
-      >
-        Log Top Face
-      </button>
+      {/* Buttons for main dice actions */}
+      <button onClick={handleRoll} style={{position:'absolute', top:'20px', left:'20px', zIndex:10}}>Roll the Dice</button>
+      <button onClick={handleNudge} style={{position:'absolute', top:'60px', left:'20px', zIndex:10}}>Nudge Rotation</button>
+      <button onClick={handleLogTopFace} style={{position:'absolute', top:'100px', left:'20px', zIndex:10}}>Log Top Face</button>
 
-      {/* Rotation adjustment controls */}
+      {/* Control Buttons for rotation adjustments OUTSIDE the Dice component */}
       <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
         <div>
           <button onClick={() => adjustRotation('x', increment)}>X+</button>
@@ -307,8 +284,8 @@ export default function DiceRoller() {
         </div>
       </div>
 
-      <Canvas shadows camera={{ position: [0, 1.2, 1], fov: 70 }}>
-        <ambientLight intensity={0.4} />
+      <Canvas shadows camera={{ position: [0, 1.2, 1.0], fov: 70 }}>
+        <ambientLight intensity={.4} />
         <directionalLight 
           intensity={1} 
           position={[2, 6, 8]} 
@@ -317,6 +294,7 @@ export default function DiceRoller() {
           shadow-mapSize-height={1024}
         />
         <Physics gravity={[0, -9.81, 0]}>
+          {/* Pass rotation as props to Dice */}
           <Dice ref={diceRef} rotation={rotation} />
           <InvisibleWalls />
           <Floor />
