@@ -8,7 +8,7 @@ const baseColorMap = new THREE.TextureLoader().load('/assets/d20/textures/dadosT
 const normalMap = new THREE.TextureLoader().load('/assets/d20/textures/NormalMap.png')
 const roughnessMap = new THREE.TextureLoader().load('/assets/d20/textures/roughnessDado.png')
 
-// Hardcoded icosahedron vertices & faces
+// Hardcoded icosahedron vertices & faces (for d20)
 const PHI = (1 + Math.sqrt(5)) / 2
 const N = 1
 const vertices = [
@@ -63,7 +63,7 @@ function Floor() {
 
 const faceValues = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-// Face mapping object
+// Face mapping object for d20
 const faceMap = {
   11: 16,
   16: 3,
@@ -87,15 +87,18 @@ const faceMap = {
   1: 1
 };
 
-const Dice = forwardRef(({ rotation }, ref) => {
-  const fbx = useFBX('/assets/d20/source/dadoD20.fbx')
+const Dice = forwardRef(({ rotation, position }, ref) => {
+  const originalFBX = useFBX('/assets/d20/source/dadoD20.fbx')
+  // Clone the fbx so each dice gets its own instance
+  const fbx = useMemo(() => originalFBX.clone(), [originalFBX])
+  
   const perfectD20Geometry = useMemo(() => new THREE.IcosahedronGeometry(1, 0), [])
   const scaleFactor = 0.1
 
   const [perfectD20Ref, api] = useConvexPolyhedron(() => ({
     mass: 0.5,
     args: [vertices.map(([x, y, z]) => [x * scaleFactor, y * scaleFactor, z * scaleFactor]), faces],
-    position: [0, 1, 0],
+    position,
     friction: 0.6,
     restitution: 0.3,
     linearDamping: 0.3,
@@ -125,8 +128,8 @@ const Dice = forwardRef(({ rotation }, ref) => {
     const geom = perfectD20Ref.current.geometry
     if (!geom) return null
 
-    const position = geom.attributes.position
-    if (!position) return null
+    const positionAttr = geom.attributes.position
+    if (!positionAttr) return null
 
     const index = geom.index
     const normal = new THREE.Vector3()
@@ -144,9 +147,9 @@ const Dice = forwardRef(({ rotation }, ref) => {
     const edge2 = new THREE.Vector3()
 
     const processFace = (a, b, c, faceIndex) => {
-      vA.fromBufferAttribute(position, a)
-      vB.fromBufferAttribute(position, b)
-      vC.fromBufferAttribute(position, c)
+      vA.fromBufferAttribute(positionAttr, a)
+      vB.fromBufferAttribute(positionAttr, b)
+      vC.fromBufferAttribute(positionAttr, c)
 
       edge1.subVectors(vB, vA)
       edge2.subVectors(vC, vA)
@@ -168,7 +171,7 @@ const Dice = forwardRef(({ rotation }, ref) => {
         processFace(a, b, c, i / 3)
       }
     } else {
-      for (let i = 0; i < position.count; i += 3) {
+      for (let i = 0; i < positionAttr.count; i += 3) {
         processFace(i, i+1, i+2, i / 3)
       }
     }
@@ -184,15 +187,14 @@ const Dice = forwardRef(({ rotation }, ref) => {
 
   useImperativeHandle(ref, () => ({
     rollDice: () => {
-      api.position.set(0, 0.5, 0)
-      api.rotation.set(0, 0, 0)
+      // Do not reset positions/rotations, just apply impulse
       api.velocity.set(0, 0, 0)
       api.angularVelocity.set(0, 0, 0)
 
       const impulse = new THREE.Vector3(
-        (Math.random() - 0.5) * 2,
-        1,
-        (Math.random() - 0.5) * 2
+        (Math.random() - 0.5) * 4,
+        2.5,
+        (Math.random() - 0.5) * 3
       )
       api.applyImpulse([impulse.x, impulse.y, impulse.z], [0, 0, 0])
 
@@ -202,44 +204,30 @@ const Dice = forwardRef(({ rotation }, ref) => {
         (Math.random() - 0.5) * 30
       )
 
-      // After some delay, log the top face
       setTimeout(() => {
         const topFaceValue = logTopFace()
         if (topFaceValue != null) {
           const mappedValue = faceMap[topFaceValue]
-          console.log(`Face: ${topFaceValue}, Shown: ${mappedValue}`)
+          console.log(`Dice at ${position}: Face: ${topFaceValue}, Shown: ${mappedValue}`)
         }
-      }, 2200) // Wait 2 seconds for dice to settle (adjust as needed)
+      }, 2200)
     },
-    logNumberOfFaces: () => {
-      const geom = perfectD20Ref.current.geometry
-      let numberOfFaces = 0
-      if (geom.index) {
-        numberOfFaces = geom.index.count / 3
-      } else {
-        const position = geom.getAttribute('position')
-        numberOfFaces = position.count / 3
-      }
-      console.log("Number of faces on the current D20 shape:", numberOfFaces)
-    },
-    logTopFace: () => {
-      const tf = logTopFace()
-      console.log("Top Face Value:", tf)
-    }
   }))
 
   return (
     <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+      {/* invisible perfectD20 */}
       <meshStandardMaterial color="green" opacity={0} visible={false} />
       <group rotation={[rotation.x, rotation.y, rotation.z]}>
-        <primitive object={fbx} scale={0.4} />
+        <primitive object={fbx} scale={0.5} />
       </group>
     </mesh>
   )
 })
 
 function InvisibleWalls() {
-  const size = .5
+  // Larger size
+  const size = 1
   usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0] }))
   usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 1.5, 0] }))
   usePlane(() => ({ rotation: [0, Math.PI / 2, 0], position: [-size, 0.5, 0] }))
@@ -250,9 +238,13 @@ function InvisibleWalls() {
 }
 
 export default function DiceRoller() {
-  const diceRef = useRef()
   const [rotation, setRotation] = useState({ x: -0.4, y: -0.5, z: -0.65 })
   const increment = 0.05
+
+  const [diceType, setDiceType] = useState(null);
+  const [diceCount, setDiceCount] = useState(1);
+
+  const diceRefs = useRef([])
 
   const adjustRotation = (axis, delta) => {
     setRotation((prev) => ({ ...prev, [axis]: prev[axis] + delta }))
@@ -263,29 +255,64 @@ export default function DiceRoller() {
   }
 
   const handleRoll = () => {
-    if (diceRef.current?.rollDice) {
-      diceRef.current.rollDice()
+    // Just apply impulse, no re-render or position reset
+    diceRefs.current.forEach((dRef) => dRef?.rollDice && dRef.rollDice())
+  }
+
+  const handleDiceSelection = (type) => {
+    if (type === '20') {
+      setDiceType('20')
+    } else {
+      setDiceType(type)
+      console.log(`Dice type d${type} selected, but not implemented yet.`)
     }
   }
 
-  const handleLogTopFace = () => {
-    if (diceRef.current?.logTopFace) {
-      diceRef.current.logTopFace()
+  const handleDiceCountChange = (e) => {
+    const val = parseInt(e.target.value, 10)
+    if (!isNaN(val) && val > 0) {
+      setDiceCount(val)
     }
   }
+
+  // Spread the dice out along the x-axis
+  const dicePositions = useMemo(() => {
+    const startX = -(diceCount - 1) * 0.2
+    return Array.from({ length: diceCount }, (_, i) => [startX + i * 0.2, 1, 0])
+  }, [diceCount])
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
+      {/* Dice selection and count UI */}
+      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 999 }}>
+        <div>
+          <button onClick={() => handleDiceSelection('4')}>d4</button>
+          <button onClick={() => handleDiceSelection('6')}>d6</button>
+          <button onClick={() => handleDiceSelection('8')}>d8</button>
+          <button onClick={() => handleDiceSelection('10')}>d10</button>
+          <button onClick={() => handleDiceSelection('12')}>d12</button>
+          <button onClick={() => handleDiceSelection('20')}>d20</button>
+        </div>
+        <div style={{ marginTop: '10px' }}>
+          <label>
+            Number of Dice: 
+            <input type="number" value={diceCount} onChange={handleDiceCountChange} style={{ width: '50px', marginLeft: '5px' }} />
+          </label>
+        </div>
+      </div>
+
       <button 
         onClick={handleRoll} 
+        style={{
+          position: 'absolute', 
+          top: '120px', 
+          left: '20px', 
+          zIndex: 10,
+          padding: '5px 10px', 
+          fontSize: '14px'
+        }}
       >
         Roll the Dice
-      </button>
-      
-      <button 
-        onClick={handleLogTopFace} 
-      >
-        Log Top Face
       </button>
 
       {/* Rotation adjustment controls */}
@@ -316,10 +343,18 @@ export default function DiceRoller() {
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
         />
-        <Physics gravity={[0, -9.81, 0]}>
-          <Dice ref={diceRef} rotation={rotation} />
+        <Physics key={diceCount} gravity={[0, -9.81, 0]}>
           <InvisibleWalls />
           <Floor />
+
+          {diceType === '20' && dicePositions.map((pos, i) => (
+            <Dice
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
         </Physics>
       </Canvas>
     </div>
