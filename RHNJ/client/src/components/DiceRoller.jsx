@@ -1,216 +1,315 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import * as THREE from 'three';
-import { OrbitControls } from '@react-three/drei';
-import * as CANNON from 'cannon-es';
+import React, { useRef, useImperativeHandle, forwardRef, useEffect, useMemo, useState } from 'react'
+import * as THREE from 'three'
+import { Canvas } from '@react-three/fiber'
+import { useFBX } from '@react-three/drei'
+import { Physics, useConvexPolyhedron, usePlane } from '@react-three/cannon'
 
-// Physics world hook
-const usePhysics = () => {
-  const world = useRef(null);
+const baseColorMap = new THREE.TextureLoader().load('/assets/d20/textures/dadosText.png')
+const normalMap = new THREE.TextureLoader().load('/assets/d20/textures/NormalMap.png')
+const roughnessMap = new THREE.TextureLoader().load('/assets/d20/textures/roughnessDado.png')
 
-  useEffect(() => {
-    const w = new CANNON.World();
-    w.gravity.set(0, -9.82, 0); // Gravity pointing downwards
-    w.broadphase = new CANNON.NaiveBroadphase();
-    w.solver.iterations = 10;
-    world.current = w;
-    return () => {
-      world.current = null;
-    };
-  }, []);
+// Hardcoded icosahedron vertices & faces
+const PHI = (1 + Math.sqrt(5)) / 2
+const N = 1
+const vertices = [
+  [-N, PHI, 0],
+  [N, PHI, 0],
+  [-N, -PHI, 0],
+  [N, -PHI, 0],
+  [0, -N, PHI],
+  [0, N, PHI],
+  [0, -N, -PHI],
+  [0, N, -PHI],
+  [PHI, 0, -N],
+  [PHI, 0, N],
+  [-PHI, 0, -N],
+  [-PHI, 0, N],
+]
+const faces = [
+  [0, 11, 5],
+  [0, 5, 1],
+  [0, 1, 7],
+  [0, 7, 10],
+  [0, 10, 11],
+  [1, 5, 9],
+  [5, 11, 4],
+  [11, 10, 2],
+  [10, 7, 6],
+  [7, 1, 8],
+  [3, 9, 4],
+  [3, 4, 2],
+  [3, 2, 6],
+  [3, 6, 8],
+  [3, 8, 9],
+  [4, 9, 5],
+  [2, 4, 11],
+  [6, 2, 10],
+  [8, 6, 7],
+  [9, 8, 1],
+]
 
-  return world;
-};
-
-// A component inside Canvas to step physics each frame
-const PhysicsStepper = ({ world }) => {
-  useFrame(() => {
-    if (world) {
-      world.step(1 / 120);
-    }
-  });
-  return null;
-};
-
-// Dynamic Camera Component
-const DynamicCamera = ({ diceBody }) => {
-  const cameraRef = useRef();
-
-  useFrame(() => {
-    if (diceBody) {
-      const dicePosition = diceBody.position;
-      const diceHeight = dicePosition?.y || 0;
-
-      // Adjust the camera's position dynamically
-      const desiredZ = Math.max(5, diceHeight + 2);
-      cameraRef.current.position.lerp(
-        new THREE.Vector3(dicePosition.x, dicePosition.y + 2, desiredZ),
-        0.1
-      );
-
-      // Look at the dice
-      cameraRef.current.lookAt(dicePosition.x, dicePosition.y, dicePosition.z);
-    }
-  });
-
-  return <perspectiveCamera ref={cameraRef} makeDefault position={[0, 2, 5]} />;
-};
-
-// Dice Roller Component
-const DiceRoller = () => {
-  const diceRef = useRef();
-  const physicsWorld = usePhysics();
-
-  const rollDice = () => {
-    if (diceRef.current) {
-      diceRef.current.roll();
-    }
-  };
-
+function Floor() {
+  const [ref] = usePlane(() => ({
+    rotation: [-Math.PI / 2, 0, 0],
+    position: [0, 0, 0],
+  }))
   return (
-    <div style={{ textAlign: 'center', height: '100vh', margin: 0, overflow: 'hidden' }}>
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={rollDice}>Roll Dice</button>
-      </div>
-      <div style={{ width: '100%', height: '80%' }}>
-        <Canvas shadows>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
-          <OrbitControls />
-
-          <PhysicsStepper world={physicsWorld.current} />
-          <DynamicCamera diceBody={diceRef.current?.diceBody} />
-
-          <Ground physicsWorld={physicsWorld} />
-          <Wall physicsWorld={physicsWorld} position={[0, 0, -5]} rotation={[0, 0, 0]} />
-          <Dice ref={diceRef} physicsWorld={physicsWorld} />
-        </Canvas>
-      </div>
-    </div>
-  );
-};
-
-// Ground Component (No texture, simple material)
-const Ground = ({ physicsWorld }) => {
-  const groundBody = useRef();
-
-  useEffect(() => {
-    // Create the ground physics body
-    groundBody.current = new CANNON.Body({
-      mass: 0, // Static body
-      shape: new CANNON.Plane(),
-    });
-    groundBody.current.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-    physicsWorld.current.addBody(groundBody.current);
-
-    return () => {
-      physicsWorld.current.removeBody(groundBody.current);
-    };
-  }, [physicsWorld]);
-
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[10, 10]} />
-      <meshStandardMaterial color="#888" roughness={1} />
+    <mesh ref={ref} receiveShadow>
+      <planeGeometry args={[9, 9]} />
+      <meshStandardMaterial color="#999" />
     </mesh>
-  );
-};
+  )
+}
 
-// An invisible wall component
-const Wall = ({ physicsWorld, position = [0,0,0], rotation = [0,0,0] }) => {
-  const wallBody = useRef();
+const Dice = forwardRef(({ rotation }, ref) => {
+  const fbx = useFBX('/assets/d20/source/dadoD20.fbx')
 
-  useEffect(() => {
-    // Create a vertical wall (plane)
-    wallBody.current = new CANNON.Body({
-      mass: 0,
-      shape: new CANNON.Plane(),
-    });
-    const euler = new THREE.Euler(...rotation);
-    const q = new CANNON.Quaternion();
-    q.setFromEuler(euler.x, euler.y, euler.z);
-    wallBody.current.quaternion.copy(q);
-    wallBody.current.position.set(...position);
-    physicsWorld.current.addBody(wallBody.current);
+  const perfectD20Geometry = useMemo(() => new THREE.IcosahedronGeometry(1, 0), [])
 
-    return () => {
-      physicsWorld.current.removeBody(wallBody.current);
-    };
-  }, [physicsWorld, position, rotation]);
+  // Scale factor if needed
+  const scaleFactor = 0.1
 
-  return null;
-};
-
-// Dice Component
-const Dice = React.forwardRef(({ physicsWorld }, ref) => {
-  const diceRef = useRef();
-  const [model, setModel] = useState(null);
-  const diceBody = useRef();
+  // Set up the physics for the perfect D20
+  const [perfectD20Ref, api] = useConvexPolyhedron(() => ({
+    mass: 0.5,
+    args: [vertices.map(([x, y, z]) => [x * scaleFactor, y * scaleFactor, z * scaleFactor]), faces],
+    position: [0, 1, 0],
+    friction: 0.6,
+    restitution: 0.3,
+    linearDamping: 0.3,
+    angularDamping: 0.1
+  }))
 
   useEffect(() => {
-    // Create the dice's physics body (approximated as a sphere)
-    diceBody.current = new CANNON.Body({
-      mass: 1,
-      shape: new CANNON.Sphere(0.1),
-      position: new CANNON.Vec3(0, 5, 0),
-    });
-    physicsWorld.current.addBody(diceBody.current);
+    fbx.traverse((child) => {
+      if (child.isMesh) {
+        child.material = new THREE.MeshStandardMaterial({
+          map: baseColorMap,
+          normalMap: normalMap,
+          roughnessMap: roughnessMap,
+          metalness: 0,
+          roughness: 1,
+          transparent: true,
+          opacity: 0.5
+        })
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+  }, [fbx])
 
-    return () => {
-      physicsWorld.current.removeBody(diceBody.current);
-    };
-  }, [physicsWorld]);
+  const logTopFace = () => {
+    if (!perfectD20Ref.current) return
+    const geom = perfectD20Ref.current.geometry
+    if (!geom) return
 
-  useEffect(() => {
-    // Load the FBX dice model
-    const loader = new FBXLoader();
-    loader.load('/assets/d20/source/dadoD20.fbx', (object) => {
-      object.scale.set(0.1, 0.1, 0.1);
-      object.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshStandardMaterial({
-            map: new THREE.TextureLoader().load('/assets/d20/textures/dadosText.png'),
-            normalMap: new THREE.TextureLoader().load('/assets/d20/textures/NormalMap.png'),
-            roughnessMap: new THREE.TextureLoader().load('/assets/d20/textures/roughnessDado.png'),
-          });
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      setModel(object);
-    });
-  }, []);
+    const position = geom.attributes.position
+    if (!position) return
 
-  useFrame(() => {
-    // Sync Three.js object position and rotation with Cannon.js body
-    if (diceBody.current && diceRef.current) {
-      diceRef.current.position.copy(diceBody.current.position);
-      diceRef.current.quaternion.copy(diceBody.current.quaternion);
+    const index = geom.index
+    const normal = new THREE.Vector3()
+    let topFaceIndex = -1
+    let maxY = -Infinity
+
+    perfectD20Ref.current.updateMatrixWorld(true)
+    const worldMatrix = perfectD20Ref.current.matrixWorld
+    const normalMatrix = new THREE.Matrix3().getNormalMatrix(worldMatrix)
+
+    const vA = new THREE.Vector3()
+    const vB = new THREE.Vector3()
+    const vC = new THREE.Vector3()
+    const edge1 = new THREE.Vector3()
+    const edge2 = new THREE.Vector3()
+
+    const processFace = (a, b, c, faceIndex) => {
+      vA.fromBufferAttribute(position, a)
+      vB.fromBufferAttribute(position, b)
+      vC.fromBufferAttribute(position, c)
+
+      edge1.subVectors(vB, vA)
+      edge2.subVectors(vC, vA)
+      normal.crossVectors(edge1, edge2).normalize()
+
+      normal.applyMatrix3(normalMatrix).normalize()
+
+      if (normal.y > maxY) {
+        maxY = normal.y
+        topFaceIndex = faceIndex
+      }
     }
-  });
 
-  // Expose roll function and diceBody
-  useEffect(() => {
-    if (ref) {
-      ref.current = {
-        roll: () => {
-          if (diceBody.current) {
-            diceBody.current.wakeUp();
-            const force = new CANNON.Vec3(
-              (Math.random() - 0.5) * 10,
-              Math.random() * 5 + 10,
-              (Math.random() - 0.5) * 10
-            );
-            diceBody.current.applyImpulse(force, diceBody.current.position);
-          }
-        },
-        diceBody: diceBody.current,
-      };
+    if (index) {
+      for (let i = 0; i < index.count; i += 3) {
+        const a = index.array[i]
+        const b = index.array[i + 1]
+        const c = index.array[i + 2]
+        processFace(a, b, c, i / 3)
+      }
+    } else {
+      for (let i = 0; i < position.count; i += 3) {
+        processFace(i, i + 1, i + 2, i / 3)
+      }
     }
-  }, [ref]);
 
-  return model ? <primitive ref={diceRef} object={model} /> : null;
-});
+    if (topFaceIndex === -1) {
+      console.warn("No top face found.")
+    } else {
+      const faceValues = Array.from({ length: 20 }, (_, i) => i + 1)
+      console.log("The top face index is:", topFaceIndex)
+      console.log("Top face value:", faceValues[topFaceIndex])
+    }
+  }
 
-export default DiceRoller;
+  useImperativeHandle(ref, () => ({
+    rollDice: () => {
+      api.position.set(0, 0.5, 0)
+      api.rotation.set(0, 0, 0)
+      api.velocity.set(0, 0, 0)
+      api.angularVelocity.set(0, 0, 0)
+
+      const impulse = new THREE.Vector3(
+        (Math.random() - 0.5) * 2,
+        2,
+        (Math.random() - 0.5) * 2
+      )
+      api.applyImpulse([impulse.x, impulse.y, impulse.z], [0, 0, 0])
+
+      api.angularVelocity.set(
+        (Math.random() - 0.5) * 30,
+        (Math.random() - 0.5) * 30,
+        (Math.random() - 0.5) * 30
+      )
+    },
+    nudgeRotation: (rx = 0, ry = 0, rz = 0) => {
+      api.rotation.set((x, y, z) => {
+        api.rotation.set(x + rx, y + ry, z + rz)
+      })
+    },
+    logNumberOfFaces: () => {
+      const geom = perfectD20Ref.current.geometry
+      let numberOfFaces = 0
+      if (geom.index) {
+        numberOfFaces = geom.index.count / 3
+      } else {
+        const position = geom.getAttribute('position')
+        numberOfFaces = position.count / 3
+      }
+      console.log("Number of faces on the current D20 shape:", numberOfFaces)
+    },
+    logTopFace: () => {
+      logTopFace()
+    }
+  }))
+
+  // State for rotation of the FBX model
+  
+
+  const adjustRotation = (axis, delta) => {
+    setRotation((prev) => ({ ...prev, [axis]: prev[axis] + delta }))
+  }
+
+  const logRotation = () => {
+    console.log("Final rotation needed (in radians):", rotation)
+  }
+
+  return (
+    <>
+      <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
+        <meshStandardMaterial color="green" opacity={0} visible={false} />
+        {/* The detailed dice as a child, with adjustable rotation */}
+        <group rotation={[-0.4, -0.5, -0.65]}>
+          <primitive object={fbx} scale={0.4} />
+        </group>
+      </mesh>
+    </>
+  )
+})
+
+function InvisibleWalls() {
+  const size = .8
+  usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0] }))
+  usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 1.5, 0] }))
+  usePlane(() => ({ rotation: [0, Math.PI / 2, 0], position: [-size, 0.5, 0] }))
+  usePlane(() => ({ rotation: [0, -Math.PI / 2, 0], position: [size, 0.5, 0] }))
+  usePlane(() => ({ rotation: [0, 0, 0], position: [0, 0.5, -size] }))
+  usePlane(() => ({ rotation: [0, Math.PI, 0], position: [0, 0.5, size] }))
+  return null
+}
+
+export default function DiceRoller() {
+  const diceRef = useRef()
+
+  const [rotation, setRotation] = useState({ x: 0, y: 0, z: 0 })
+  const increment = 0.05
+
+  const adjustRotation = (axis, delta) => {
+    setRotation((prev) => ({ ...prev, [axis]: prev[axis] + delta }))
+  }
+
+  const logRotation = () => {
+    console.log("Final rotation (radians):", rotation)
+  }
+
+  const handleRoll = () => {
+    if (diceRef.current?.rollDice) {
+      diceRef.current.rollDice()
+    }
+  }
+
+  const handleNudge = () => {
+    if (diceRef.current?.nudgeRotation) {
+      diceRef.current.nudgeRotation(0.05, 0, 0)
+    }
+  }
+
+  const handleLogTopFace = () => {
+    if (diceRef.current?.logTopFace) {
+      diceRef.current.logTopFace()
+    }
+  }
+
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+      {/* Buttons for main dice actions */}
+      <button onClick={handleRoll} style={{position:'absolute', top:'20px', left:'20px', zIndex:10}}>Roll the Dice</button>
+      <button onClick={handleNudge} style={{position:'absolute', top:'60px', left:'20px', zIndex:10}}>Nudge Rotation</button>
+      <button onClick={handleLogTopFace} style={{position:'absolute', top:'100px', left:'20px', zIndex:10}}>Log Top Face</button>
+
+      {/* Control Buttons for rotation adjustments OUTSIDE the Dice component */}
+      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
+        <div>
+          <button onClick={() => adjustRotation('x', increment)}>X+</button>
+          <button onClick={() => adjustRotation('x', -increment)}>X-</button>
+        </div>
+        <div>
+          <button onClick={() => adjustRotation('y', increment)}>Y+</button>
+          <button onClick={() => adjustRotation('y', -increment)}>Y-</button>
+        </div>
+        <div>
+          <button onClick={() => adjustRotation('z', increment)}>Z+</button>
+          <button onClick={() => adjustRotation('z', -increment)}>Z-</button>
+        </div>
+        <div style={{ marginTop: '10px' }}>
+          <button onClick={logRotation}>Log Rotation</button>
+        </div>
+      </div>
+
+      <Canvas shadows camera={{ position: [0, 2, .8], fov: 50 }}>
+        <ambientLight intensity={1} />
+        <directionalLight 
+          intensity={1} 
+          position={[1, 7, 5]} 
+          castShadow 
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+        />
+        <Physics gravity={[0, -9.81, 0]}>
+          {/* Pass rotation as props to Dice */}
+          <Dice ref={diceRef} rotation={rotation} />
+          <InvisibleWalls />
+          <Floor />
+        </Physics>
+      </Canvas>
+    </div>
+  )
+}
