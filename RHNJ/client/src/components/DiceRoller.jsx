@@ -3,10 +3,11 @@ import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { useFBX } from '@react-three/drei'
 import { Physics, useConvexPolyhedron, usePlane } from '@react-three/cannon'
+import D12 from './D12.jsx';
 
-const baseColorMap = new THREE.TextureLoader().load('/assets/d20/textures/dadosText.png')
-const normalMap = new THREE.TextureLoader().load('/assets/d20/textures/NormalMap.png')
-const roughnessMap = new THREE.TextureLoader().load('/assets/d20/textures/roughnessDado.png')
+const baseColorMap = new THREE.TextureLoader().load('/assets/d20/dice-basecolors.jpeg')
+const normalMap = new THREE.TextureLoader().load('/assets/d20/dice-normal.jpeg')
+const roughnessMap = new THREE.TextureLoader().load('/assets/d20/dice-rough.jpeg')
 
 // Hardcoded icosahedron vertices & faces (for d20)
 const PHI = (1 + Math.sqrt(5)) / 2
@@ -64,36 +65,59 @@ function Floor() {
 const faceValues = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
 // Face mapping object for d20
+// const faceMap = {
+//   11: 16,
+//   16: 3,
+//   5: 13,
+//   4: 5,
+//   9: 18,
+//   2: 7,
+//   18: 4,
+//   15: 8,
+//   10: 12,
+//   20: 10,
+//   8: 11,
+//   6: 17,
+//   13: 14,
+//   19: 2,
+//   7: 19,
+//   14: 20,
+//   17: 9,
+//   3: 15,
+//   12: 6,
+//   1: 1
+// };
+//mapping for diceset New
 const faceMap = {
-  11: 16,
-  16: 3,
-  5: 13,
-  4: 5,
-  9: 18,
-  2: 7,
-  18: 4,
-  15: 8,
-  10: 12,
-  20: 10,
-  8: 11,
-  6: 17,
-  13: 14,
-  19: 2,
-  7: 19,
-  14: 20,
-  17: 9,
-  3: 15,
-  12: 6,
-  1: 1
-};
+  16: 7,
+  17: 10,
+  12: 12,
+  20: 13,
+  19: 4,
+  8: 8,
+  10: 11,
+  13: 2,
+  11: 15,
+  18: 20,
+  6: 1,
+  5: 16,
+  3: 6,
+  7: 17,
+  2: 19,
+  4: 9,
+  14: 18,
+  9: 14,
+  15: 5,
+  1: 3,
+}
 
 const Dice = forwardRef(({ rotation, position }, ref) => {
-  const originalFBX = useFBX('/assets/d20/source/dadoD20.fbx')
+  const originalFBX = useFBX('/assets/d20/d20New.fbx')
   // Clone the fbx so each dice gets its own instance
   const fbx = useMemo(() => originalFBX.clone(), [originalFBX])
   
   const perfectD20Geometry = useMemo(() => new THREE.IcosahedronGeometry(1, 0), [])
-  const scaleFactor = 0.1
+  const scaleFactor = .18
 
   const [perfectD20Ref, api] = useConvexPolyhedron(() => ({
     mass: 0.5,
@@ -217,9 +241,9 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
   return (
     <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
       {/* invisible perfectD20 */}
-      <meshStandardMaterial color="green" opacity={0} visible={false} />
+      <meshStandardMaterial color="green" opacity={0.5} visible={false} transparent={false} />
       <group rotation={[rotation.x, rotation.y, rotation.z]}>
-        <primitive object={fbx} scale={0.5} />
+        <primitive object={fbx} scale={0.7} />
       </group>
     </mesh>
   )
@@ -229,7 +253,7 @@ function InvisibleWalls() {
   // Larger size
   const size = 1
   usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0] }))
-  usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 1.5, 0] }))
+  usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 2.5, 0] }))
   usePlane(() => ({ rotation: [0, Math.PI / 2, 0], position: [-size, 0.5, 0] }))
   usePlane(() => ({ rotation: [0, -Math.PI / 2, 0], position: [size, 0.5, 0] }))
   usePlane(() => ({ rotation: [0, 0, 0], position: [0, 0.5, -size] }))
@@ -238,7 +262,7 @@ function InvisibleWalls() {
 }
 
 export default function DiceRoller() {
-  const [rotation, setRotation] = useState({ x: -0.4, y: -0.5, z: -0.65 })
+  const [rotation, setRotation] = useState({ x: -0.35, y: -0.55, z: -1.25 })
   const increment = 0.05
 
   const [diceType, setDiceType] = useState(null);
@@ -334,11 +358,11 @@ export default function DiceRoller() {
         </div>
       </div>
 
-      <Canvas shadows camera={{ position: [0, 1.2, 1], fov: 70 }}>
+      <Canvas shadows camera={{ position: [0, 1.8, 1.4], fov: 65 }}>
         <ambientLight intensity={0.4} />
         <directionalLight 
           intensity={1} 
-          position={[2, 6, 8]} 
+          position={[2, 10, 8]} 
           castShadow 
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
@@ -351,6 +375,16 @@ export default function DiceRoller() {
             <Dice
               key={i}
               ref={el => diceRefs.current[i] = el}
+              diceType="20"
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
+          {diceType === '12' && dicePositions.map((pos, i) => (
+            <D12
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              diceType="12"
               rotation={rotation}
               position={pos}
             />
