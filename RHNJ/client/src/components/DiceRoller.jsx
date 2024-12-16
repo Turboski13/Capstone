@@ -243,7 +243,7 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
       {/* invisible perfectD20 */}
       <meshStandardMaterial color="green" opacity={0.5} visible={false} transparent={false} />
       <group rotation={[rotation.x, rotation.y, rotation.z]}>
-        <primitive object={fbx} scale={0.7} />
+        <primitive object={fbx} scale={0.8} />
       </group>
     </mesh>
   )
@@ -385,6 +385,15 @@ export default function DiceRoller() {
               key={i}
               ref={el => diceRefs.current[i] = el}
               diceType="12"
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
+          {diceType === '10' && dicePositions.map((pos, i) => (
+            <D12
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              diceType="10"
               rotation={rotation}
               position={pos}
             />
