@@ -1,10 +1,10 @@
 import React, { useRef, useImperativeHandle, forwardRef, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
-import { useFBX } from '@react-three/drei'
+import { useFBX, useTexture } from '@react-three/drei'
 import { Physics, useConvexPolyhedron, usePlane } from '@react-three/cannon'
 import D12 from './D12.jsx';
-
+import D10 from './D10.jsx';
 const baseColorMap = new THREE.TextureLoader().load('/assets/d20/dice-basecolors.jpeg')
 const normalMap = new THREE.TextureLoader().load('/assets/d20/dice-normal.jpeg')
 const roughnessMap = new THREE.TextureLoader().load('/assets/d20/dice-rough.jpeg')
@@ -54,40 +54,22 @@ function Floor() {
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
   }))
+  
+  // Load your texture image
+  // const texture = useTexture('/logo.png') 
+  
   return (
     <mesh ref={ref} receiveShadow>
       <planeGeometry args={[9, 9]} />
-      <meshStandardMaterial color="#999" />
+      <meshStandardMaterial  />
     </mesh>
   )
 }
 
+
+
 const faceValues = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
-// Face mapping object for d20
-// const faceMap = {
-//   11: 16,
-//   16: 3,
-//   5: 13,
-//   4: 5,
-//   9: 18,
-//   2: 7,
-//   18: 4,
-//   15: 8,
-//   10: 12,
-//   20: 10,
-//   8: 11,
-//   6: 17,
-//   13: 14,
-//   19: 2,
-//   7: 19,
-//   14: 20,
-//   17: 9,
-//   3: 15,
-//   12: 6,
-//   1: 1
-// };
-//mapping for diceset New
 const faceMap = {
   16: 7,
   17: 10,
@@ -240,7 +222,7 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
 
   return (
     <mesh ref={perfectD20Ref} geometry={perfectD20Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]}>
-      {/* invisible perfectD20 */}
+      {/* needed to set the icosahedron to invisible so we can use our own artwork and skins on the dice*/}
       <meshStandardMaterial color="green" opacity={0.5} visible={false} transparent={false} />
       <group rotation={[rotation.x, rotation.y, rotation.z]}>
         <primitive object={fbx} scale={0.8} />
@@ -284,12 +266,7 @@ export default function DiceRoller() {
   }
 
   const handleDiceSelection = (type) => {
-    if (type === '20') {
-      setDiceType('20')
-    } else {
-      setDiceType(type)
-      console.log(`Dice type d${type} selected, but not implemented yet.`)
-    }
+    setDiceType(type);
   }
 
   const handleDiceCountChange = (e) => {
@@ -390,7 +367,7 @@ export default function DiceRoller() {
             />
           ))}
           {diceType === '10' && dicePositions.map((pos, i) => (
-            <D12
+            <D10
               key={i}
               ref={el => diceRefs.current[i] = el}
               diceType="10"
