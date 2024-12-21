@@ -221,6 +221,7 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
         if (topFaceValue != null) {
           const mappedValue = faceMap[topFaceValue]
           console.log(`Dice at ${position}: Face: ${topFaceValue}, Shown: ${mappedValue}`)
+          return mappedValue;
         }
       }, 2200)
     },
@@ -297,7 +298,7 @@ export default function DiceRoller() {
           <button onClick={() => handleDiceSelection('4')}>d4</button>
           <button onClick={() => handleDiceSelection('6')}>d6</button>
           <button onClick={() => handleDiceSelection('8')}>d8</button>
-          <button onClick={() => handleDiceSelection('10')}>d10</button>
+          {/* <button onClick={() => handleDiceSelection('10')}>d10</button> */}
           <button onClick={() => handleDiceSelection('12')}>d12</button>
           <button onClick={() => handleDiceSelection('20')}>d20</button>
         </div>
@@ -324,7 +325,7 @@ export default function DiceRoller() {
       </button>
 
       {/* Rotation adjustment controls */}
-      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
+      {/* <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
         <div>
           <button onClick={() => adjustRotation('x', increment)}>X+</button>
           <button onClick={() => adjustRotation('x', -increment)}>X-</button>
@@ -340,7 +341,7 @@ export default function DiceRoller() {
         <div style={{ marginTop: '10px' }}>
           <button onClick={logRotation}>Log Rotation</button>
         </div>
-      </div>
+      </div> */}
 
       <Canvas shadows camera={{ position: [0, 1.8, 1.4], fov: 65 }}>
         <ambientLight intensity={0.4} />
@@ -373,7 +374,7 @@ export default function DiceRoller() {
               position={pos}
             />
           ))}
-          {diceType === '10' && dicePositions.map((pos, i) => (
+          {/* {diceType === '10' && dicePositions.map((pos, i) => (
             <D10
               key={i}
               ref={el => diceRefs.current[i] = el}
@@ -381,7 +382,7 @@ export default function DiceRoller() {
               rotation={rotation}
               position={pos}
             />
-          ))}
+          ))} */}
           {diceType === '8' && dicePositions.map((pos, i) => (
             <D8
               key={i}

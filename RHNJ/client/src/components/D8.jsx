@@ -173,6 +173,7 @@ const D8 = forwardRef(({  position }, ref) => {
         const val = findTopFace()
         if (val != null) {
           console.log(`D8 landed on face: ${val}`)
+          return val;
         }
       }, 2200)
     },

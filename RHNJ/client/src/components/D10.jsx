@@ -116,6 +116,8 @@ const D10 = forwardRef(({ rotation, position = [0, 0, 0] }, ref) => {
     mass: 0.5,
     args: [vertices, faces],
     position: position,
+    collisionFilterGroup: 1,
+    collisionFilterMask: 2,
     friction: 0.6,
     restitution: 0.3,
     linearDamping: 0.3,

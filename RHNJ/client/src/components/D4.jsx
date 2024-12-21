@@ -163,6 +163,7 @@ const fbx = useMemo(() => originalFBX.clone(), [originalFBX])
         const topCornerValue = getTopCornerValue()
         if (topCornerValue != null) {
           console.log(`D4 corner result: ${topCornerValue}`)
+          return topCornerValue
         }
       }, 2200)
     },

@@ -192,6 +192,7 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
         if (topFaceValue != null) {
           const mappedValue = d12FaceMap[topFaceValue]
           console.log(`D12 Face: ${topFaceValue}, Shown: ${mappedValue}`)
+          return mappedValue;
         }
       }, 2200)
     },
