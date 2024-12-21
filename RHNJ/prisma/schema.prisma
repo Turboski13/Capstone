@@ -21,6 +21,7 @@ model UserCharacter {
   id             Int      @id @default(autoincrement())
   userId         Int
   characterName  String
+  teamId         Int?
   description    String?
   characterClass String
   level          Int
@@ -38,17 +39,34 @@ model UserCharacter {
   notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  items          String[]
+
   user           User     @relation(fields: [userId], references: [id])
+  team           Team?     @relation(fields: [teamId], references: [id])
 }
+
+model Asset {
+  id               Int      @id @default(autoincrement())
+  teamId           Int
+  type             String   
+  properties       Json
+  visibleProperties Json?   
+  createdAt        DateTime @default(now())
+  team             Team     @relation(fields: [teamId], references: [id], name: "AssetToTeam")
+}
+
 
 model Team {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   password  String?
   dmId      Int?
-  assets    Json?
+  visibleProperties Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   dm        User?    @relation("DMTeams", fields: [dmId], references: [id])
   users     User[]   @relation("UserTeams")
+  characters UserCharacter[]
+  assets    Asset[]  @relation("AssetToTeam")
 }
+

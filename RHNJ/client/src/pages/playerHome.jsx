@@ -15,6 +15,7 @@ const PlayerHome = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false); // To toggle the character form
+  
 
   
    /* const handleLogout = () => {
@@ -38,9 +39,10 @@ const PlayerHome = () => {
 
   const fetchCharacters = async () => {
     try {
-      const userId = localStorage.getItem('userId');
-      const allCharacters = await searchAllUserCharacters(userId);
+      const allCharacters = await searchAllUserCharacters();
       /*console.log("Characters array:", characters);*/
+      console.log(allCharacters);
+      
       setCharacters(allCharacters);
     } catch (err) {
       setError('No characters found. Create a character to start!');
@@ -49,9 +51,12 @@ const PlayerHome = () => {
     }
   };
 
+  const joinTeamArea = (teamId) => {
+    navigate(`/play-area/${teamId}`)
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Token in PlayerHome:', token);// Check if the token is present
     if (!token) {
       console.log("No token found, navigating to login.");
       navigate('/login'); // Redirect to login if no token is found
@@ -124,6 +129,14 @@ const PlayerHome = () => {
                 >
                   View Details
                 </button>
+                {
+                  character.teamId && (
+                    
+                
+                    <button onClick={() => joinTeamArea(character.teamId)}>
+                  Go To Play Area
+                </button>
+                )}
               </td>
             </tr>
           ))}

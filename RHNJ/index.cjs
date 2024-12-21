@@ -5,12 +5,24 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const path = require('path');
+const csv = require('csvtojson');
+const http = require("http");
+const { Server } = require("socket.io");
+
 
 const prisma = new PrismaClient();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-app.use(cors()); // Added this line
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+app.use(cors()); 
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'client/dist')));
@@ -74,12 +86,12 @@ app.get('/test', (req, res) => {
 });
 
 // Protected admin route
-app.get('/admin-home', authenticateAdmin, (req, res, next) => {
+app.get(`/admin-home`, authenticateAdmin, (req, res, next) => {
   res.send('Welcome to Admin Home');
 });
 
 // Verify Token Route
-app.post('/api/verify-token', (req, res, next) => {
+app.post(`${process.env.DEV_URL}/api/verify-token`, (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).send({
@@ -104,7 +116,7 @@ app.post('/api/verify-token', (req, res, next) => {
 });
 
 // Sign-up
-app.post('/api/auth/signup', async (req, res, next) => {
+app.post(`/api/auth/signup`, async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
@@ -130,7 +142,7 @@ app.post('/api/auth/signup', async (req, res, next) => {
 });
 
 // User login
-app.post('/api/auth/login', async (req, res) => {
+app.post(`/api/auth/login`, async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await prisma.user.findUnique({ where: { username } });
@@ -343,6 +355,7 @@ app.get('/api/teams', async (req, res, next) => {
   }
 });
 
+//create team
 app.post('/api/teams', authMiddleware, async (req, res, next) => {
   try {
     const { teamName, roomPassword, assets } = req.body;
@@ -366,6 +379,7 @@ app.post('/api/teams', authMiddleware, async (req, res, next) => {
   }
 });
 
+//join team
 app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   try {
     const { teamPW } = req.body;
@@ -405,19 +419,67 @@ app.post('/api/teams/:teamId/join', authMiddleware, async (req, res, next) => {
   }
 });
 
+app.post('/api/teams/:teamId/char-join', authMiddleware, async(req, res, next) => {
+  const { teamPW, charId } = req.body;
+  const { id } = req.user;
+  const { teamId } = req.params;
+
+  try{
+    const team = await prisma.team.findUnique({
+      where: { id: +teamId },
+    });
+
+    if(!team || team.password !== teamPW){
+      return res.status(404).json({message: 'couldnt find the team or incorrect PW'});
+    }
+
+    const isTheirChar = await prisma.userCharacter.findUnique({
+      where: { id: +charId },
+      include: { user: true },
+    });
+    console.log(isTheirChar);
+    if(isTheirChar.userId !== id){
+      return res.status(403).json({message: "unauthorized to add this character to this team"});
+    }
+
+    const joinTeam = await prisma.userCharacter.update({ //this will actually equal the character that joined. 
+      where: { id: +charId },
+      data: {
+        teamId: +teamId
+      },
+    });
+    res.status(201).json({message: 'successfully joined the team'});
+
+  }catch(err){
+    console.error('Couldnt add the char to the current team', err);
+  }
+})
+
 app.get('/api/teams/:teamId', authMiddleware, async (req, res) => {
-  const { teamId } = req.params.teamId;
+  const { id } = req.user;
+  const { teamId } = req.params;
+
+  const user = await prisma.user.findUnique({
+    where: { id: +id },
+    include: { teams: true },
+  });
+
+  const isOnTeam = user.teams.some((team) => team.id === parseInt(teamId));
+
+  if(!isOnTeam){
+    return res.status(401).json({message: 'Unauthorized to this team!'});
+  }
 
   const team = await prisma.team.findUnique({
     where: { id: parseInt(teamId) },
-    include: { users: true, assets: true }, // Include users (players) and assets
+    include: { users: true, characters: true, }, // Include users (players) and assets
   });
 
   if (!team) {
     return res.status(404).json({ message: 'Team not found' });
   }
 
-  res.json({ message: `Team details for ${teamId}` });
+  res.status(201).json({ message: `Team details for ${teamId}`, team, id });
 });
 
 // Delete team
@@ -446,6 +508,104 @@ app.delete('/api/teams/:teamId', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Failed to delete team' });
   }
 });
+
+app.get('/api/assets/:teamId', authMiddleware, async (req, res, next) => { 
+  const { teamId } = req.params;
+  const { id: userId } = req.user; // The currently authenticated user's ID
+
+  try {
+    // Fetch the team info to check who the DM is
+    const team = await prisma.team.findUnique({
+      where: { id: +teamId },
+      select: { dmId: true }
+    });
+
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    // Determine if this user is the DM
+    const isDm = team.dmId === userId;
+
+    const teamAssets = await prisma.asset.findMany({
+      where: { teamId: +teamId },
+      select: {
+        id: true,
+        type: true,
+        properties: true,
+        visibleProperties: true
+      }
+    });
+
+    const transformedAssets = teamAssets.map((asset) => {
+      const { id, type, properties, visibleProperties } = asset;
+
+      // If the user is the DM, return all properties unfiltered
+      if (isDm) {
+        return {
+          id,
+          type,
+          properties // Return full properties
+        };
+      }
+
+      // Otherwise, filter according to visibleProperties
+      const filteredProps = {};
+      if (visibleProperties && typeof visibleProperties === 'object') {
+        for (const propKey in properties) {
+          if (visibleProperties[propKey]) {
+            filteredProps[propKey] = properties[propKey];
+          }
+        }
+      }
+
+      return {
+        id,
+        type,
+        properties: filteredProps
+      };
+    });
+
+    res.json(transformedAssets);
+  } catch (err) {
+    console.error('Error fetching filtered assets', err);
+    next(err);
+  }
+});
+
+
+//upload info to a team
+app.post('/api/teams/upload', authMiddleware, async(req, res, next) => {
+
+  const { teamId, csvData, shareAll=false } = req.body;
+  try{
+    const assets = await csv().fromString(csvData);
+  
+    const assetRecords = assets.map((row) => {
+      const { Type, ...rest } = row;
+
+      const visibleProperties = Object.keys(rest).reduce((acc, key) => {
+        acc[key] = shareAll;
+        return acc;
+      }, {});
+      return {
+        teamId: +teamId,
+        type: Type || 'Uknown',
+        properties: row,
+        visibleProperties
+      };
+    });
+    console.log(assetRecords.length);
+    await prisma.asset.createMany({
+      data: assetRecords,
+    })
+    res.status(201).json({message: 'upload success!', assetRecords });
+
+  }catch(err){
+    console.error('couldnt add the info to the team', err);
+  }
+})
+
 
 app.delete(
   '/api/teams/:teamId/users/:userId',
@@ -478,6 +638,7 @@ app.delete(
     res.json(updatedTeam);
   }
 );
+
 
 app.delete('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
   try {
@@ -671,6 +832,96 @@ app.delete('/api/characters/:id', authenticateAdmin, async (req, res, next) => {
   }
 });
 
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  // Client should call this when they join a team
+  socket.on("joinTeam", ({ teamId }) => {
+    socket.join(`team-${teamId}`);
+    console.log(`User ${socket.id} joined room team-${teamId}`);
+  });
+
+  socket.on("addSharedAsset", async ({ teamId, assetId, visibleProperties }) => {
+    try {
+      // Convert visibleProperties array into an object with keys set to true
+      const visiblePropsObject = {};
+      if (Array.isArray(visibleProperties)) {
+        for (const prop of visibleProperties) {
+          visiblePropsObject[prop] = true;
+        }
+      }
+
+      // Update the asset with the new visibleProperties
+      await prisma.asset.update({
+        where: { id: +assetId },
+        data: {
+          visibleProperties: visiblePropsObject,
+        },
+      });
+
+      // After updating, fetch all team assets and filter them before sharing
+      const teamAssets = await prisma.asset.findMany({
+        where: { teamId: +teamId },
+        select: {
+          id: true,
+          type: true,
+          properties: true,
+          visibleProperties: true
+        }
+      });
+
+      // Filter the assets' properties based on visibleProperties
+      const filteredAssets = teamAssets.map((asset) => {
+        const { id, type, properties, visibleProperties } = asset;
+        const filteredProps = {};
+        if (visibleProperties && typeof visibleProperties === 'object') {
+          for (const propKey in properties) {
+            if (visibleProperties[propKey]) {
+              filteredProps[propKey] = properties[propKey];
+            }
+          }
+        }
+        return {
+          id,
+          type,
+          properties: filteredProps
+        };
+      });
+
+      console.log(filteredAssets);
+      // Emit the updated filtered assets to the team room
+      io.to(`team-${teamId}`).emit('updateSharedAssets', filteredAssets);
+    } catch (err) {
+      console.error('Could not update visibleProperties for the asset:', err);
+    }
+  });
+
+  socket.on("updateCharacterProperty", async ({ characterId, property, change }) => {
+    try {
+      const updatedCharacter = await prisma.userCharacter.update({
+        where: { id: characterId },
+        data: {
+          [property]: { increment: change },
+        },
+      });
+      const updatedValue = updatedCharacter[property];
+
+      io.to(`team-${updatedCharacter.teamId}`).emit("updateCharacterProperty", {
+        characterId: updatedCharacter.id,
+        property,
+        value: updatedValue,
+      });
+    } catch (err) {
+      console.error(`Error updating ${property}:`, err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});
+
+
 app.get('/', (req, res, next)=>{
   res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
@@ -685,12 +936,9 @@ app.use((err, req, res, next) => {
   res.status(500).send({ error: 'Internal server error', message: err.message });
 });
 
-// Start the server
-if (process.env.NODE_ENV !== 'test') {
-  app.listen(process.env.PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+server.listen(process.env.PORT || 3000, () => {
+  console.log(`Listening on port ${PORT}`);
   });
-}
 
 app.get('/test', (req, res) => {
   res.send('Server is up and running!');
