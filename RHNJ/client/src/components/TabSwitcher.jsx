@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './TabSwitcher.css';
 import DmUi from "./DmUi";
+import DiceRoller from "./DiceRoller";
 
 const TabSwitcher = ({ selectedAbility, setSelectedAbility, teamId,userId, isDm, teamName, dmId, assets, characters, enemies, users, socket }) => {
   const [activeTab, setActiveTab] = useState("inventory");
@@ -137,6 +138,12 @@ const TabSwitcher = ({ selectedAbility, setSelectedAbility, teamId,userId, isDm,
           </ul>
         </div>
       );
+      case "dice":
+      return (
+        <div className="dice-comp">
+          <DiceRoller />
+        </div>
+      )
         case "stats":
           return (
             <div>
@@ -401,6 +408,12 @@ const TabSwitcher = ({ selectedAbility, setSelectedAbility, teamId,userId, isDm,
     <div>
       {isDm && <DmUi teamId={teamId} assets={assets} socket={socket}/>}
       <div className="tabs">
+      <button
+          onClick={() => setActiveTab("dice")}
+          className={activeTab === "dice" ? "active" : ""}
+        >
+          Dice Roll
+        </button>
         <button
           onClick={() => setActiveTab("inventory")}
           className={activeTab === "inventory" ? "active" : ""}

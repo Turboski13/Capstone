@@ -61,9 +61,6 @@ function Floor() {
     collisionFilterMask: -1,
   }))
   
-  // Load your texture image
-  // const texture = useTexture('/logo.png') 
-  
   return (
     <mesh ref={ref} receiveShadow>
       <planeGeometry args={[9, 9]} />
@@ -71,8 +68,6 @@ function Floor() {
     </mesh>
   )
 }
-
-
 
 const faceValues = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
 
@@ -259,13 +254,13 @@ export default function DiceRoller() {
 
   const diceRefs = useRef([])
 
-  const adjustRotation = (axis, delta) => {
-    setRotation((prev) => ({ ...prev, [axis]: prev[axis] + delta }))
-  }
+  // const adjustRotation = (axis, delta) => {
+  //   setRotation((prev) => ({ ...prev, [axis]: prev[axis] + delta }))
+  // }
 
-  const logRotation = () => {
-    console.log("Final rotation (radians):", rotation)
-  }
+  // const logRotation = () => {
+  //   console.log("Final rotation (radians):", rotation)
+  // }
 
   const handleRoll = () => {
     // Just apply impulse, no re-render or position reset
@@ -291,9 +286,14 @@ export default function DiceRoller() {
   }, [diceCount])
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      {/* Dice selection and count UI */}
-      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 999 }}>
+    <div style={{
+      width: '100%',
+      maxWidth: '100%', 
+      minHeight: '500px',
+      margin: '0 auto',
+    }}>
+
+      <div >
         <div>
           <button onClick={() => handleDiceSelection('4')}>d4</button>
           <button onClick={() => handleDiceSelection('6')}>d6</button>
@@ -312,38 +312,19 @@ export default function DiceRoller() {
 
       <button 
         onClick={handleRoll} 
-        style={{
-          position: 'absolute', 
-          top: '120px', 
-          left: '20px', 
-          zIndex: 10,
-          padding: '5px 10px', 
-          fontSize: '14px'
-        }}
+        
       >
         Roll the Dice
       </button>
 
-      {/* Rotation adjustment controls */}
-      {/* <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
-        <div>
-          <button onClick={() => adjustRotation('x', increment)}>X+</button>
-          <button onClick={() => adjustRotation('x', -increment)}>X-</button>
-        </div>
-        <div>
-          <button onClick={() => adjustRotation('y', increment)}>Y+</button>
-          <button onClick={() => adjustRotation('y', -increment)}>Y-</button>
-        </div>
-        <div>
-          <button onClick={() => adjustRotation('z', increment)}>Z+</button>
-          <button onClick={() => adjustRotation('z', -increment)}>Z-</button>
-        </div>
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={logRotation}>Log Rotation</button>
-        </div>
-      </div> */}
-
-      <Canvas shadows camera={{ position: [0, 1.8, 1.4], fov: 65 }}>
+      <Canvas style={{
+          width: '175%',
+          height: '800px', 
+        }}
+        shadows 
+        camera={{ position: [0, 1.8, 1.4], fov: 40 }}
+      >
+        
         <ambientLight intensity={0.4} />
         <directionalLight 
           intensity={1} 
@@ -374,15 +355,6 @@ export default function DiceRoller() {
               position={pos}
             />
           ))}
-          {/* {diceType === '10' && dicePositions.map((pos, i) => (
-            <D10
-              key={i}
-              ref={el => diceRefs.current[i] = el}
-              diceType="10"
-              rotation={rotation}
-              position={pos}
-            />
-          ))} */}
           {diceType === '8' && dicePositions.map((pos, i) => (
             <D8
               key={i}
@@ -415,3 +387,22 @@ export default function DiceRoller() {
     </div>
   )
 }
+
+ {/* Rotation adjustment controls */}
+      {/* <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 999, background: '#fff', padding: '10px' }}>
+        <div>
+          <button onClick={() => adjustRotation('x', increment)}>X+</button>
+          <button onClick={() => adjustRotation('x', -increment)}>X-</button>
+        </div>
+        <div>
+          <button onClick={() => adjustRotation('y', increment)}>Y+</button>
+          <button onClick={() => adjustRotation('y', -increment)}>Y-</button>
+        </div>
+        <div>
+          <button onClick={() => adjustRotation('z', increment)}>Z+</button>
+          <button onClick={() => adjustRotation('z', -increment)}>Z-</button>
+        </div>
+        <div style={{ marginTop: '10px' }}>
+          <button onClick={logRotation}>Log Rotation</button>
+        </div>
+      </div> */}
