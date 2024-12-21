@@ -4,20 +4,20 @@ import { useFBX } from '@react-three/drei'
 import { useConvexPolyhedron } from '@react-three/cannon'
 
 // Load your D12 textures
-const d12BaseColorMap = new THREE.TextureLoader().load('/assets/d20/dice-basecolors.jpeg')
-const d12NormalMap = new THREE.TextureLoader().load('/assets/d20/dice-normal.jpeg')
-const d12RoughnessMap = new THREE.TextureLoader().load('/assets/d20/dice-roughness.jpeg')
+const d6BaseColorMap = new THREE.TextureLoader().load('/assets/d20/dice-basecolors.jpeg')
+const d6NormalMap = new THREE.TextureLoader().load('/assets/d20/dice-normal.jpeg')
+const d6RoughnessMap = new THREE.TextureLoader().load('/assets/d20/dice-roughness.jpeg')
 
-// Create a perfect D12 geometry (dodecahedron)
-const perfectD12Geometry = new THREE.DodecahedronGeometry(1, 0)
+// Create a perfect d6 geometry (dodecahedron)
+const perfectD6Geometry = new THREE.cube(1,0)
 
-// Extract vertices and faces from the D12 geometry
-const positionAttr = perfectD12Geometry.attributes.position
-const indexAttr = perfectD12Geometry.index
+// Extract vertices and faces from the d6 geometry
+const positionAttr = perfectD6Geometry.attributes.position
+const indexAttr = perfectD6Geometry.index
 
 const scaleFactor = 0.2
 
-const d12FaceMap = {
+const d6FaceMap = {
     1: 5,
     9: 8,
     11: 4,
@@ -33,12 +33,12 @@ const d12FaceMap = {
   }
 
 // Extract convex polyhedron data (vertices and faces) from the DodecahedronGeometry
-const d12Verts = []
+const d6Verts = []
 for (let i = 0; i < positionAttr.count; i++) {
-  d12Verts.push([positionAttr.getX(i), positionAttr.getY(i), positionAttr.getZ(i)])
+  d6Verts.push([positionAttr.getX(i), positionAttr.getY(i), positionAttr.getZ(i)])
 }
 
-const d12Faces = [
+const d6Faces = [
   [8, 4, 14, 12, 0],
   [1, 9, 5, 15, 13],
   [2, 10, 6, 16, 12],
@@ -53,22 +53,17 @@ const d12Faces = [
   [3, 13, 15, 9, 11]
 ];
 
-d12Faces[0] = d12Faces[0].reverse();
-d12Faces[1] = d12Faces[1].reverse();
-d12Faces[6] = d12Faces[6].reverse();
-d12Faces[10] = d12Faces[10].reverse();
-d12Faces[7] = d12Faces[7].reverse();
 
-const D12 = forwardRef(({ rotation, position }, ref) => {
-  const originalFBX = useFBX('/assets/d12/d12.fbx')
+const D6 = forwardRef(({ rotation, position }, ref) => {
+  const originalFBX = useFBX('/assets/d6/d6.fbx')
   const fbx = useMemo(() => originalFBX.clone(), [originalFBX])
 
-  const [d12Ref, api] = useConvexPolyhedron(() => ({
+  const [d6Ref, api] = useConvexPolyhedron(() => ({
     mass: 0.5,
-    args: [d12Verts.map(([x,y,z]) => [x * scaleFactor, y * scaleFactor, z * scaleFactor]), d12Faces],
+    args: [d6Verts.map(([x,y,z]) => [x * scaleFactor, y * scaleFactor, z * scaleFactor]), d6Faces],
     position: position,
     collisionFilterGroup: 1,
-    collisionFilterMask: 2,
+    collisionFilterMask: 1,
     friction: 0.6,
     restitution: 0.3,
     linearDamping: 0.3,
@@ -92,9 +87,9 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
     fbx.traverse((child) => {
       if (child.isMesh) {
         child.material = new THREE.MeshStandardMaterial({
-          map: d12BaseColorMap,
-          normalMap: d12NormalMap,
-          roughnessMap: d12RoughnessMap,
+          map: d6BaseColorMap,
+          normalMap: d6NormalMap,
+          roughnessMap: d6RoughnessMap,
           metalness: 0,
           roughness: 1,
           transparent: true,
@@ -107,8 +102,8 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
   }, [fbx]);
 
   const logTopFace = () => {
-    if (!d12Ref.current) return null
-    const geom = d12Ref.current.geometry
+    if (!d6Ref.current) return null
+    const geom = d6Ref.current.geometry
     if (!geom) return null
   
     const posAttr = geom.attributes.position
@@ -119,8 +114,8 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
     let topFaceIndex = -1
     let maxY = -Infinity
   
-    d12Ref.current.updateMatrixWorld(true)
-    const worldMatrix = d12Ref.current.matrixWorld
+    d6Ref.current.updateMatrixWorld(true)
+    const worldMatrix = d6Ref.current.matrixWorld
     const normalMatrix = new THREE.Matrix3().getNormalMatrix(worldMatrix)
   
     const vA = new THREE.Vector3()
@@ -160,7 +155,7 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
     }
   
     if (topFaceIndex === -1) {
-      console.warn("No top face found for D12.")
+      console.warn("No top face found for d6.")
       return null
     } else {
       // Map the triangulated face index to one of the 12 faces
@@ -190,15 +185,15 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
       setTimeout(() => {
         const topFaceValue = logTopFace()
         if (topFaceValue != null) {
-          const mappedValue = d12FaceMap[topFaceValue]
-          console.log(`D12 Face: ${topFaceValue}, Shown: ${mappedValue}`)
+          const mappedValue = d6FaceMap[topFaceValue]
+          console.log(`d6 Face: ${topFaceValue}, Shown: ${mappedValue}`)
         }
       }, 2200)
     },
   }))
 
   return (
-    <mesh ref={d12Ref} geometry={perfectD12Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]} position={position}>
+    <mesh ref={d6Ref} geometry={perfectD6Geometry} scale={[scaleFactor, scaleFactor, scaleFactor]} position={position}>
       {/* Green overlay to help align */}
       <meshStandardMaterial color="green" opacity={0.5} transparent={true} visible={false} />
       <group rotation={[0.25, 0.15, -1.05]}>
@@ -208,4 +203,4 @@ const D12 = forwardRef(({ rotation, position }, ref) => {
   )
 })
 
-export default D12
+export default D6

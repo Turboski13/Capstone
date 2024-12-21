@@ -5,6 +5,10 @@ import { useFBX, useTexture } from '@react-three/drei'
 import { Physics, useConvexPolyhedron, usePlane } from '@react-three/cannon'
 import D12 from './D12.jsx';
 import D10 from './D10.jsx';
+import D8 from './D8.jsx';
+import D6 from './D6.jsx';
+import D4 from './D4.jsx';
+
 const baseColorMap = new THREE.TextureLoader().load('/assets/d20/dice-basecolors.jpeg')
 const normalMap = new THREE.TextureLoader().load('/assets/d20/dice-normal.jpeg')
 const roughnessMap = new THREE.TextureLoader().load('/assets/d20/dice-rough.jpeg')
@@ -53,6 +57,8 @@ function Floor() {
   const [ref] = usePlane(() => ({
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
+    collisionFilterGroup:2,
+    collisionFilterMask: -1,
   }))
   
   // Load your texture image
@@ -99,7 +105,7 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
   const fbx = useMemo(() => originalFBX.clone(), [originalFBX])
   
   const perfectD20Geometry = useMemo(() => new THREE.IcosahedronGeometry(1, 0), [])
-  const scaleFactor = .18
+  const scaleFactor = .1
 
   const [perfectD20Ref, api] = useConvexPolyhedron(() => ({
     mass: 0.5,
@@ -225,7 +231,7 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
       {/* needed to set the icosahedron to invisible so we can use our own artwork and skins on the dice*/}
       <meshStandardMaterial color="green" opacity={0.5} visible={false} transparent={false} />
       <group rotation={[rotation.x, rotation.y, rotation.z]}>
-        <primitive object={fbx} scale={0.8} />
+        <primitive object={fbx} scale={1.5} />
       </group>
     </mesh>
   )
@@ -234,12 +240,12 @@ const Dice = forwardRef(({ rotation, position }, ref) => {
 function InvisibleWalls() {
   // Larger size
   const size = 1
-  usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0] }))
-  usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 2.5, 0] }))
-  usePlane(() => ({ rotation: [0, Math.PI / 2, 0], position: [-size, 0.5, 0] }))
-  usePlane(() => ({ rotation: [0, -Math.PI / 2, 0], position: [size, 0.5, 0] }))
-  usePlane(() => ({ rotation: [0, 0, 0], position: [0, 0.5, -size] }))
-  usePlane(() => ({ rotation: [0, Math.PI, 0], position: [0, 0.5, size] }))
+  usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: [0, 0, 0], collisionFilterGroup: 2, collisionFilterMask: -1, }))
+  usePlane(() => ({ rotation: [Math.PI / 2, 0, 0], position: [0, 2.5, 0], collisionFilterGroup: 2, collisionFilterMask: -1,}))
+  usePlane(() => ({ rotation: [0, Math.PI / 2, 0], position: [-size, 0.5, 0], collisionFilterGroup: 2, collisionFilterMask: -1,}))
+  usePlane(() => ({ rotation: [0, -Math.PI / 2, 0], position: [size, 0.5, 0], collisionFilterGroup: 2, collisionFilterMask: -1,}))
+  usePlane(() => ({ rotation: [0, 0, 0], position: [0, 0.5, -size], collisionFilterGroup: 2, collisionFilterMask: -1,}))
+  usePlane(() => ({ rotation: [0, Math.PI, 0], position: [0, 0.5, size], collisionFilterGroup: 2, collisionFilterMask: -1,}))
   return null
 }
 
@@ -278,8 +284,9 @@ export default function DiceRoller() {
 
   // Spread the dice out along the x-axis
   const dicePositions = useMemo(() => {
-    const startX = -(diceCount - 1) * 0.2
-    return Array.from({ length: diceCount }, (_, i) => [startX + i * 0.2, 1, 0])
+    const startX = -(diceCount - 1) * 0.3
+    return Array.from({ length: diceCount }, (_, i) => [startX + i * 0.6, 
+      1 + (Math.random() * 0.2), 0])
   }, [diceCount])
 
   return (
@@ -344,7 +351,7 @@ export default function DiceRoller() {
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
         />
-        <Physics key={diceCount} gravity={[0, -9.81, 0]}>
+        <Physics gravity={[0, -9.81, 0]} iterations={15} step={1/120}>
           <InvisibleWalls />
           <Floor />
 
@@ -371,6 +378,33 @@ export default function DiceRoller() {
               key={i}
               ref={el => diceRefs.current[i] = el}
               diceType="10"
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
+          {diceType === '8' && dicePositions.map((pos, i) => (
+            <D8
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              diceType="8"
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
+          {diceType === '6' && dicePositions.map((pos, i) => (
+            <D6
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              diceType="6"
+              rotation={rotation}
+              position={pos}
+            />
+          ))}
+          {diceType === '4' && dicePositions.map((pos, i) => (
+            <D4
+              key={i}
+              ref={el => diceRefs.current[i] = el}
+              diceType="4"
               rotation={rotation}
               position={pos}
             />
