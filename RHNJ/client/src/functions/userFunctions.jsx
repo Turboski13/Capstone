@@ -1,4 +1,5 @@
-const API_URL = `http://localhost:3000/api`;
+const API_URL = `https://capstone-dk9v.onrender.com/api`;
+// const API_URL = `http://localhost:3000/api`;
 const token = localStorage.getItem('jwtToken');
 
 // Helper function for making fetch requests
