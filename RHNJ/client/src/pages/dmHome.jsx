@@ -12,6 +12,7 @@ import {
   removePlayerFromTeam,
   deleteTeam,
 } from '../functions/dmFunctions';
+import './dmHome.css';
 
 const DMHome = () => {
   const [players, setPlayers] = useState([]);
@@ -190,7 +191,7 @@ const DMHome = () => {
       setTeamPW('');
       setError(null);
       alert('Successfully joined the team!');
-      navigate(`/play-area/${joinTeamId}`)
+      navigate(`/play-area/${joinTeamId}`);
     } catch (err) {
       setError('Failed to join the team. Please check the password.');
     }
@@ -252,7 +253,6 @@ const DMHome = () => {
       >
         {newTeamForm ? 'Cancel' : 'Create New Team'}
       </button>
-
       <h3 className='team-h3'>Teams List</h3>
       <h3 id='search-label'>Search for a specific team</h3>
       <input

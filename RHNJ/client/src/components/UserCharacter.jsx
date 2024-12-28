@@ -7,6 +7,7 @@ import {
 import '../index.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigations from '../components/Navigations';
+import './UserCharacter.css';
 
 const UserCharacter = () => {
   const { id } = useParams();
@@ -178,18 +179,22 @@ const UserCharacter = () => {
                   className='uc-form'
                 />
               </div>
-              <button onClick={handleEditSubmit}>Save</button>
-              <button onClick={() => setIsEditing(false)}>Cancel</button>
+              <button onClick={handleEditSubmit} className='uc-btn'>
+                Save
+              </button>
+              <button onClick={() => setIsEditing(false)} className='uc-btn'>
+                Cancel
+              </button>
             </div>
           ) : (
             <div>
-              <h3 className='char-txt'>
+              <h3 className='uc-char-level'>
                 Level: {characterInfo.character?.level}
               </h3>
-              <h3 className='char-txt'>
+              <h3 className='uc-char-sp'>
                 Status Points: {characterInfo.character?.statusPoints}
               </h3>
-              <h2>Stats:</h2>
+              <h2 className='uc-char-stats'>Stats:</h2>
               <ul>
                 <li>Strength: {characterInfo.character.attributes.strength}</li>
                 <li>
@@ -206,7 +211,7 @@ const UserCharacter = () => {
                 <li>Wisdom: {characterInfo.character.attributes.wisdom}</li>
                 <li>Charisma: {characterInfo.character.attributes.charisma}</li>
               </ul>
-              <p>
+              <p className='uc-char-stats'>
                 Saving Throws:{' '}
                 {characterInfo.character.attributes?.savingThrows?.map(
                   (save, index) => (
@@ -248,15 +253,26 @@ const UserCharacter = () => {
               <p className='char-txt'>
                 Attack Roll: {characterInfo.character.attackRoll}
               </p>
-              <h3>Ideals: {characterInfo.character.ideals}</h3>
-              <h3>Flaws: {characterInfo.character.flaws}</h3>
-              <h3>Notes: {characterInfo.character.notes}</h3>
+              <h3 className='uc-char-stats'>
+                Ideals: {characterInfo.character.ideals}
+              </h3>
+              <h3 className='uc-char-stats'>
+                Flaws: {characterInfo.character.flaws}
+              </h3>
+              <h3 className='uc-char-stats'>
+                Notes: {characterInfo.character.notes}
+              </h3>
 
-              <button onClick={() => setIsEditing(true)}>Edit</button>
+              <button
+                onClick={() => setIsEditing(true)}
+                className='uc-edit-btn'
+              >
+                Edit
+              </button>
             </div>
           )}
           <div>
-            <Link to='/player-home' className='char-link'>
+            <Link to='/player-home' className='uc-char-link'>
               Back to Player Homepage
             </Link>
           </div>

@@ -1,0 +1,91 @@
+/* Login Page and Signup Page */
+.navigation {
+    margin-left: 150px; /* Remove any left margin */
+    padding-left: 10px; /* Optional: Add some padding for spacing */
+    justify-content: space-between;
+  }
+  
+  .login-page,
+  .signup-page,
+  .player-home {
+    background-image: url(./public/assets/Images/background-image2.gif);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: stretch;
+    background-repeat: no-repeat;
+    height: 100vh;
+    overflow: auto; /* adds scroll bars when content exceeds the viewport */
+    /* width: 100%; */
+    color: goldenrod;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .form {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .card-container {
+    background-image: url(./public/assets/Images/tarot-card.png); /* Background image */
+    background-size: contain; /* Adjust this as needed */
+    background-repeat: no-repeat; /* No repeat */
+    background-position: center; /* Center background */
+    width: 300px; /* Width of the card */
+    height: 400px; /* Height of the card */
+    display: flex; /* Flexbox for centering content */
+    flex-direction: column; /* Arrange inputs vertically */
+    justify-content: center; /* Center inputs vertically */
+    align-items: center; /* Center inputs horizontally */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding inside the card */
+    margin-top: 200px;
+  }
+  
+  .user-box {
+    margin-bottom: 15px; /* Space between inputs */
+    width: 100%; /* Full width for inputs */
+    position: relative; /* To position inputs correctly */
+  }
+  
+  input {
+    color: goldenrod;
+    width: 90%; /* Width of the input field */
+    padding: 10px; /* Padding inside the input */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow */
+  }
+  
+  input-type {
+    color: #f5d04d;
+  }
+  
+  button {
+    padding: 10px 20px; /* Padding for the button */
+    border: goldenrod; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f5d04d; /* Button color */
+    cursor: pointer; /* Pointer on hover */
+    color: goldenrod;
+  }
+  
+  .btn {
+    margin-top: 20px;
+    padding: 10px 20px; /* Padding for the button */
+    border: goldenrod; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: dimgray; /* Button color */
+    cursor: pointer; /* Pointer on hover */
+  }
+  

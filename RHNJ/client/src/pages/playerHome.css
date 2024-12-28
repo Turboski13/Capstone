@@ -1,0 +1,83 @@
+/* Player Home page */
+@layer library, reset, base, demo;
+@import 'https://unpkg.com/open-props@2.0.0-beta.5' layer(library);
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap');
+@layer reset {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+  :where(:not(dialog)) {
+    margin: 0;
+  }
+}
+
+@layer base {
+  html {
+    --nav-block-size: 74px;
+    --brand-gradient: linear-gradient(227deg, #1400c7 0%, #00bbff 100%);
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    min-block-size: 100dvb;
+  }
+}
+
+.ph-nav {
+  margin-left: 50px;
+}
+.ph-ul {
+  display: flex; /* Enable flexbox */
+  justify-content: space-between; /* Spread the items out with space between them */
+  align-items: center; /* Vertically center the items */
+  width: 100%; /* Make sure the container spans the full width of the page */
+  padding: 0 20px;
+}
+
+.p-homepage {
+  margin-bottom: 10px;
+}
+
+.char-create {
+  margin-bottom: 20px;
+  color: aliceblue;
+  font-size: 16px;
+}
+
+.your-char {
+  font-size: 25px;
+  text-shadow: 2px 2px whitesmoke;
+  color: goldenrod;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.your-char-level {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+  display: flex;
+}
+
+.your-char-txt {
+  color: aliceblue;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.your-char-btn {
+  color: aliceblue;
+  padding: 8px 12px;
+  margin-right: 5px;
+}
+
+button.choose-char {
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}

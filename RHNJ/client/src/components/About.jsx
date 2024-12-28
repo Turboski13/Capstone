@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
+import './About.css';
 
 export default function About() {
   return (

@@ -1,0 +1,20 @@
+/* Admin Home */
+.adm-home-h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .adm-home-p {
+    margin-bottom: 10px;
+  }
+  .admin-h3 {
+    font-size: 22px;
+    color: aliceblue;
+  }
+  .adm-search {
+    margin-top: 10px;
+    width: 300px;
+  }
+  .admin-th {
+    color: antiquewhite;
+  }
+  

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { signup } from '../api';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigation from './Navigations';
+import './Login.css';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -27,7 +28,7 @@ const Signup = () => {
         'Signup failed: ' + (error.response?.data?.error || 'An error occurred')
       );
     }
-    };
+  };
 
   return (
     <div className='signup-page'>
@@ -35,7 +36,7 @@ const Signup = () => {
 
       <div className='form'>
         <div className='card-container'>
-          <h2 className='admin-login-h2'>Signup</h2>
+          <h2 className='admin-login-h2'>Sign up</h2>
           <form className='signup-form' onSubmit={handleSignup}>
             <div className='user-box'>
               <input

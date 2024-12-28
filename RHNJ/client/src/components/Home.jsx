@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import '../index.css';
+import './Home.css';
 
 function Home() {
   return (
@@ -10,8 +11,6 @@ function Home() {
         This is the home page where players can learn about the game and get
         started!
       </p> */}
-
-      
     </div>
   );
 }

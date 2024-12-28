@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import characters from '../utils/characterList';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
-import '../index.css';
+// import '../index.css';
+import './CharacterDetail.css';
 
 const CharacterDetail = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const CharacterDetail = () => {
       <h2 className='char-class'>{character.class}</h2>
       <img src={character.image} alt={character.class} className='img2' />
       <p className='char-desc'>{character.description}</p>
-      <h3 className='char-cp'>Catchphrase</h3>
+      <h3 className='char-catch'>Catchphrase</h3>
       <p className='char-desc'>{character.catchPhrases}</p>
       {/* <h3 className='char-att'>Attributes:</h3>
       <ul className='char-att-list'>
@@ -33,7 +34,7 @@ const CharacterDetail = () => {
         <li>Charisma: {character.attributes.charisma}</li>
         <li>Saving Throws: {character.attributes.savingThrows.join(', ')}</li>
       </ul> */}
-      <h3 className='char-att'>Skills:</h3>
+      <h3 className='char-att'>Skills</h3>
       <ul>
         {character.skills.length > 0 ? (
           character.skills.map((skill, index) => <li key={index}>{skill}</li>)
@@ -42,7 +43,7 @@ const CharacterDetail = () => {
         )}
       </ul>
 
-      <h3 className='char-att'>Single Use Skill:</h3>
+      <h3 className='char-att'>Single Use Skill</h3>
       <p className='char-desc'>{character.singleUseSkill.join(', ')}</p>
 
       {/* <h3 className='char-att'>Hit Points:</h3>
