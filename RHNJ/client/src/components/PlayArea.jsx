@@ -64,8 +64,7 @@ const PlayArea = () => {
     const token = localStorage.getItem('token');
 
     try{
-      // const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`
-      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/${teamId}/char-join`, {
+      const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
