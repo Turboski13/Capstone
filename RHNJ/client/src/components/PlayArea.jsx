@@ -41,7 +41,7 @@ const PlayArea = () => {
 
   useEffect(() => {
     // const newSocket = io('http://localhost:3000');
-    const newSocket = io('https://capstone-dk9v.onrender.com:3000');
+    const newSocket = io('https://capstone-dk9v.onrender.com');
     if (paramTeamId) {
       newSocket.emit("joinTeam", { teamId: paramTeamId });
     }
