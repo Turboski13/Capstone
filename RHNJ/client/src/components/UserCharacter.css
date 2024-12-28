@@ -37,6 +37,7 @@ label {
   color: aliceblue;
   margin-bottom: 10px;
   margin-top: 15px;
+  font-weight: bold;
 }
 
 .uc-char-stats {
@@ -44,6 +45,7 @@ label {
   color: aliceblue;
   margin-top: 15px;
   margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .uc-char-sp {
@@ -51,6 +53,13 @@ label {
   color: aliceblue;
   margin-top: 15px;
   margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.uc-char-level + p,
+.uc-char-sp + p,
+.uc-char-stats + p {
+  color: goldenrod;
 }
 
 .uc-edit-btn {

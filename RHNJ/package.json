@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
+    "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.120.4",
     "@react-three/fiber": "^8.17.10",
     "axios": "^1.7.7",
