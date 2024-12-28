@@ -26,14 +26,17 @@ const TabSwitcher = ({
 
   const getFilteredAssets = async (teamId) => {
     const token = localStorage.getItem('token');
-    try{
+    try {
       // const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {
-      const response = await fetch(`https://capstone-dk9v.onrender.com/api/assets/${teamId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://capstone-dk9v.onrender.com/api/assets/${teamId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const result = await response.json();
       setFilteredAssets((prev) => ({ ...prev, result }));
       const enemyArray = result.filter(
@@ -440,7 +443,7 @@ const TabSwitcher = ({
       case 'teamStats':
         return (
           <div>
-            <h2>Teamates</h2>
+            <h2>Teammates</h2>
             <ul>
               {userData.map((user) => (
                 <li key={user.id}>
@@ -493,7 +496,7 @@ const TabSwitcher = ({
           onClick={() => setActiveTab('teamStats')}
           className={activeTab === 'teamStats' ? 'active' : ''}
         >
-          Teamates
+          Teammates
         </button>
       </div>
       <div className='tab-content'>{renderContent()}</div>
