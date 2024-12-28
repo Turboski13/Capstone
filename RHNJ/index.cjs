@@ -18,7 +18,8 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    // origin: "http://localhost:5173",
+    origin: ["https://capstone-dk9v.onrender.com", "https://capstone-dk9v.onrender.com:3000", "capstone-dk9v.onrender:3000"],
     methods: ["GET", "POST"],
   },
 });

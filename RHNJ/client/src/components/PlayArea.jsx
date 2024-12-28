@@ -29,6 +29,7 @@ const PlayArea = () => {
 
 
   const { teamId: paramTeamId } = useParams();
+  console.log(teamId);
 
   useEffect(() => {
     if(paramTeamId){
@@ -39,7 +40,8 @@ const PlayArea = () => {
   },[paramTeamId])
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    // const newSocket = io('http://localhost:3000');
+    const newSocket = io('https://capstone-dk9v.onrender.com:3000');
     if (paramTeamId) {
       newSocket.emit("joinTeam", { teamId: paramTeamId });
     }
@@ -62,7 +64,8 @@ const PlayArea = () => {
     const token = localStorage.getItem('token');
 
     try{
-      const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`, {
+      // const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/${teamId}/char-join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +86,8 @@ const PlayArea = () => {
   const getTeamInfo = async(teamId) => {
     const token = localStorage.getItem('token');
     try{
-      const response = await fetch(`http://localhost:3000/api/teams/${teamId}`, {
+      // const response = await fetch(`http://localhost:3000/api/teams/${teamId}`,
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/${teamId}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -117,7 +121,8 @@ useEffect(() => {
   const getAssets = async(teamId) => {
     const token = localStorage.getItem('token');
     try{
-      const response = await fetch(`http://localhost:3000/api/assets/${teamId}`, {
+      // const response = await fetch(`http://localhost:3000/api/assets/${teamId}`,
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/assets/${teamId}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -145,7 +150,8 @@ useEffect(() => {
     const token = localStorage.getItem('token');
 
     try{
-      const response = await fetch(`http://localhost:3000/api/teams/upload`, {
+      // const response = await fetch(`http://localhost:3000/api/teams/upload`,
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/upload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
