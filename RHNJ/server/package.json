@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "prisma": {
-  "seed": "node ../prisma/seed.js"
-},
+    "seed": "node ../prisma/seed.js"
+  },
   "dependencies": {
     "@prisma/client": "^5.21.1",
     "axios": "^1.7.7",
