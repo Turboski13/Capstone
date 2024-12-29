@@ -8,7 +8,7 @@
   .login-page,
   .signup-page,
   .player-home {
-    background-image: url(./public/assets/Images/background-image2.gif);
+    background-image: url('./assets/Images/background-image2.gif');
     position: absolute;
     top: 0;
     left: 0;
@@ -37,7 +37,7 @@
   }
   
   .card-container {
-    background-image: url(./public/assets/Images/tarot-card.png); /* Background image */
+    background-image: url('./assets/Images/tarot-card.png'); /* Background image */
     background-size: contain; /* Adjust this as needed */
     background-repeat: no-repeat; /* No repeat */
     background-position: center; /* Center background */

@@ -1,6 +1,6 @@
 /* How to Play page */
 .how-to-play {
-    background-image: url(./public/assets/Images/background-image2.gif);
+    background-image: url('./assets/Images/background-image2.gif');
     position: absolute;
     top: 0;
     left: 0;
