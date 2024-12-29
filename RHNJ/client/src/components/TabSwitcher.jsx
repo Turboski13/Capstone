@@ -434,7 +434,7 @@ const TabSwitcher = ({
                       <strong>Damage Immunities:</strong>
                       <span>{enemy.properties['damage immunities']}</span>
                     </div>
-                    <img src={`./assets/${enemy.properties.Image}`} />
+                    <img src={`/assets/${enemy.properties.Image}`} />
                   </div>
                 </div>
               ))}
