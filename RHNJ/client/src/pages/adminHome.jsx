@@ -10,7 +10,7 @@ import {
   deleteUserCharacter,
 } from '../functions/adminFunctions';
 import Navigations from '../components/Navigations';
-import './AdminHome.css';
+import './adminHome.css';
 
 const AdminHome = () => {
   const navigate = useNavigate();
