@@ -1,0 +1,69 @@
+/* How to Play page */
+.how-to-play {
+    background-image: url(./public/assets/Images/background-image2.gif);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: stretch;
+    background-repeat: no-repeat;
+    height: 100vh;
+    overflow: auto; /* adds scroll bars when content exceeds the viewport */
+    /* width: 100%; */
+    color: goldenrod;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .nav-left1 {
+    margin-left: 150px;
+    color: goldenrod;
+    text-decoration: none;
+    display: flex;
+    float: left;
+  }
+  
+  .htp-head-text {
+    color: aliceblue;
+    text-shadow: 3px 2px darkgoldenrod;
+  }
+  
+  .htp-text {
+    color: cornsilk;
+    margin-top: 30px;
+    margin-bottom: 5px;
+  }
+  
+  p {
+    margin-top: 5;
+  }
+  
+  .htp-text2 {
+    color: honeydew;
+    padding-bottom: 0;
+    margin-bottom: 5px;
+  }
+  
+  .htp1 {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .htp-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  th {
+    padding-top: 0;
+  }
+  

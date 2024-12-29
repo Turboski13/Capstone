@@ -1,0 +1,26 @@
+/* About Characters page */
+.about-character {
+    background-image: url(./public/assets/Images/background-image2.gif);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: stretch;
+    background-repeat: no-repeat;
+    height: 100vh;
+    overflow: auto; /* adds scroll bars when content exceeds the viewport */
+    /* width: 100%; */
+    color: goldenrod;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  

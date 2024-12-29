@@ -1,0 +1,98 @@
+/* DM Homepage */
+.dm-home {
+    background-image: url(./public/assets/Images/background-image2.gif);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: stretch;
+    background-repeat: no-repeat;
+    height: 100vh;
+    overflow: auto; /* adds scroll bars when content exceeds the viewport */
+    /* width: 100%; */
+    color: goldenrod;
+    margin: 0;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  /* .dm-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: normal;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0);
+    z-index: 1000;
+    color: goldenrod;
+    text-decoration: none;
+  }
+  
+  .dm-nav-ul {
+    margin-left: 300px;
+  } */
+  .dm-h2,
+  .dm-h3 {
+    margin-top: 50px;
+    color: goldenrod;
+  }
+  
+  .team-name {
+    width: 300px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: auto;
+    padding-top: 10px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .team-label {
+    margin-top: 15px;
+    margin-bottom: 5;
+  }
+  
+  .submit-btn {
+    padding: 6 16;
+    font-size: 16px;
+    background-color: whitesmoke;
+    color: goldenrod;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  #search-label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: aliceblue;
+    font-size: 16px;
+  }
+  
+  #team-search {
+    width: 300px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: auto;
+  }
+  

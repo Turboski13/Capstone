@@ -1,0 +1,67 @@
+/* Character details */
+.char-img {
+  height: 200px;
+  width: auto;
+}
+.character-detail {
+  background-image: url(./public/assets/Images/background-image2.gif);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: stretch;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: auto; /* adds scroll bars when content exceeds the viewport */
+  /* width: 100%; */
+  color: goldenrod;
+  margin: 0;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.img2 {
+  height: 500px;
+  width: auto;
+}
+
+.char-cp {
+  color: antiquewhite;
+  font-family: 'balzano-std', sans-serif;
+  font-size: 30px;
+  margin-bottom: 25px;
+  text-decoration: none;
+}
+
+.char-catch {
+  color: aliceblue;
+  margin-top: 10px;
+}
+
+.char-att {
+  color: aliceblue;
+  margin-top: 10px;
+}
+
+.char-desc {
+  color: goldenrod;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.char-link {
+  padding: 8px 12px;
+  color: beige;
+  margin-top: 30px;
+}
+
+.char-link:hover {
+  background-color: goldenrod;
+}

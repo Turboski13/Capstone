@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
+import './Login.css'
 
 const Login = () => {
   const [username, setUsername] = useState('');

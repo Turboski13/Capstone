@@ -1,0 +1,83 @@
+/* USER CHARACTER */
+.uc-form {
+  width: 400px;
+  margin-left: 15px;
+  background-color: dimgray;
+  color: white;
+  font-size: 16px;
+}
+.form-field {
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+  padding: 10px;
+  display: block;
+}
+
+label {
+  margin-right: 10px;
+}
+
+.uc-btn {
+  color: aliceblue;
+  padding: 8px 12px;
+  margin-right: 15px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.charc-name {
+  color: goldenrod;
+  text-shadow: 2px 2px aliceblue;
+  margin-bottom: 15px;
+}
+
+.uc-char-level {
+  font-size: 20px;
+  color: aliceblue;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.uc-char-stats {
+  font-size: 20px;
+  color: aliceblue;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.uc-char-sp {
+  font-size: 20px;
+  color: aliceblue;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.uc-char-level + p,
+.uc-char-sp + p,
+.uc-char-stats + p {
+  color: goldenrod;
+}
+
+.uc-edit-btn {
+  margin-top: 15px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.uc-char-link {
+  padding: 8px 12px;
+  color: beige;
+  margin-top: 30px;
+}
+
+.uc-char-link:hover {
+  background-color: goldenrod;
+}
+
+.edit-char {
+  font-size: 25px;
+}

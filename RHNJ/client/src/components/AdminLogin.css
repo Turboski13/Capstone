@@ -1,0 +1,69 @@
+/* Admin Login */
+.admin-login-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 6px 10px;
+  background-color: dimgray;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 1000; /* Ensure it stays above other content */
+}
+
+.navtext3 {
+  text-decoration: none;
+  color: silver;
+}
+
+.admin-login-div {
+  background-image: url(./public/assets/Images/background-image2.gif);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: stretch;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: auto; /* adds scroll bars when content exceeds the viewport */
+  /* width: 100%; */
+  color: goldenrod;
+  margin: 0;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-container {
+  margin-top: 300px;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-login-h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: silver;
+}
+.admin-h3 {
+  margin-top: 20px;
+}
+
+.admin-table {
+  padding-top: 30px;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-th {
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding: 15px;
+}

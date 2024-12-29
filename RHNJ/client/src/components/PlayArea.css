@@ -1,0 +1,70 @@
+body {
+  background-image: url(./public/assets/Images/background-image2.gif);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: stretch;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: auto; /* adds scroll bars when content exceeds the viewport */
+  /* width: 100%; */
+  color: goldenrod;
+  margin: 0;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.pa-team {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px aliceblue;
+}
+
+/* .pa-container {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: lightgray;
+} */
+
+#csv-input {
+  width: 400px;
+  height: auto;
+  position: absolute;
+  left: 0;
+}
+
+#dm-upload {
+  width: 100px;
+  height: auto;
+  position: absolute;
+  left: 420px;
+}
+
+.add-char-btn {
+  margin-top: 100px;
+}
+
+.hide-char-btn {
+  margin-top: 100px;
+}
+
+#pa-img {
+  height: 250px;
+  margin-top: 30px;
+}
+
+.join-char-btn {
+  color: aliceblue;
+  margin-top: 10px;
+}

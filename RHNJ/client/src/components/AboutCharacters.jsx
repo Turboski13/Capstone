@@ -2,6 +2,7 @@ import React from 'react';
 import characters from '../utils/characterList'; // Adjust the path as necessary
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
+import './AboutCharacters.css';
 
 // import AboutCharacters from './AboutCharacters';
 

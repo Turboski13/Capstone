@@ -1,0 +1,138 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0);
+  z-index: 1000;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  width: 95%;
+  margin-left: 50px;
+}
+
+.nav-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  color: goldenrod;
+  margin-left: 300px;
+  gap: 25px;
+}
+
+.nav-left a {
+  color: #bd9302;
+  text-decoration: none;
+  padding: 8px 12px;
+  text-shadow: 4px 4px 4px #0a6a56;
+}
+
+.nav-left a:hover {
+  background-color: aliceblue;
+  border-radius: 2px;
+}
+
+.nav-right {
+  color: #bd9302;
+  font-size: 15px;
+  text-shadow: 4px 4px 4px #0a6a56;
+
+  display: flex;
+  float: right;
+}
+
+.navtext2 {
+  color: goldenrod;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+button.navtext2 {
+  color: aliceblue;
+}
+
+.navtext2:hover {
+  background-color: #a82b11;
+}
+
+ul {
+  list-style-type: none;
+  padding: 10px;
+  justify-content: space-between;
+  margin: 0;
+  display: flex;
+}
+
+li {
+  margin: 0 20px; /* Spacing between nav items */
+}
+
+.nav-link {
+  color: goldenrod; /* Link color */
+  text-decoration: none; /* Removes underline */
+  padding: 10px; /* Padding around links */
+}
+
+/* for mobile phones */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .nav-left {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 120px;
+    gap: 1px;
+  }
+
+  .nav-right {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 14px;
+    margin-left: 40px;
+  }
+
+  .nav-left a {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+/* for tablet */
+@media (min-width: 768px) and (max-width: 1180px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 15px;
+    margin-left: 130px;
+  }
+
+  .nav-left {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: 120px;
+  }
+
+  .nav-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-left a {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+
+  .hamburger {
+    display: block;
+  }
+}

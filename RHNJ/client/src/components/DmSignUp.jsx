@@ -62,11 +62,6 @@ export default function DmSignUpComponent() {
         </div>
         <button type='submit'>Sign Up</button>
       </form>
-
-      
-
-
-
     </div>
   );
 }

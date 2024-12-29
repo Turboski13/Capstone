@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import Link for navigation
 import Navigations from './Navigations';
+import './AdminLogin.css';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
