@@ -44,7 +44,7 @@ const TabSwitcher = ({
           (asset.type === 'Enemy' || asset.type === 'Boss') &&
           asset.properties.Name
       );
-      const abilities = result.filter((asset) => asset.type === 'ability');
+      const abilities = result?.filter((asset) => asset.type === 'ability');
       console.log('enem: ', enemies);
       setEnemyData(enemyArray);
       setUserAbilities(userId, abilities);
@@ -54,11 +54,12 @@ const TabSwitcher = ({
   };
 
   const setUserAbilities = (userId, abilities) => {
-    const myChar = characterData.filter((char) => char.userId === userId);
-    const myClass = myChar[0].characterClass;
+    const myChar = characterData?.filter((char) => char.userId === userId);
+    const myClass = myChar[0]?.characterClass || localStorage.getItem('class');
+    localStorage.setItem('class', myClass);
     console.log('CLASS: ', myClass);
     console.log('ABILITIES: ', abilities);
-    const filteredAbilities = abilities.filter((ability) =>
+    const filteredAbilities = abilities?.filter((ability) =>
       myClass.includes(ability.properties.Class)
     );
     setMyAbilities(filteredAbilities);
