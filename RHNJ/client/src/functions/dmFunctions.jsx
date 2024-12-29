@@ -3,7 +3,6 @@
 /* increase XP for team and single character */
 const API_URL = `https://capstone-dk9v.onrender.com/api`;
 // const API_URL = `http://localhost:3000/api`;
-
 // Helper function for making fetch requests
 const fetchData = async (url, options) => {
   try {
@@ -81,8 +80,9 @@ export const createTeam = async (
   teamName,
   roomPassword = '',
   assets = {},
-  token
+  authToken
 ) => {
+  const token = authToken || localStorage.getItem('token');
   try {
     return await fetchData(`${API_URL}/teams`, {
       method: 'POST',

@@ -18,8 +18,8 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://capstone-dk9v.onrender.com:3000",
     // origin: "http://localhost:5173",
+    origin: "https://capstone-dk9v.onrender.com",
     methods: ["GET", "POST"],
   },
 });
@@ -517,7 +517,7 @@ app.get('/api/assets/:teamId', authMiddleware, async (req, res, next) => {
   try {
     // Fetch the team info to check who the DM is
     const team = await prisma.team.findUnique({
-      where: { id: +teamId },
+      where: { id: parseInt(teamId) },
       select: { dmId: true }
     });
 

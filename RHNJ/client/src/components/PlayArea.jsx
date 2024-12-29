@@ -28,6 +28,7 @@ const PlayArea = () => {
   });
 
   const { teamId: paramTeamId } = useParams();
+  console.log(teamId);
 
   useEffect(() => {
     if (paramTeamId) {
@@ -38,8 +39,8 @@ const PlayArea = () => {
   }, [paramTeamId]);
 
   useEffect(() => {
-    const newSocket = io('https://capstone-dk9v.onrender.com:3000');
     // const newSocket = io('http://localhost:3000');
+    const newSocket = io('https://capstone-dk9v.onrender.com');
     if (paramTeamId) {
       newSocket.emit('joinTeam', { teamId: paramTeamId });
     }
@@ -61,19 +62,15 @@ const PlayArea = () => {
     const teamPW = teamInfo.password;
     const token = localStorage.getItem('token');
 
-    try {
-      // const response = await fetch(`http://localhost:3000/api/teams/${teamId}/char-join`,
-      const response = await fetch(
-        `https://capstone-dk9v.onrender.com/api/teams/${teamId}/char-join`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ teamPW, charId }),
-        }
-      );
+    try{
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/${teamId}/char-join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ teamPW, charId }),
+      });
       const result = await response.json();
       setShowChars(false);
       getTeamInfo(teamId);
@@ -156,19 +153,16 @@ const PlayArea = () => {
     const csvData = await csvInfo.text();
     const token = localStorage.getItem('token');
 
-    try {
-      // const response = await fetch(`http://localhost:3000/api/teams/upload`, {
-      const response = await fetch(
-        `https://capstone-dk9v.onrender.com/api/teams/upload`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ teamId, csvData, shareAll }),
-        }
-      );
+    try{
+      // const response = await fetch(`http://localhost:3000/api/teams/upload`,
+      const response = await fetch(`https://capstone-dk9v.onrender.com/api/teams/upload`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ teamId, csvData, shareAll }),
+      });
       const result = await response.json();
       console.log(result);
     } catch (err) {

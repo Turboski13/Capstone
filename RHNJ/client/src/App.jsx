@@ -57,7 +57,7 @@ function App() {
         <Route path='/character/:id' element={<CharacterDetail />} />
         <Route path='/' element={<HowToPlay />} />
         <Route path='/play-area/:teamId' element={<PlayArea />} />
-        <Route path='/roll' element={<DiceRoller />} />
+        {/* <Route path='/roll' element={<DiceRoller />} /> */}
         
         {/* Protected Routes */}
         {/* <Route
