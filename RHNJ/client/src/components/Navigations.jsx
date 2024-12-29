@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useLocation to detect current path
 import { logout } from '../api';
+import './Navigations.css';
 
 const Navigations = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State for managing logged-in status
