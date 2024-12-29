@@ -30,7 +30,6 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // JWT Verfication Middleware
 const authMiddleware = (req, res, next) => {
-  console.log('Request Headers:', req.headers);
   const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -152,9 +151,6 @@ app.post(`/api/auth/login`, async (req, res) => {
       return res.status(401).send({ error: 'Invalid credentials' });
     }
 
-    // Log the JWT secret before signing
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
-
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
@@ -266,7 +262,6 @@ app.post('/api/user/characters/:id', authMiddleware, async (req, res, next) => {
 });
 
 app.get('/api/users/:userId/characters', authMiddleware, async (req, res) => {
-  console.log('Accessing /api/users/:userId/characters route');
   console.log(
     'Authenticated user ID:',
     req.user.id,
@@ -302,8 +297,6 @@ app.get('/api/users/characters', authMiddleware, async (req, res) => {
 app.post('/api/character', async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization']; //problem here
-    console.log('Authorization Header:', authHeader);
-    console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'missing or wrong jwt' });
